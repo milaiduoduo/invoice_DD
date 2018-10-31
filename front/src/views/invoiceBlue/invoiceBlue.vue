@@ -1,6 +1,6 @@
 <template>
 <div class="blueWrap">
-    <el-card ref="invoiceWrap">
+    <el-card>
         <!-- <div slot="header" class="headerWrap">
             <el-button type="primary" size="medium" @click="onSubmit">立即上传蓝票信息</el-button>
             <el-button type="default" size="small" @click="onCancel">取消</el-button>

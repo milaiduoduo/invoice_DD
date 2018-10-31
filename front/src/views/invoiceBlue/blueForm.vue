@@ -35,7 +35,7 @@
             </el-row>
             <el-row>
                 <el-col :offset="1" :span="10">
-                    <el-form-item label="开票日期">
+                    <el-form-item label="开票日期" prop="invoiceTime">
                         <el-date-picker v-model="formData.invoiceTime" type="date" placeholder="选择日期"></el-date-picker>
                     </el-form-item>
                 </el-col>
