@@ -47,12 +47,25 @@ export const constantRouterMap = [{
     }]
   },
   {
+    path: '/queryInvoice',
+    component: Layout,
+    children: [{
+      path: '',
+      name: 'queryInvoice',
+      component: () => import('@/views/invoiceQuery'),
+      meta: {
+        title: '已上传票据查询',
+        icon: 'link'
+      }
+    }]
+  },
+  {
     path: '/invoiceBlue',
     component: Layout,
     children: [{
       path: '',
       name: 'invoiceBlue',
-      component: () => import('@/views/invoiceBlue'),
+      component: () => import('@/views/invoiceBlue/invoiceBlue'),
       meta: {
         title: '蓝票上传',
         icon: 'form'
@@ -73,15 +86,15 @@ export const constantRouterMap = [{
     }]
   },
   {
-    path: '/queryInvoice',
+    path: '/test',
     component: Layout,
     children: [{
       path: '',
-      name: 'queryInvoice',
-      component: () => import('@/views/invoiceQuery'),
+      name: 'test',
+      component: () => import('@/views/invoiceBlue/blueForm'),
       meta: {
-        title: '已上传票据查询',
-        icon: 'link'
+        title: 'test',
+        icon: 'nested'
       }
     }]
   },
