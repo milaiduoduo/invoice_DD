@@ -1,5 +1,6 @@
 <template>
-<div>
+<div class="blueFormWrap">
+    <div class="title">发票信息</div>
     <el-form class="formWrap" size="small" ref="formWrap" label-width="120px" :model="formData" :rules="formRules">
             <el-row>
                 <el-col :offset="1" :span="10">
@@ -58,6 +59,7 @@
                     </el-form-item>
                 </el-col>
             </el-row>
+            <!-- <el-button type="primary" size="medium" @click="onSave">获取数据</el-button> -->
         </el-form>
 </div>
 </template>
@@ -65,6 +67,7 @@
 <script type="text/ecmascript-6">
 export default {
   name: "m-blue-form",
+  props: ["eformData"],
   data() {
     return {
       formData: {
@@ -119,7 +122,21 @@ export default {
       ]
     };
   },
+  created() {
+    this.formData.orderId = this.eformData.orderId;
+    this.formData.invoiceCode = this.eformData.invoiceCode;
+    this.formData.invoiceNo = this.eformData.invoiceNo;
+    this.formData.ivcTitle = this.eformData.ivcTitle;
+    this.formData.totalPrice = this.eformData.totalPrice;
+    this.formData.invoiceTime = this.eformData.invoiceTime;
+  },
+  created() {
+    console.log("this.eformData:", this.eformData);
+  },
   methods: {
+    onSave() {
+      console.log(this.formData);
+    },
     handleRemove(file, fileList) {
       console.log(file, fileList);
     },
@@ -141,4 +158,11 @@ export default {
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
+.blueFormWrap {
+  margin-top: 10px;
+  border-bottom: 1px dashed #ccc;
+  > .title {
+    font-weight: bold;
+  }
+}
 </style>

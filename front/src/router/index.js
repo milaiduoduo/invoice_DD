@@ -91,7 +91,7 @@ export const constantRouterMap = [{
     children: [{
       path: '',
       name: 'test',
-      component: () => import('@/views/invoiceBlue/blueForm'),
+      component: () => import('@/views/test'),
       meta: {
         title: 'test',
         icon: 'nested'
