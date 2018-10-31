@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-container">
-    页面待开发。。。
+    做一些数据统计，页面待开发。。。
     <!-- <div class="dashboard-text">name:{{ name }}</div>
     <div class="dashboard-text">roles:<span v-for="role in roles" :key="role">{{ role }}</span></div> -->
   </div>

@@ -47,29 +47,30 @@ export const constantRouterMap = [{
     }]
   },
   {
-    path: '/queryInvoice',
-    component: Layout,
-    children: [{
-      path: '',
-      name: 'queryInvoice',
-      component: () => import('@/views/invoiceQuery'),
-      meta: {
-        title: '已上传票据查询',
-        icon: 'link'
-      }
-    }]
-  },
-  {
     path: '/invoiceBlue',
     component: Layout,
     children: [{
       path: '',
       name: 'invoiceBlue',
-      component: () => import('@/views/invoiceBlue/invoiceBlue'),
+      component: () => import('@/views/invoiceQuery/waitForUpload'),
       meta: {
         title: '蓝票上传',
         icon: 'form'
       }
+    }]
+  },
+  {
+    path: '/invoiceBlueFrom',
+    component: Layout,
+    hidden: true,
+    children: [{
+      path: '',
+      name: 'invoiceBlueFrom',
+      component: () => import('@/views/invoiceBlue/invoiceBlue'),
+      // meta: {
+      //   title: '蓝票录入表单',
+      //   icon: 'form'
+      // }
     }]
   },
   {
@@ -78,7 +79,7 @@ export const constantRouterMap = [{
     children: [{
       path: '',
       name: 'invoiceRed',
-      component: () => import('@/views/invoiceRed'),
+      component: () => import('@/views/invoiceQuery/uploadedBlueQuery'),
       meta: {
         title: '红票上传',
         icon: 'nested'
@@ -86,18 +87,41 @@ export const constantRouterMap = [{
     }]
   },
   {
-    path: '/test',
+    path: '/invoiceRedForm',
+    component: Layout,
+    hidden: true,
+    children: [{
+      path: '',
+      name: 'invoiceRedForm',
+      component: () => import('@/views/invoiceRed/invoiceRedForm')
+    }]
+  },
+  {
+    path: '/queryAllInvoice',
     component: Layout,
     children: [{
       path: '',
-      name: 'test',
-      component: () => import('@/views/test'),
+      name: 'queryAllInvoice',
+      component: () => import('@/views/invoiceQuery/queryAllInvoice'),
       meta: {
-        title: 'test',
-        icon: 'nested'
+        title: '已上传发票查询',
+        icon: 'link'
       }
     }]
   },
+  // {
+  //   path: '/test',
+  //   component: Layout,
+  //   children: [{
+  //     path: '',
+  //     name: 'test',
+  //     component: () => import('@/views/test'),
+  //     meta: {
+  //       title: 'test',
+  //       icon: 'nested'
+  //     }
+  //   }]
+  // },
   {
     path: '*',
     redirect: '/404',
