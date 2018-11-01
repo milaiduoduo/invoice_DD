@@ -9,6 +9,19 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
 
+//后端当服务器
+const express = require('express');
+const axios = require('axios');
+const bodyParser = require('body-parser');
+const app = express();
+let apiRoutes = express.Router();
+
+app.use('/api', apiRoutes);
+console.log("后台运行中！in webpack.dev.conf.js")
+//后端当服务器
+
+
+
 function resolve(dir) {
   return path.join(__dirname, '..', dir)
 }
@@ -29,6 +42,17 @@ const devWebpackConfig = merge(baseWebpackConfig, {
 
   // these devServer options should be customized in /config/index.js
   devServer: {
+    before(app) {
+      app.post('/api/fileUpload', (req, res) => {
+        console.log("in server post!");
+        res.end(JSON.stringify({
+          "code": 20000,
+          data: {
+            name: "can you get this msg?!"
+          }
+        }))
+      })
+    },
     clientLogLevel: 'warning',
     historyApiFallback: true,
     hot: true,
@@ -36,9 +60,10 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     host: HOST || config.dev.host,
     port: PORT || config.dev.port,
     open: config.dev.autoOpenBrowser,
-    overlay: config.dev.errorOverlay
-      ? { warnings: false, errors: true }
-      : false,
+    overlay: config.dev.errorOverlay ? {
+      warnings: false,
+      errors: true
+    } : false,
     publicPath: config.dev.assetsPublicPath,
     proxy: config.dev.proxyTable,
     quiet: true, // necessary for FriendlyErrorsPlugin
@@ -83,9 +108,8 @@ module.exports = new Promise((resolve, reject) => {
               }:${port}`
             ]
           },
-          onErrors: config.dev.notifyOnErrors
-            ? utils.createNotifierCallback()
-            : undefined
+          onErrors: config.dev.notifyOnErrors ?
+            utils.createNotifierCallback() : undefined
         })
       )
 

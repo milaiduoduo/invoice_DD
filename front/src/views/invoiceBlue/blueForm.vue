@@ -66,6 +66,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+import axios from "axios";
 export default {
   name: "m-blue-form",
   props: ["eformData"],
@@ -133,14 +134,14 @@ export default {
   },
   methods: {
     uploadFile() {
-      let url = "https://api.jd.com/routerjson",
+      let url = "/fileUpload",
         data = {};
-      this.$reqPost(url, data)
+      this.$reqPost("/fileUpload", { name: "alice" })
         .then(res => {
-          console.log("res：", res);
+          console.log("接口返回：", res);
         })
         .catch(err => {
-          console.log("blue upload Error: ", err);
+          console.log("blue page query Test err:", err);
         });
     },
     onSave() {
