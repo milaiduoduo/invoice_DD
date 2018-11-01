@@ -43,7 +43,7 @@
             <el-row>
                 <el-col :offset="1">
                     <el-form-item label="PDF上传">
-                        <el-upload
+                        <!-- <el-upload
                             class="upload-demo"
                             action="https://jsonplaceholder.typicode.com/posts/"
                             :on-preview="handlePreview"
@@ -55,7 +55,8 @@
                             :file-list="fileList">
                             <el-button size="small" type="primary">点击上传</el-button>
                             <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-                        </el-upload>
+                        </el-upload> -->
+                        <input id="file" ref="file" type="file" name="file" @change="uploadFile">
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -130,10 +131,18 @@ export default {
     this.formData.totalPrice = this.eformData.totalPrice;
     this.formData.invoiceTime = this.eformData.invoiceTime;
   },
-  created() {
-    console.log("this.eformData:", this.eformData);
-  },
   methods: {
+    uploadFile() {
+      let url = "https://api.jd.com/routerjson",
+        data = {};
+      this.$reqPost(url, data)
+        .then(res => {
+          console.log("res：", res);
+        })
+        .catch(err => {
+          console.log("blue upload Error: ", err);
+        });
+    },
     onSave() {
       console.log(this.formData);
     },
