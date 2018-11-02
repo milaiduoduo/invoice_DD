@@ -56,7 +56,7 @@
                             <el-button size="small" type="primary">点击上传</el-button>
                             <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
                         </el-upload> -->
-                        <input id="file" ref="file" type="file" name="file" @change="uploadFile">
+                        <input id="file" ref="file" type="file" name="file" @change="uploadFile" accept="application/pdf">
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -66,7 +66,8 @@
 </template>
 
 <script type="text/ecmascript-6">
-import axios from "axios";
+import dateUtil from "@/utils/date";
+
 export default {
   name: "m-blue-form",
   props: ["eformData"],
@@ -133,13 +134,28 @@ export default {
     this.formData.invoiceTime = this.eformData.invoiceTime;
   },
   methods: {
+    _checkFileExt(path) {
+      if (!path.match(/.pdf$/i)) {
+        return false;
+      }
+      return true;
+    },
     uploadFile(e) {
+      let tempPath = e.target.value;
+      let extMatch = this._checkFileExt(tempPath);
+
+      if (!extMatch) {
+        this.$message({
+          showClose: true,
+          message: "只能上传.pdf文件，不能上传其它类型哦~",
+          type: "error"
+        });
+        return;
+      }
+
       let url = "/fileUpload";
       let formData = new FormData(this.$refs.formWrap.$el);
-      // console.log("this.$refs.formWrap:", this.$refs.formWrap.$el);
-      // // console.log("formData: ", formData);
-      // console.log(e.target.value);
-      this.$reqPost("/api/post", formData)
+      this.$reqPost("/post", formData)
         .then(res => {
           console.log("上传接口返回：", res);
         })

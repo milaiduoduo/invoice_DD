@@ -22,6 +22,9 @@ app.use(koaBody({
     multipart: true
 }));
 
+import dateUtil from "./public/js/utils/date";
+
+
 // custom 404
 
 // app.use(async function(ctx, next) {
@@ -43,7 +46,6 @@ router.post('/post', async function (ctx, next) {
         //解析参数的代码
         // let useName = params.userName;
         // let email = params.email;
-        //console.log('post params:::::useName,email',useName,email);
 
         //取得上传文件
         let files = ctx.request.body.files.file;
@@ -61,8 +63,7 @@ router.post('/post', async function (ctx, next) {
                 let tmpath = item['path'];
                 let tmparr = item['name'].split('.');
                 let ext = '.' + tmparr[tmparr.length - 1];
-                newpath = path.join('public/upload', parseInt(Math.random() * 100) + Date.parse(new Date()).toString() + ext);
-                // newpath = 'D:\/testUpload' + parseInt(Math.random() * 100) + Date.parse(new Date()).toString() + ext;
+                newpath = path.join('public/upload', new Date().timestamp() + ext);
                 const stream = fs.createWriteStream(newpath); //创建一个可写流
                 fs.createReadStream(tmpath).pipe(stream); //可读流通过管道写入可写流
             }
