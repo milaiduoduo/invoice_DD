@@ -42,7 +42,7 @@ const user = {
         /*暂时改为本地模拟数据，不发请求 */
         try {
           const mockResponse = {
-            code: 20000,
+            code: 0,
             data: {
               token: 'admin'
             }
@@ -78,7 +78,7 @@ const user = {
         /*暂时改为本地模拟数据，不发请求 */
         try {
           const userInfoResponse = {
-            code: 20000,
+            code: 0,
             data: {
               name: "admin",
               avatar: "",

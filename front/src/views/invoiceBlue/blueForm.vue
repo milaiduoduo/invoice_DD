@@ -133,12 +133,15 @@ export default {
     this.formData.invoiceTime = this.eformData.invoiceTime;
   },
   methods: {
-    uploadFile() {
-      let url = "/fileUpload",
-        data = {};
-      this.$reqPost("/fileUpload", { name: "alice" })
+    uploadFile(e) {
+      let url = "/fileUpload";
+      let formData = new FormData(this.$refs.formWrap.$el);
+      // console.log("this.$refs.formWrap:", this.$refs.formWrap.$el);
+      // // console.log("formData: ", formData);
+      // console.log(e.target.value);
+      this.$reqPost("/api/post", formData)
         .then(res => {
-          console.log("接口返回：", res);
+          console.log("上传接口返回：", res);
         })
         .catch(err => {
           console.log("blue page query Test err:", err);
