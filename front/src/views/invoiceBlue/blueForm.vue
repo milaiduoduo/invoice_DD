@@ -140,14 +140,29 @@ export default {
       }
       return true;
     },
+    _checkSize(fileSize) {
+      let maxSize = 100 * 1024;
+      return fileSize < maxSize;
+    },
     uploadFile(e) {
       let tempPath = e.target.value;
+      let fileSize = this.$refs.file.files[0].size;
+      // console.log(this.$refs.file.files[0]);
       let extMatch = this._checkFileExt(tempPath);
-
+      let sizeMatch = this._checkSize(fileSize);
+      // console.log(this._checkSize(fileSize));
       if (!extMatch) {
         this.$message({
           showClose: true,
-          message: "只能上传.pdf文件，不能上传其它类型哦~",
+          message: "注意：只能上传.pdf文件，不能上传其它类型哦~",
+          type: "error"
+        });
+        return;
+      }
+      if (!sizeMatch) {
+        this.$message({
+          showClose: true,
+          message: "注意：pdf文件大小不能超过100K哦~",
           type: "error"
         });
         return;
