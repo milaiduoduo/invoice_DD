@@ -9,7 +9,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
 
-//后端当服务器
+//测试用。。。。后端模拟接口服务器
 const express = require('express');
 const axios = require('axios');
 const bodyParser = require('body-parser');
@@ -18,7 +18,7 @@ let apiRoutes = express.Router();
 
 app.use('/api', apiRoutes);
 console.log("后台运行中！in webpack.dev.conf.js")
-//后端当服务器
+//测试用。。。。后端模拟接口服务器
 
 
 
@@ -42,17 +42,19 @@ const devWebpackConfig = merge(baseWebpackConfig, {
 
   // these devServer options should be customized in /config/index.js
   devServer: {
-    before(app) {
-      app.post('/api/fileUpload', (req, res) => {
-        console.log("in server post!");
-        res.end(JSON.stringify({
-          "code": 20000,
-          data: {
-            name: "can you get this msg?!"
-          }
-        }))
-      })
-    },
+    // 测试用。。。。后端模拟接口服务器
+    // before(app) {
+    //   app.post('/api/fileUpload', (req, res) => {
+    //     console.log("in server post!");
+    //     res.end(JSON.stringify({
+    //       "code": 20000,
+    //       data: {
+    //         name: "can you get this msg?!"
+    //       }
+    //     }))
+    //   })
+    // },
+    // 测试用。。。。后端模拟接口服务器
     clientLogLevel: 'warning',
     historyApiFallback: true,
     hot: true,
