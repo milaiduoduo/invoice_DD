@@ -57,6 +57,7 @@
                             <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
                         </el-upload> -->
                         <input id="file" ref="file" type="file" name="file" @change="uploadFile" accept="application/pdf">
+                        <div class="fileNotice">（文件大小不能超过100KB）</div>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -207,6 +208,9 @@ export default {
   border-bottom: 1px dashed #ccc;
   > .title {
     font-weight: bold;
+  }
+  .fileNotice {
+    color: #afafaf;
   }
 }
 </style>
