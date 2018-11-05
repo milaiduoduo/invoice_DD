@@ -118,7 +118,7 @@
             console.log('formData:', formData);
             $.ajax({
                 type: "post",
-                url: '/post', //url跟后台路由url完全一致
+                url: 'http://127.0.0.1:3000/post', //url跟后台路由url完全一致
                 data: formData,
                 processData: false, // 告诉jQuery不要默认把数据转化成字符串,http://jquery.cuishifeng.cn/jQuery.Ajax.html
                 contentType: false, // 告诉jQuery不要把请求头Content-Type设置成默认值

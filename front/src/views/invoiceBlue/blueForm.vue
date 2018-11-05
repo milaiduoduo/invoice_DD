@@ -174,6 +174,11 @@ export default {
       this.$reqPost("/post", formData)
         .then(res => {
           console.log("上传接口返回：", res);
+          this.$message({
+            showClose: true,
+            message: res.data.path,
+            type: "success"
+          });
         })
         .catch(err => {
           console.log("blue page query Test err:", err);
