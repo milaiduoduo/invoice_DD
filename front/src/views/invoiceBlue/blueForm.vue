@@ -171,7 +171,7 @@ export default {
 
       let url = "/fileUpload";
       let formData = new FormData(this.$refs.formWrap.$el);
-      this.$reqPost("/post", formData)
+      this.$reqPost("http://127.0.0.1:3000/post", formData)
         .then(res => {
           console.log("上传接口返回：", res);
           this.$message({
