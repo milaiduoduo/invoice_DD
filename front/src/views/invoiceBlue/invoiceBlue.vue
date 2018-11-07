@@ -56,7 +56,11 @@ export default {
   methods: {
     onAllSubmit() {
       /*获取所有From字段的值，并发送请求*/
-      console.log(this.formList);
+      console.log("this.formList all submit:", this.formList);
+      for (let i = 0; i < this.formList.length; i++) {
+        let orderId = this.formList[i].orderId;
+        console.log("all submit,序号：", i, " orderId:", orderId);
+      }
     },
     onCancel() {
       this.formList.length = 0;
@@ -71,8 +75,11 @@ export default {
       // });
     },
     onAddInvoice() {
-      console.log(initFormData);
-      this.formList.push(initFormData);
+      this.formList.push(Object.create(initFormData));
+      for (let i = 0; i < this.formList.length; i++) {
+        let orderId = this.formList[i].orderId;
+        console.log("add ,序号：", i, " orderId:", orderId);
+      }
     }
   },
   components: {
@@ -80,7 +87,7 @@ export default {
     [testVue.name]: testVue
   },
   created() {
-    this.formList.push(initFormData);
+    this.formList.push(Object.create(initFormData));
   }
 };
 </script>
