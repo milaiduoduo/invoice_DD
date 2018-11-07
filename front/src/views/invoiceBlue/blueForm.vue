@@ -68,10 +68,18 @@
 
 <script type="text/ecmascript-6">
 import dateUtil from "@/utils/date";
-
+import axios from "axios";
 export default {
   name: "m-blue-form",
-  props: ["eformData"],
+  props: [
+    "formOrderId",
+    "formInvoiceCode",
+    "formInvoiceNo",
+    "formIvcTitle",
+    "formTotalPrice",
+    "formInvoiceTime",
+    "formPdfPath"
+  ],
   data() {
     return {
       formData: {
@@ -80,7 +88,8 @@ export default {
         invoiceNo: "",
         ivcTitle: "",
         totalPrice: "",
-        invoiceTime: ""
+        invoiceTime: "",
+        pdfPath: ""
       },
       formRules: {
         orderId: [
@@ -126,13 +135,56 @@ export default {
       ]
     };
   },
-  created() {
-    this.formData.orderId = this.eformData.orderId;
-    this.formData.invoiceCode = this.eformData.invoiceCode;
-    this.formData.invoiceNo = this.eformData.invoiceNo;
-    this.formData.ivcTitle = this.eformData.ivcTitle;
-    this.formData.totalPrice = this.eformData.totalPrice;
-    this.formData.invoiceTime = this.eformData.invoiceTime;
+  computed: {
+    /*为了监控form中控件值的变化而建立----------------*/
+    c_orderId() {
+      return this.formData.orderId;
+    },
+    c_invoiceCode() {
+      return this.formData.invoiceCode;
+    },
+    c_invoiceNo() {
+      return this.formData.invoiceNo;
+    },
+    c_ivcTitle() {
+      return this.formData.ivcTitle;
+    },
+    c_totalPrice() {
+      return this.formData.totalPrice;
+    },
+    c_invoiceTime() {
+      return this.formData.invoiceTime;
+    },
+    c_pdfPath() {
+      return this.formData.pdfPath;
+    }
+
+    /*为了监控form中控件值的变化而建立------------------*/
+  },
+  watch: {
+    /*为了监控form中控件值的变化而建立----------------*/
+    c_orderId(newValue) {
+      this.$emit("update:formOrderId", newValue);
+    },
+    c_invoiceCode(newValue) {
+      this.$emit("update:formInvoiceCode", newValue);
+    },
+    c_invoiceNo(newValue) {
+      this.$emit("update:formInvoiceNo", newValue);
+    },
+    c_ivcTitle(newValue) {
+      this.$emit("update:formIvcTitle", newValue);
+    },
+    c_totalPrice(newValue) {
+      this.$emit("update:formTotalPrice", newValue);
+    },
+    c_invoiceTime(newValue) {
+      this.$emit("update:formInvoiceTime", newValue);
+    },
+    c_pdfPath(newValue) {
+      this.$emit("update:formPdfPath", newValue);
+    }
+    /*为了监控form中控件值的变化而建立----------------*/
   },
   methods: {
     _checkFileExt(path) {
@@ -171,9 +223,12 @@ export default {
 
       let url = "/fileUpload";
       let formData = new FormData(this.$refs.formWrap.$el);
-      this.$reqPost("http://127.0.0.1:3000/post", formData)
+      this.$reqPost("http://117.48.208.116:3000/post", formData)
+        // axios
+        // .post("http://117.48.208.116:3000/post", formData)
         .then(res => {
           console.log("上传接口返回：", res);
+          this.formData.pdfPath = res.data.path;
           this.$message({
             showClose: true,
             message: res.data.path,

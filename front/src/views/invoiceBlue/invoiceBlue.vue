@@ -6,7 +6,24 @@
             <el-button type="default" size="small" @click="onCancel">取消</el-button>
             <el-button type="primary" @click="onAddInvoice">继续录入蓝票</el-button>
         </div> -->
-        <div v-for="(item,index) in formList" :key="index"><m-blue-form :eformData="item"></m-blue-form></div> 
+        <div v-for="(item,index) in formList" :key="index">
+          <div>orderId: {{item.orderId}}</div>
+          <div>invoiceCode: {{item.invoiceCode}}</div>
+          <div>invoiceNo: {{item.invoiceNo}}</div>
+          <div>ivcTitle: {{item.ivcTitle}}</div>
+          <div>totalPrice: {{item.totalPrice}}</div>
+          <div>invoiceTime: {{item.invoiceTime}}</div>
+          <div>pdfPath: {{item.pdfPath}}</div>
+          <m-blue-form 
+            :form-order-id.sync="item.orderId"
+            :form-invoice-code.sync="item.invoiceCode"
+            :form-invoice-no.sync="item.invoiceNo"
+            :form-ivc-title.sync="item.ivcTitle"
+            :form-total-price.sync="item.totalPrice"
+            :form-invoice-time.sync="item.invoiceTime"
+            :form-pdf-path.sync="item.pdfPath"
+            ></m-blue-form>
+          </div> 
         <div class="footer">
             <el-button type="primary" @click="onAllSubmit">蓝票录入完毕，上传！</el-button>
             <el-button type="default" size="small" @click="onCancel">取消</el-button>
@@ -18,13 +35,16 @@
 
 <script type="text/ecmascript-6">
 import blueForm from "./blueForm.vue";
+import axios from "axios";
+import testVue from "./testSync";
 let initFormData = {
   orderId: "",
   invoiceCode: "",
   invoiceNo: "",
   ivcTitle: "",
   totalPrice: "",
-  invoiceTime: ""
+  invoiceTime: "",
+  pdfPath: ""
 };
 export default {
   data() {
@@ -40,6 +60,14 @@ export default {
     onCancel() {
       this.formList.length = 0;
       this.formList.push(initFormData);
+      this.$reqPost("http://117.48.208.116:3000/post_test")
+        // axios.post("http://117.48.208.116:3000/post_test")
+        .then(res => {
+          console.log("Test上传接口返回：", res);
+        });
+      // this.$reqPost("http://117.48.208.116:3000/post_test", {}).then(res => {
+      //   console.log("Test上传接口返回：", res);
+      // });
     },
     onAddInvoice() {
       console.log(initFormData);
@@ -47,7 +75,8 @@ export default {
     }
   },
   components: {
-    [blueForm.name]: blueForm
+    [blueForm.name]: blueForm,
+    [testVue.name]: testVue
   },
   created() {
     this.formList.push(initFormData);
