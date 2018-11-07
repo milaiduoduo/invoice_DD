@@ -136,7 +136,7 @@ export default {
     };
   },
   computed: {
-    /*为了监控form中控件值的变化而建立----------------*/
+    /*为了监控form中控件值的变化，实现双向绑定而建立----------------*/
     c_orderId() {
       return this.formData.orderId;
     },
@@ -159,10 +159,10 @@ export default {
       return this.formData.pdfPath;
     }
 
-    /*为了监控form中控件值的变化而建立------------------*/
+    /*为了监控form中控件值的变化，实现双向绑定而建立------------------*/
   },
   watch: {
-    /*为了监控form中控件值的变化而建立----------------*/
+    /*为了监控form中控件值的变化，实现双向绑定而建立----------------*/
     c_orderId(newValue) {
       this.$emit("update:formOrderId", newValue);
     },
@@ -184,7 +184,7 @@ export default {
     c_pdfPath(newValue) {
       this.$emit("update:formPdfPath", newValue);
     }
-    /*为了监控form中控件值的变化而建立----------------*/
+    /*为了监控form中控件值的变化，实现双向绑定而建立----------------*/
   },
   methods: {
     _checkFileExt(path) {

@@ -14,6 +14,7 @@
           <div>totalPrice: {{item.totalPrice}}</div>
           <div>invoiceTime: {{item.invoiceTime}}</div>
           <div>pdfPath: {{item.pdfPath}}</div>
+          <!-- 为了监控form中控件值的变化，实现双向绑定而建立 -->
           <m-blue-form 
             :form-order-id.sync="item.orderId"
             :form-invoice-code.sync="item.invoiceCode"
