@@ -1,6 +1,6 @@
 <template>
 <div class="blueFormWrap">
-    <div class="title">发票信息</div>
+    <section class="title">发票信息</section>
     <el-form class="formWrap" size="small" ref="formWrap" label-width="120px" :model="formData" :rules="formRules">
             <el-row>
                 <el-col :offset="1" :span="10">
@@ -30,6 +30,18 @@
                 <el-col :offset="1" :span="10">
                     <el-form-item label="开票金额" prop="totalPrice">
                         <el-input v-model.number="formData.totalPrice"></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col :offset="1" :span="10">
+                    <el-form-item label="销货方税号" prop="receiverTaxNo">
+                        <el-input v-model="formData.receiverTaxNo" :disabled="true"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :offset="1" :span="10">
+                    <el-form-item label="销货方公司名称" prop="receiverName">
+                        <el-input v-model="formData.receiverName" :disabled="true"></el-input>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -89,7 +101,9 @@ export default {
         ivcTitle: "",
         totalPrice: "",
         invoiceTime: "",
-        pdfPath: ""
+        pdfPath: "",
+        receiverTaxNo: "91650103599163841F",
+        receiverName: "乌鲁木齐华鑫智宏商贸有限公司"
       },
       formRules: {
         orderId: [
@@ -103,6 +117,12 @@ export default {
         ],
         ivcTitle: [
           { required: true, message: "发票抬头不能为空", trigger: "blur" }
+        ],
+        receiverTaxNo: [
+          { required: true, message: "销货方税号不能为空", trigger: "blur" }
+        ],
+        receiverName: [
+          { required: true, message: "销货方公司名称不能为空", trigger: "blur" }
         ],
         totalPrice: [
           { required: true, message: "发票金额不能为空", trigger: "blur" },

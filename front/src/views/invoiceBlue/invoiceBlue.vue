@@ -1,19 +1,19 @@
 <template>
 <div class="blueWrap">
-    <el-card>
+    <el-card class="elcardWrap">
         <!-- <div slot="header" class="headerWrap">
             <el-button type="primary" size="medium" @click="onSubmit">立即上传蓝票信息</el-button>
             <el-button type="default" size="small" @click="onCancel">取消</el-button>
             <el-button type="primary" @click="onAddInvoice">继续录入蓝票</el-button>
         </div> -->
         <div v-for="(item,index) in formList" :key="index">
-          <div>orderId: {{item.orderId}}</div>
+          <!-- <div>orderId: {{item.orderId}}</div>
           <div>invoiceCode: {{item.invoiceCode}}</div>
           <div>invoiceNo: {{item.invoiceNo}}</div>
           <div>ivcTitle: {{item.ivcTitle}}</div>
           <div>totalPrice: {{item.totalPrice}}</div>
           <div>invoiceTime: {{item.invoiceTime}}</div>
-          <div>pdfPath: {{item.pdfPath}}</div>
+          <div>pdfPath: {{item.pdfPath}}</div> -->
           <!-- 为了监控form中控件值的变化，实现双向绑定而建立 -->
           <m-blue-form 
             :form-order-id.sync="item.orderId"
@@ -63,8 +63,7 @@ export default {
       }
     },
     onCancel() {
-      this.formList.length = 0;
-      this.formList.push(initFormData);
+      this.formList.pop();
       this.$reqPost("http://117.48.208.116:3000/post_test")
         // axios.post("http://117.48.208.116:3000/post_test")
         .then(res => {
@@ -96,6 +95,11 @@ export default {
 .blueWrap {
   .footer {
     margin-top: 10px;
+  }
+  .elcardWrap {
+    > .title {
+      font-weight: bold;
+    }
   }
 }
 </style>
