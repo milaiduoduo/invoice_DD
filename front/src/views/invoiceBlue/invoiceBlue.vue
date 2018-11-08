@@ -1,6 +1,7 @@
 <template>
 <div class="blueWrap">
     <el-card class="elcardWrap">
+      <span class="sectionTitle">第二步：录入蓝票信息，并上传.</span>
         <!-- <div slot="header" class="headerWrap">
             <el-button type="primary" size="medium" @click="onSubmit">立即上传蓝票信息</el-button>
             <el-button type="default" size="small" @click="onCancel">取消</el-button>
@@ -37,7 +38,6 @@
 <script type="text/ecmascript-6">
 import blueForm from "./blueForm.vue";
 import axios from "axios";
-import testVue from "./testSync";
 let initFormData = {
   orderId: "",
   invoiceCode: "",
@@ -82,8 +82,7 @@ export default {
     }
   },
   components: {
-    [blueForm.name]: blueForm,
-    [testVue.name]: testVue
+    [blueForm.name]: blueForm
   },
   created() {
     this.formList.push(Object.create(initFormData));
@@ -93,6 +92,13 @@ export default {
 
 <style scoped lang="scss" rel="stylesheet/scss">
 .blueWrap {
+  .sectionTitle {
+    display: block;
+    padding-bottom: 11px;
+    margin-bottom: 20px;
+    border-bottom: 1px dashed #ccc;
+    font-weight: bold;
+  }
   .footer {
     margin-top: 10px;
   }
