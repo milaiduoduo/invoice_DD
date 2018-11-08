@@ -2,7 +2,7 @@
  <div class="queryBlueWrap">
      <el-card>
          <div slot="header" class="headerWrap clearfix">
-            <span class="sectionTitle">第一步：查询虚要冲红的蓝票.</span>
+            <span class="sectionTitle">第一步：查询需要冲红的蓝票.</span>
              <!-- <h3>红票查询第一步：查询已上传的蓝票（相同的订单号可对应多张已上传的蓝票）</h3> -->
                        <section class="queryWrap">
             <el-form ref="queryform" size="mini" label-width="100px">

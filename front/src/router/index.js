@@ -52,7 +52,7 @@ export const constantRouterMap = [{
     children: [{
       path: '',
       name: 'invoiceBlue',
-      component: () => import('@/views/invoiceQuery/waitForUpload'),
+      component: () => import('@/views/invoiceQuery/queryOrder'),
       meta: {
         title: '蓝票上传',
         icon: 'form'
@@ -79,7 +79,7 @@ export const constantRouterMap = [{
     children: [{
       path: '',
       name: 'invoiceRed',
-      component: () => import('@/views/invoiceQuery/uploadedBlueQuery'),
+      component: () => import('@/views/invoiceQuery/queryBlueInvoice'),
       meta: {
         title: '红票上传',
         icon: 'nested'
@@ -107,6 +107,24 @@ export const constantRouterMap = [{
         title: '已上传发票查询',
         icon: 'link'
       }
+    }]
+  },
+  {
+    path: '/blueIvcDetail',
+    component: Layout,
+    children: [{
+      path: '',
+      name: 'blueIvcDetail',
+      component: () => import('@/views/invoiceBlue/blueIvcDetail'),
+    }]
+  },
+  {
+    path: '/redIvcDetail',
+    component: Layout,
+    children: [{
+      path: '',
+      name: 'redIvcDetail',
+      component: () => import('@/views/invoiceRed/redIvcDetail'),
     }]
   },
   // {

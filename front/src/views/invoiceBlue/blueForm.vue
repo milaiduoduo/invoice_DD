@@ -5,7 +5,7 @@
             <el-row>
                 <el-col :offset="1" :span="10">
                     <el-form-item label="订单编号" prop="orderId">
-                        <el-input v-model="formData.orderId"></el-input>
+                        <el-input :disabled="true" v-model="formData.orderId"></el-input>
                     </el-form-item>
                 </el-col>
             </el-row>

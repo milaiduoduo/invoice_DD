@@ -2,6 +2,7 @@
 <div class="redWrap">
     <el-card>
         <div slot="header" class="headerWrap">
+            <span class="sectionTitle">第二步：录入蓝票信息，并上传.</span>
             <el-button type="primary" size="medium" @click="onSubmit">立即上传红票信息</el-button>
             <el-button type="default" size="small" @click="onCancel">取消</el-button>
         </div>
@@ -11,19 +12,19 @@
                 <el-row>
                 <el-col :offset="1" :span="10">
                     <el-form-item label="订单编号" prop="orderId">
-                        <el-input v-model="formData.orderId"></el-input>
+                        <el-input :disabled="true" v-model="formData.orderId"></el-input>
                     </el-form-item>
                 </el-col>
                 </el-row>
                 <el-row>
                     <el-col :offset="1" :span="10">
                         <el-form-item label="原蓝票代码" prop="blueInvoiceCode">
-                            <el-input v-model="formData.blueInvoiceCode"></el-input>
+                            <el-input :disabled="true" v-model="formData.blueInvoiceCode"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :offset="1" :span="10">
                         <el-form-item label="原蓝票号码" prop="blueInvoiceNo">
-                            <el-input v-model.number="formData.blueInvoiceNo"></el-input>
+                            <el-input :disabled="true" v-model.number="formData.blueInvoiceNo"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -146,4 +147,19 @@ export default {
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
+.sectionTitle {
+  display: block;
+  padding-bottom: 11px;
+  margin-bottom: 20px;
+  border-bottom: 1px dashed #ccc;
+  font-weight: bold;
+}
+.footer {
+  margin-top: 10px;
+}
+.elcardWrap {
+  > .title {
+    font-weight: bold;
+  }
+}
 </style>

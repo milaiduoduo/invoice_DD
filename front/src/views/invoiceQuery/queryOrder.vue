@@ -60,6 +60,7 @@ export default {
       }
     ];
     return {
+      stepActive: 0,
       currentPage: 1,
       queryResult: mockData
     };
