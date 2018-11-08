@@ -3,7 +3,7 @@
     <el-card>
         <div slot="header" class="headerWrap clearfix">
           <!-- <span>查询条件：发票类型, 订单号，发票代码，发票号，开票日期段，</span> -->
-          <section>
+          <section class="queryWrap">
             <el-form ref="queryform" size="mini" label-width="100px">
                  <el-row>
                      <el-col :span="5">
@@ -84,7 +84,7 @@
                       </el-col>
                   </el-row>
           </el-form> -->
-		    </div>
+		</div>
         <div class="pagination top">
             <el-pagination 
                 @size-change="handleSizeChange"
@@ -179,16 +179,16 @@ export default {
     };
   },
   methods: {
-    showDetail(ivcType) {
+    showDetail(ivcType, invoiceCode, invoiceNo) {
       if (ivcType === config.ivcType.blue) {
         this.$router.push({
           name: "blueIvcDetail",
-          params: { invoiceNo: "1111" }
+          params: { invoiceCode: "", invoiceNo: "1111" }
         });
       } else {
         this.$router.push({
           name: "redIvcDetail",
-          params: { invoiceNo: "2222" }
+          params: { invoiceCode: "", invoiceNo: "2222" }
         });
       }
     },

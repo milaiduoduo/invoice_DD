@@ -4,19 +4,50 @@
          <div slot="header" class="headerWrap clearfix">
             <span class="sectionTitle">第一步：查询虚要冲红的蓝票.</span>
              <!-- <h3>红票查询第一步：查询已上传的蓝票（相同的订单号可对应多张已上传的蓝票）</h3> -->
-             <span>查询条件：订单号，发票代码，发票号</span>
-             <el-form ref="queryform" size="mini" label-width="80px">
+                       <section class="queryWrap">
+            <el-form ref="queryform" size="mini" label-width="100px">
                  <el-row>
-                     <el-col :span="8">
-                         <el-form-item label="订单编号">
+                     <el-col :span="5">
+                         <el-form-item label="发票类型：">
+                             <el-select v-model="queryInvoiceType" placeholder="请选择">
+                                <el-option
+                                    v-for="item in invoiceTypeOptions"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
+                         </el-form-item>
+                     </el-col>
+                     <el-col :span="5">
+                         <el-form-item label="订单编号：">
                             <el-input placeholder="请输入订单编号"></el-input>
                          </el-form-item>
                      </el-col>
+                     <el-col :span="5">
+                         <el-form-item label="发票代码：">
+                            <el-input placeholder="请输入发票代码"></el-input>
+                         </el-form-item>
+                     </el-col>
+                     
                      <el-col :span="2">
                             <el-button class="queryBtn" type="primary" size="small" @click="onQuery">查询</el-button>
                      </el-col>
                  </el-row>
-             </el-form>
+                 <el-row>
+                     <el-col :span="10">
+                         <el-form-item label="开票日期：">
+                             <el-date-picker  type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+                         </el-form-item>
+                     </el-col>
+                     <el-col :span="5">
+                         <el-form-item label="发票号码：">
+                            <el-input placeholder="请输入发票号码"></el-input>
+                         </el-form-item>
+                     </el-col>
+                 </el-row>
+            </el-form>
+          </section>
          </div>
          <div class="pagination">
             <el-pagination 
@@ -42,7 +73,7 @@
             <el-table-column fixed label="操作" width="200">
                <template slot-scope="scope">
                     <el-button type="text" size="small" @click="toRedInvoice(scope.row)">冲红录入</el-button>
-                    <el-button type="text" size="small">查看蓝票</el-button>
+                    <el-button type="text" size="small" @click="showDetail(1,invoiceCode,invoiceNo)">查看蓝票</el-button>
                 </template>
             </el-table-column>
             <!-- <el-table-column fixed label="详情查看" width="100"></el-table-column> -->
@@ -87,6 +118,12 @@ let mockData = [
     uploadFlag: "待上传"
   }
 ];
+let config = {
+  ivcType: {
+    blue: 1,
+    red: 2
+  }
+};
 export default {
   data() {
     return {
@@ -95,6 +132,19 @@ export default {
     };
   },
   methods: {
+    showDetail(ivcType, invoiceCode, invoiceNo) {
+      if (ivcType === config.ivcType.blue) {
+        this.$router.push({
+          name: "blueIvcDetail",
+          params: { invoiceCode: "", invoiceNo: "1111" }
+        });
+      } else {
+        this.$router.push({
+          name: "redIvcDetail",
+          params: { invoiceCode: "", invoiceNo: "2222" }
+        });
+      }
+    },
     toRedInvoice(row) {
       console.log(row);
       this.$router.push({ name: "invoiceRedForm" });
