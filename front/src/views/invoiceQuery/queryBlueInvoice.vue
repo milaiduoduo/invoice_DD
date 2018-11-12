@@ -49,7 +49,7 @@
             </el-form>
           </section>
          </div>
-         <div class="pagination">
+         <div class="pagination top">
             <el-pagination 
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
@@ -161,6 +161,13 @@ export default {
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
+.el-row:nth-last-of-type(1) {
+  .el-form-item--mini.el-form-item:nth-last-of-type(1),
+  .el-form-item--small.el-form-item {
+    margin-bottom: 0px;
+  }
+}
+
 .queryBlueWrap {
   .sectionTitle {
     display: block;
@@ -176,11 +183,16 @@ export default {
     padding: 9px 30px;
     font-size: 14px;
   }
+
   .pagination {
     padding: 5px 20px 10px 20px;
     margin: 10px;
     // border-top: 1px dashed #ccc;
     border-bottom: 1px solid #ccc;
+    &.top {
+      padding-top: 0px;
+      margin: -10px 10px 10px 10px;
+    }
   }
 }
 </style>
