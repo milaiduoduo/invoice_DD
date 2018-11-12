@@ -37,11 +37,11 @@
             <el-pagination 
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
-                :current-page = "currentPage"
-                :page-sizes="[10,30,50,100]"
-                :page-size="1"
                 layout="total,sizes,prev,pager,next,jumper"
-                :total="1">
+                :current-page = currentPage
+                :page-sizes=pageSizes
+                :page-size="1"
+                :total=queryTotal>
             </el-pagination>
         </div>
     </el-card>
@@ -60,9 +60,11 @@ export default {
       }
     ];
     return {
-      stepActive: 0,
+      queryResult: mockData,
+      pageSizes: [10, 30, 50, 100],
+      pageSize: 10,
       currentPage: 1,
-      queryResult: mockData
+      queryTotal: 130
     };
   },
   methods: {
@@ -81,7 +83,6 @@ export default {
   }
 };
 </script>
-
 <style scoped lang="scss" rel="stylesheet/scss">
 .el-form-item--mini.el-form-item,
 .el-form-item--small.el-form-item {

@@ -2,7 +2,7 @@
     <div class="blueDetailWrap">
         <el-card>
         <!-- <div slot="header" class="headerWrap clearfix"> -->
-          <span class="sectionTitle">蓝票详情：</span>
+          <!-- <span class="sectionTitle">蓝票详情：</span> -->
         <!-- </div> -->
         <el-form class="formWrap" size="small" ref="formWrap" label-width="120px" :model="formData">
                 <section class="category">订单信息</section>
@@ -18,7 +18,7 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <section class="category">发票信息</section>
+                <section class="category blueWrap">蓝票信息</section>
                 <el-row>
                     <el-col :offset="1" :span="10">
                         <el-form-item label="发票代码" prop="invoiceCode">
@@ -141,5 +141,9 @@ export default {
   margin-bottom: 20px;
   border-bottom: 1px dashed #ccc;
   font-weight: bold;
+}
+.category {
+  font-weight: bold;
+  padding: 0 0 10px 20px;
 }
 </style>

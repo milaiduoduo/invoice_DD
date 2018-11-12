@@ -50,50 +50,44 @@ export const constantRouterMap = [{
     path: '/invoiceBlue',
     component: Layout,
     children: [{
-      path: '',
-      name: 'invoiceBlue',
+      path: 'queryOrder',
+      name: 'queryOrder',
       component: () => import('@/views/invoiceQuery/queryOrder'),
       meta: {
         title: '蓝票上传',
         icon: 'form'
       }
-    }]
-  },
-  {
-    path: '/invoiceBlueFrom',
-    component: Layout,
-    hidden: true,
-    children: [{
-      path: '',
+    }, {
+      path: 'invoiceBlueFrom',
       name: 'invoiceBlueFrom',
       component: () => import('@/views/invoiceBlue/invoiceBlue'),
-      // meta: {
-      //   title: '蓝票录入表单',
-      //   icon: 'form'
-      // }
+      hidden: true,
+      meta: {
+        title: '蓝票上传 / 蓝票录入',
+        icon: 'form'
+      }
     }]
   },
   {
     path: '/invoiceRed',
     component: Layout,
     children: [{
-      path: '',
-      name: 'invoiceRed',
+      path: 'queryBlueInvoice',
+      name: 'queryBlueInvoice',
       component: () => import('@/views/invoiceQuery/queryBlueInvoice'),
       meta: {
         title: '红票上传',
         icon: 'nested'
       }
-    }]
-  },
-  {
-    path: '/invoiceRedForm',
-    component: Layout,
-    hidden: true,
-    children: [{
-      path: '',
+    }, {
+      path: 'invoiceRedForm',
       name: 'invoiceRedForm',
-      component: () => import('@/views/invoiceRed/invoiceRedForm')
+      component: () => import('@/views/invoiceRed/invoiceRedForm'),
+      hidden: true,
+      meta: {
+        title: '红票上传 / 红票录入',
+        icon: 'nested'
+      }
     }]
   },
   {
@@ -112,19 +106,29 @@ export const constantRouterMap = [{
   {
     path: '/blueIvcDetail',
     component: Layout,
+    hidden: true,
     children: [{
       path: '',
       name: 'blueIvcDetail',
       component: () => import('@/views/invoiceBlue/blueIvcDetail'),
+      meta: {
+        title: '蓝票详情',
+        icon: 'link'
+      }
     }]
   },
   {
     path: '/redIvcDetail',
     component: Layout,
+    hidden: true,
     children: [{
       path: '',
       name: 'redIvcDetail',
       component: () => import('@/views/invoiceRed/redIvcDetail'),
+      meta: {
+        title: '红票详情',
+        icon: 'link'
+      }
     }]
   },
   // {
