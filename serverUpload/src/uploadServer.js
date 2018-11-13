@@ -6,7 +6,7 @@ const Koa = require('koa');
 var router = require('koa-router')();
 
 //服务器处理跨域
-const cors = require('koa2-cors');
+// const cors = require('koa2-cors');
 //服务器处理跨域
 
 import babel_co from 'babel-core/register';
@@ -17,8 +17,26 @@ const app = new Koa();
 const os = require('os');
 const path = require('path');
 
-//服务器处理跨域
-app.use(cors());
+// //服务器处理跨域
+// app.use(cors({
+//     origin: function (ctx) {
+//         return "*"; // 允许来自所有域名请求
+//     },
+//     exposeHeaders: ['Content-Length', 'WWW-Authenticate', 'Server-Authorization'],
+//     maxAge: 5,
+//     credentials: true,
+//     allowMethods: ['GET', 'POST', 'DELETE'], //设置允许的HTTP请求类型
+//     allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
+// }));
+
+// app.use(async (ctx, next) => {
+//     console.log('在options外面！ctx.method: ', ctx.method);
+//     if (ctx.method === 'OPTIONS') {
+//         console.log('在options里面！');
+//         ctx.body = '';
+//     }
+//     await next();
+// });
 //服务器处理跨域
 
 // serve files from ./public
@@ -28,6 +46,82 @@ app.use(serve(path.join(__dirname, '/views')));
 app.use(koaBody({
     multipart: true
 }));
+
+import dateUtil from "./public/js/utils/date";
+
+
+// custom 404
+
+// app.use(async function(ctx, next) {
+//     await next();
+//     if (ctx.body || !ctx.idempotent) return;
+//     ctx.redirect('/404.html');
+// });
+
+//测试
+router.post('/fileApi/post_test/', async function (ctx, next) {
+    ctx.body = {
+        code: 0,
+        data: {
+            name: 'post_test 方法'
+        }
+    };
+})
+
+
+// post获取上传的文件
+router.post('/fileApi/fileUpload/', async function (ctx, next) {
+    try {
+        // ignore non-POSTs
+        if ('POST' != ctx.method) return await next();
+        console.log('request.body::::', ctx.request.body);
+        //取得表单元素
+        let params = ctx.request.body.fields;
+        console.log("取得表单元素ctx.request.body.fields", ctx.request.body.fields);
+        //解析参数的代码
+        // let useName = params.userName;
+        // let email = params.email;
+
+        //取得上传文件
+        let files = ctx.request.body.files.file;
+        let newpath = '';
+        files = Array.isArray(files) ? files : Array.of(files); //将单个对象转换为数组
+
+        // 只能用先把files转化成数组，因为不传文件和上传1个文件从request上区分不出来，因为只有一个文件时，数据结构取不出来，不是数组。
+        if (files.length > 0) {
+            console.log("in 处理文件process！！！！")
+            for (let item of files) {
+                if (!item || (!item.size && !item.name)) {
+                    console.log("此次没有上传文件");
+                    continue;
+                }
+                let tmpath = item['path'];
+                let tmparr = item['name'].split('.');
+                let ext = '.' + tmparr[tmparr.length - 1];
+                // console.log('时间戳：', new Date().timestamp());
+                newpath = path.join('public/upload', new Date().timestamp() + ext);
+                const stream = fs.createWriteStream(newpath); //创建一个可写流
+                fs.createReadStream(tmpath).pipe(stream); //可读流通过管道写入可写流
+            }
+        }
+        // console.log('ctx.request.body:', ctx.request.body);
+        // 返回保存的路径
+        ctx.body = {
+            code: 0,
+            data: {
+                path: newpath
+            }
+        };
+    } catch (err) {
+        console.log("上传失败，原因：", err);
+    }
+});
+
+app.use(router.routes());
+
+// listen
+app.listen(3000);
+console.log('test upload server listening on port 3002');
 
 // app.use(async (ctx, next) => {
 //     // 允许来自所有域名请求
@@ -70,73 +164,3 @@ app.use(koaBody({
 
 //     await next();
 // })
-
-
-
-
-import dateUtil from "./public/js/utils/date";
-
-
-// custom 404
-
-// app.use(async function(ctx, next) {
-//     await next();
-//     if (ctx.body || !ctx.idempotent) return;
-//     ctx.redirect('/404.html');
-// });
-
-
-
-
-// post获取上传的文件
-router.post('/post', async function (ctx, next) {
-    try {
-        // ignore non-POSTs
-        if ('POST' != ctx.method) return await next();
-        console.log('request.body::::', ctx.request.body);
-        //取得表单元素
-        let params = ctx.request.body.fields;
-        console.log("取得表单元素ctx.request.body.fields", ctx.request.body.fields);
-        //解析参数的代码
-        // let useName = params.userName;
-        // let email = params.email;
-
-        //取得上传文件
-        let files = ctx.request.body.files.file;
-        let newpath = '';
-        files = Array.isArray(files) ? files : Array.of(files); //将单个对象转换为数组
-
-        // 只能用先把files转化成数组，因为不传文件和上传1个文件从request上区分不出来，因为只有一个文件时，数据结构取不出来，不是数组。
-        if (files.length > 0) {
-            console.log("in 处理文件process！！！！")
-            for (let item of files) {
-                if (!item || (!item.size && !item.name)) {
-                    console.log("此次没有上传文件");
-                    continue;
-                }
-                let tmpath = item['path'];
-                let tmparr = item['name'].split('.');
-                let ext = '.' + tmparr[tmparr.length - 1];
-                newpath = path.join('public/upload', new Date().timestamp() + ext);
-                const stream = fs.createWriteStream(newpath); //创建一个可写流
-                fs.createReadStream(tmpath).pipe(stream); //可读流通过管道写入可写流
-            }
-        }
-        console.log('ctx.request.body:', ctx.request.body);
-        // 返回保存的路径
-        ctx.body = {
-            code: 0,
-            data: {
-                path: newpath
-            }
-        };
-    } catch (err) {
-        console.log("上传失败，原因：", err);
-    }
-});
-
-app.use(router.routes());
-
-// listen
-app.listen(3000);
-console.log('upload server listening on port 3000');

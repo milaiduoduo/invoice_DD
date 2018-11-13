@@ -11,7 +11,7 @@ import {
 // 创建axios实例
 const service = axios.create({
   // baseURL: process.env.BASE_API, // api 的 base_url
-  baseURL: process.env.NODE_ENV === "development" ? '/api' : "", //,
+  // baseURL: process.env.NODE_ENV === "development" ? '/api' : "", //,
   timeout: 300000 // 请求超时时间
 })
 

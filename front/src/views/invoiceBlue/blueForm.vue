@@ -243,7 +243,8 @@ export default {
 
       let url = "/fileUpload";
       let formData = new FormData(this.$refs.formWrap.$el);
-      this.$reqPost("http://117.48.208.116:3000/post", formData)
+      this.$reqPost("/fileApis/fileApi/fileUpload", formData)
+        // this.$reqPost("http://117.48.208.116:3000/fileApi/fileUpload", formData)
         // axios
         // .post("http://117.48.208.116:3000/post", formData)
         .then(res => {

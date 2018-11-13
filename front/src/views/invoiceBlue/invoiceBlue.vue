@@ -30,6 +30,7 @@
             <el-button type="primary" @click="onAllSubmit">蓝票录入完毕，上传！</el-button>
             <el-button type="default" size="small" @click="onCancel">取消</el-button>
             <el-button type="success" size="small" @click="onAddInvoice"> + 继续录入蓝票</el-button>   
+            <el-button type="success" @click="onTest">测试数据接口</el-button>
         </div>
     </el-card>
 </div>
@@ -54,6 +55,22 @@ export default {
     };
   },
   methods: {
+    onTest() {
+      axios
+        .post("/dataApis/api/invoice", {
+          PageInfo: {
+            PageSize: 100,
+            CurrentPage: 1
+          }
+        })
+        .then(res => {
+          console.log("调用京东接口测试。。。。");
+          console.log("京东接口已传发票数据：", res);
+        })
+        .catch(err => {
+          console.log("京东接口调用error:", err);
+        });
+    },
     onAllSubmit() {
       /*获取所有From字段的值，并发送请求*/
       console.log("this.formList all submit:", this.formList);
@@ -64,7 +81,8 @@ export default {
     },
     onCancel() {
       this.formList.pop();
-      this.$reqPost("http://117.48.208.116:3000/post_test")
+      this.$reqPost("/fileApis/fileApi/post_test")
+        // this.$reqPost("http://117.48.208.116:3000/fileApi/fileUpload")
         // axios.post("http://117.48.208.116:3000/post_test")
         .then(res => {
           console.log("Test上传接口返回：", res);
