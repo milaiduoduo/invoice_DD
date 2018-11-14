@@ -25,11 +25,11 @@ module.exports = {
         //   '^/fileApis': ''
         // }
       }
-      // '/api': {
+      // '/fileApis': {
       //   target: 'http://127.0.0.1:3000',
       //   changeOrigin: true,
       //   pathRewrite: {
-      //     '/api': ''
+      //     '/fileApis': ''
       //   }
       // }
     },

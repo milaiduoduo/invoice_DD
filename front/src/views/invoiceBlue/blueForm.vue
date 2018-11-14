@@ -68,7 +68,7 @@
                             <el-button size="small" type="primary">点击上传</el-button>
                             <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
                         </el-upload> -->
-                        <input id="file" ref="file" type="file" name="file" @change="uploadFile" accept="application/pdf">
+                        <input id="file" ref="file" type="file" name="file" @change="_uploadFile" accept="application/pdf">
                         <div class="fileNotice">（文件大小不能超过100KB）</div>
                     </el-form-item>
                 </el-col>
@@ -80,7 +80,8 @@
 
 <script type="text/ecmascript-6">
 import dateUtil from "@/utils/date";
-import axios from "axios";
+import config from "@/config/paramsConfig";
+// import axios from "axios";
 export default {
   name: "m-blue-form",
   props: [
@@ -96,14 +97,14 @@ export default {
     return {
       formData: {
         orderId: "",
-        invoiceCode: "",
-        invoiceNo: "",
-        ivcTitle: "",
-        totalPrice: "",
-        invoiceTime: "",
+        invoiceCode: "065001800111",
+        invoiceNo: "1239208",
+        ivcTitle: "个人",
+        totalPrice: "100",
+        invoiceTime: "2018-10-26",
         pdfPath: "",
-        receiverTaxNo: "91650103599163841F",
-        receiverName: "乌鲁木齐华鑫智宏商贸有限公司"
+        receiverTaxNo: config.receiverTaxNo,
+        receiverName: config.receiverName
       },
       formRules: {
         orderId: [
@@ -217,13 +218,13 @@ export default {
       let maxSize = 100 * 1024;
       return fileSize < maxSize;
     },
-    uploadFile(e) {
+    _uploadFile(e) {
       let tempPath = e.target.value;
+      let file = e.target.files[0];
       let fileSize = this.$refs.file.files[0].size;
-      // console.log(this.$refs.file.files[0]);
       let extMatch = this._checkFileExt(tempPath);
       let sizeMatch = this._checkSize(fileSize);
-      // console.log(this._checkSize(fileSize));
+
       if (!extMatch) {
         this.$message({
           showClose: true,
@@ -242,14 +243,34 @@ export default {
       }
 
       let url = "/fileUpload";
-      let formData = new FormData(this.$refs.formWrap.$el);
-      this.$reqPost("/fileApis/fileApi/fileUpload", formData)
-        // this.$reqPost("http://117.48.208.116:3000/fileApi/fileUpload", formData)
-        // axios
-        // .post("http://117.48.208.116:3000/post", formData)
+      //let formData = new FormData(this.$refs.formWrap.$el);
+      let formData = new FormData();
+      formData.append("mFile", file);
+      // console.log("formData.get(file):", formData.get("file"));
+      // console.log("this.$refs.file: ", this.$refs.file.files[0]);
+
+      this.$reqPost("/fileApis/fileApi/fileUpload", formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      })
         .then(res => {
-          console.log("上传接口返回：", res);
-          this.formData.pdfPath = res.data.path;
+          console.log("上传接口返回：", res.data.path);
+          let pdf_xiangduiPath = res.data.path;
+          if (!pdf_xiangduiPath) {
+            this.$message({
+              showClose: true,
+              message: "pdf上传失败，请重新再试 ！"
+            });
+            return;
+          }
+
+          let tempArray = pdf_xiangduiPath.split("\\");
+          let pdfName = tempArray[tempArray.length - 1];
+
+          //D:\APIService\SourceInvoicePDF
+          this.formData.pdfPath = "111.pdf"; //pdfName;
+
+          console.log("this.formData.pdfPath:", this.formData.pdfPath);
+
           this.$message({
             showClose: true,
             message: res.data.path,
@@ -279,6 +300,10 @@ export default {
     beforeRemove(file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`);
     }
+  },
+  created() {
+    this.formData.orderId = this.$route.params.orderId;
+    //console.log("params:", this.$route.params.orderId);
   }
 };
 </script>

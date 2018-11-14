@@ -9,7 +9,7 @@
                  <el-row>
                      <el-col :span="8">
                          <el-form-item label="订单编号">
-                            <el-input placeholder="请输入订单编号"></el-input>
+                            <el-input placeholder="请输入订单编号" v-model="queryOrderId"></el-input>
                          </el-form-item>
                      </el-col>
                      <el-col :span="2">
@@ -23,10 +23,10 @@
         <el-table border :data="queryResult" style="width:100%" height="50%">
             <el-table-column fixed type="index"  label="序号" width="50">
             </el-table-column>
-            <el-table-column fixed prop="orderId" label="订单编号" width="100"></el-table-column>
-            <el-table-column  prop="consigneeInfo" label="收货人基本信息" width="200"></el-table-column>
-            <el-table-column  prop="orderStartTime" label="下单时间" width="100"></el-table-column>
-            <el-table-column  prop="orderTotalPrice" label="开票金额" width="100"></el-table-column>
+            <el-table-column fixed prop="orderId" label="订单编号" width="120"></el-table-column>
+            <el-table-column  prop="consigneeFullName" label="收货人基本信息" width="240"></el-table-column>
+            <el-table-column  prop="orderTime" label="下单时间" width="180"></el-table-column>
+            <el-table-column  prop="sellerPrice" label="开票金额" width="100"></el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
                     <el-button type="text" size="small" @click="toBlueInvoice(scope.row)">录入蓝票</el-button>
@@ -49,18 +49,12 @@
 </template>
 
 <script type="text/ecmascript-6">
+import axios from "axios";
 export default {
   data() {
-    let mockData = [
-      {
-        orderId: "100000000",
-        consigneeInfo: "艾维尔集团有限公司",
-        orderStartTime: "2018-6-3",
-        orderTotalPrice: "999.96"
-      }
-    ];
     return {
-      queryResult: mockData,
+      queryOrderId: "81448392454",
+      queryResult: [],
       pageSizes: [10, 30, 50, 100],
       pageSize: 10,
       currentPage: 1,
@@ -69,16 +63,49 @@ export default {
   },
   methods: {
     toBlueInvoice(row) {
-      this.$router.push({ name: "invoiceBlueFrom" });
+      console.log("row: ", row);
+      this.$router.push({
+        name: "invoiceBlueFrom",
+        params: { orderId: row.orderId }
+      });
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
     },
     handleCurrentChange(val) {
+      this.currentPage = val;
       console.log(`当前页: ${val}`);
+      console.log("currentPage:", this.currentPage);
     },
     onQuery() {
       //调查询接口查询“以电子发票开票的订单”
+      axios
+        .get("/dataApis/api/order", {
+          params: {
+            orderId: this.queryOrderId
+          }
+        })
+        .then(res => {
+          let resultData = res.data.data;
+          if (!resultData) return;
+          resultData.forEach(element => {
+            console.log("element:", element);
+            for (let item in element) {
+              // console.log("item:", item);
+              // console.log("elemtn.item", element[item]);
+              if (item == "orderTime") {
+                element[item] = element[item].replace("T", " ");
+              }
+            }
+          });
+          this.queryResult = resultData;
+
+          //设置翻页组件参数
+          this.queryTotal = resultData.length;
+        })
+        .catch(err => {
+          console.log("订单查询错误：", err);
+        });
     }
   }
 };

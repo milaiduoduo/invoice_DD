@@ -8,13 +8,13 @@
             <el-button type="primary" @click="onAddInvoice">继续录入蓝票</el-button>
         </div> -->
         <div v-for="(item,index) in formList" :key="index">
-          <!-- <div>orderId: {{item.orderId}}</div>
+          <div>orderId: {{item.orderId}}</div>
           <div>invoiceCode: {{item.invoiceCode}}</div>
           <div>invoiceNo: {{item.invoiceNo}}</div>
           <div>ivcTitle: {{item.ivcTitle}}</div>
           <div>totalPrice: {{item.totalPrice}}</div>
           <div>invoiceTime: {{item.invoiceTime}}</div>
-          <div>pdfPath: {{item.pdfPath}}</div> -->
+          <div>pdfPath: {{item.pdfPath}}</div>
           <!-- 为了监控form中控件值的变化，实现双向绑定而建立 -->
           <m-blue-form 
             :form-order-id.sync="item.orderId"
@@ -39,6 +39,7 @@
 <script type="text/ecmascript-6">
 import blueForm from "./blueForm.vue";
 import axios from "axios";
+import config from "@/config/paramsConfig";
 let initFormData = {
   orderId: "",
   invoiceCode: "",
@@ -51,6 +52,7 @@ let initFormData = {
 export default {
   data() {
     return {
+      orderId: "",
       formList: []
     };
   },
@@ -75,21 +77,74 @@ export default {
       /*获取所有From字段的值，并发送请求*/
       console.log("this.formList all submit:", this.formList);
       for (let i = 0; i < this.formList.length; i++) {
-        let orderId = this.formList[i].orderId;
-        console.log("all submit,序号：", i, " orderId:", orderId);
+        let formData = this.formList[i];
+
+        let OrderId = formData.orderId;
+        let ReceiverTaxNo = formData.ReceiverTaxNo;
+        let InvoiceCode = formData.invoiceCode;
+        let InvoiceNo = formData.invoiceNo;
+        let IvcTitle = formData.ivcTitle;
+        let TotalPrice = formData.totalPrice;
+        let InvocieTime = formData.invoiceTime;
+        let PDFInfo = FormData.pdfPath;
+
+        console.log(
+          OrderId,
+          " | ",
+          ReceiverTaxNo,
+          " | ",
+          InvoiceCode,
+          " | ",
+          InvoiceNo,
+          " | ",
+          IvcTitle,
+          " | ",
+          TotalPrice,
+          " | ",
+          InvocieTime,
+          " | ",
+          PDFInfo
+        );
+
+        axios
+          .post("/dataApis/api/invoice-blue", {
+            OrderId: this.$route.params.orderId,
+            ReceiverTaxNo: config.receiverTaxNo,
+            InvoiceCode: "065001800111",
+            InvoiceNo: 1239208,
+            IvcTitle: "个人",
+            TotalPrice: 100,
+            InvocieTime: "2018-10-26",
+            PDFInfo: "111.pdf"
+          })
+          .then(res => {
+            console.log("蓝票上传返回：", res);
+            if (res.data.code == 0 && res.data.isSuccess) {
+              if (res.data.message == "重复开票") {
+                this.$message({
+                  showClose: true,
+                  message: res.data.message + ",注意发票号不能重复！",
+                  type: "error"
+                });
+              } else {
+                this.$message({
+                  showClose: true,
+                  message: "上传成功！",
+                  type: "success"
+                });
+              }
+            }
+          })
+          .catch(err => {
+            console.log("蓝票上传返回错误：", err);
+          });
       }
     },
     onCancel() {
       this.formList.pop();
-      this.$reqPost("/fileApis/fileApi/post_test")
-        // this.$reqPost("http://117.48.208.116:3000/fileApi/fileUpload")
-        // axios.post("http://117.48.208.116:3000/post_test")
-        .then(res => {
-          console.log("Test上传接口返回：", res);
-        });
-      // this.$reqPost("http://117.48.208.116:3000/post_test", {}).then(res => {
-      //   console.log("Test上传接口返回：", res);
-      // });
+      this.$reqPost("/fileApis/fileApi/post_test").then(res => {
+        console.log("Test上传接口返回：", res);
+      });
     },
     onAddInvoice() {
       this.formList.push(Object.create(initFormData));
@@ -103,6 +158,11 @@ export default {
     [blueForm.name]: blueForm
   },
   created() {
+    this.orderId = this.$route.params.orderId;
+    // console.log("this.$route.params.orderId:", this.$route.params.orderId);
+    // this.initFormData.orderId = this.$route.params.orderId;
+    // this.initFormData.receiverTaxNo = this.config.receiverTaxNo;
+    // this.initFormData.receiverName = this.config.receiverName;
     this.formList.push(Object.create(initFormData));
   }
 };

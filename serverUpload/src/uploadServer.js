@@ -74,16 +74,18 @@ router.post('/fileApi/fileUpload/', async function (ctx, next) {
     try {
         // ignore non-POSTs
         if ('POST' != ctx.method) return await next();
-        console.log('request.body::::', ctx.request.body);
+        // console.log('request.body::::', ctx.request.body);
         //取得表单元素
-        let params = ctx.request.body.fields;
-        console.log("取得表单元素ctx.request.body.fields", ctx.request.body.fields);
+        // let params = ctx.request.body.fields;
+        // console.log("取得表单元素ctx.request.body.fields", ctx.request.body.fields);
         //解析参数的代码
         // let useName = params.userName;
         // let email = params.email;
 
         //取得上传文件
-        let files = ctx.request.body.files.file;
+        let files = ctx.request.body.files.mFile;
+        console.log("取得上传文件1：", ctx.request.body.files);
+        console.log("取得上传文件2：", ctx.request.body.files.mFile);
         let newpath = '';
         files = Array.isArray(files) ? files : Array.of(files); //将单个对象转换为数组
 
@@ -100,6 +102,7 @@ router.post('/fileApi/fileUpload/', async function (ctx, next) {
                 let ext = '.' + tmparr[tmparr.length - 1];
                 // console.log('时间戳：', new Date().timestamp());
                 newpath = path.join('public/upload', new Date().timestamp() + ext);
+                // newpath = path.join('public/upload', "111" + ext);
                 const stream = fs.createWriteStream(newpath); //创建一个可写流
                 fs.createReadStream(tmpath).pipe(stream); //可读流通过管道写入可写流
             }
@@ -121,7 +124,7 @@ app.use(router.routes());
 
 // listen
 app.listen(3000);
-console.log('test upload server listening on port 3002');
+console.log('test upload server listening on port 3000');
 
 // app.use(async (ctx, next) => {
 //     // 允许来自所有域名请求
