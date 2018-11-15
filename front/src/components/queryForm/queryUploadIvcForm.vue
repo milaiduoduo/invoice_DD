@@ -1,0 +1,96 @@
+<template>
+<div class="queryFormWrap">
+    <el-form ref="queryform" size="mini" label-width="100px" :model="queryFormData">
+                 <el-row>
+                     <el-col :span="5">
+                         <el-form-item label="发票类型：">
+                             <el-select disabled v-model="queryFormData.selectedInvoiceType" placeholder="请选择">
+                                <el-option
+                                    v-for="item in invoiceTypeOptions"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
+                         </el-form-item>
+                     </el-col>
+                     <el-col :span="5">
+                         <el-form-item label="订单编号：">
+                            <el-input v-model="queryFormData.orderId" placeholder="请输入订单编号"></el-input>
+                         </el-form-item>
+                     </el-col>
+                     <el-col :span="5">
+                         <el-form-item label="发票代码：">
+                            <el-input v-model="queryFormData.invoiceCode" placeholder="请输入发票代码"></el-input>
+                         </el-form-item>
+                     </el-col>
+                     
+                     <el-col :span="2">
+                            <el-button class="queryBtn" type="primary" size="small" @click="onQuery">查询</el-button>
+                     </el-col>
+                 </el-row>
+                 <el-row>
+                     <el-col :span="10">
+                         <el-form-item label="开票日期：">
+                             <el-date-picker v-model="queryFormData.invoiceTimeGap"  type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+                         </el-form-item>
+                     </el-col>
+                     <el-col :span="5">
+                         <el-form-item label="发票号码：">
+                            <el-input v-model.number="queryFormData.invoiceNo" placeholder="请输入发票号码"></el-input>
+                         </el-form-item>
+                     </el-col>
+                 </el-row>
+            </el-form>
+</div>
+</template>
+
+<script type="text/ecmascript-6">
+import axios from "axios";
+export default {
+  name: "query-ivc-form",
+  data() {
+    return {
+      queryFormData: {
+        selectedInvoiceType: 1,
+        orderId: "",
+        invoiceCode: "",
+        invoiceNo: "",
+        invoiceTimeGap: null
+      },
+      invoiceTypeOptions: [
+        {
+          value: 0,
+          label: "所有"
+        },
+        {
+          value: 1,
+          label: "蓝票"
+        },
+        {
+          value: 2,
+          label: "红票"
+        }
+      ]
+    };
+  },
+  methods: {
+    onQuery() {
+      console.log("queryForm子组件触发！");
+      this.$emit("showQueryCondition", this.queryFormData);
+    }
+  }
+};
+</script>
+
+<style scoped lang="scss" rel="stylesheet/scss">
+.queryFormWrap {
+  .queryBtn {
+    position: absolute;
+    top: -3px;
+    margin-left: 40px;
+    padding: 9px 30px;
+    font-size: 14px;
+  }
+}
+</style>

@@ -8,15 +8,15 @@
             <el-button type="primary" @click="onAddInvoice">继续录入蓝票</el-button>
         </div> -->
         <div v-for="(item,index) in formList" :key="index">
-          <div>orderId: {{item.orderId}}</div>
+          <!-- <div>orderId: {{item.orderId}}</div>
           <div>invoiceCode: {{item.invoiceCode}}</div>
           <div>invoiceNo: {{item.invoiceNo}}</div>
           <div>ivcTitle: {{item.ivcTitle}}</div>
           <div>totalPrice: {{item.totalPrice}}</div>
           <div>invoiceTime: {{item.invoiceTime}}</div>
-          <div>pdfPath: {{item.pdfPath}}</div>
+          <div>pdfPath: {{item.pdfPath}}</div> -->
           <!-- 为了监控form中控件值的变化，实现双向绑定而建立 -->
-          <m-blue-form 
+          <m-blue-form ref="blueForm"
             :form-order-id="item.orderId"
             :form-invoice-code.sync="item.invoiceCode"
             :form-invoice-no.sync="item.invoiceNo"
@@ -31,7 +31,8 @@
         <div class="footer">
             <el-button type="primary" @click="onAllSubmit">蓝票录入完毕，上传！</el-button>
             <el-button type="default" size="small" @click="onCancel">取消</el-button>
-            <el-button type="success" size="small" @click="onAddInvoice"> + 继续录入蓝票</el-button>   
+            <el-button type="success" size="small" @click="onAddInvoice"> + 继续录入蓝票</el-button> 
+            <el-button type="success" @click="onfileTest">测试文件服务接口</el-button>  
             <el-button type="success" @click="onTest">测试数据接口</el-button>
         </div>
     </el-card>
@@ -120,10 +121,17 @@ export default {
       }
     },
     onCancel() {
-      this.formList.pop();
-      this.$reqPost("/fileApis/fileApi/post_test").then(res => {
-        console.log("Test上传接口返回：", res);
-      });
+      if (this.formList.length > 1) {
+        this.formList.pop();
+      }
+      if (this.formList.length == 1) {
+        console.log(this.$refs.blueForm.$el);
+        this.$message({
+          showClose: true,
+          message: "需要实现清空内容！！！！",
+          type: "error"
+        });
+      }
     },
     onAddInvoice() {
       this.formList.push(Object.create(initFormData));
@@ -147,8 +155,14 @@ export default {
         .catch(err => {
           console.log("京东接口调用error:", err);
         });
+    },
+    onfileTest() {
+      this.$reqPost("/fileApis/fileApi/post_test").then(res => {
+        console.log("Test上传接口返回：", res);
+      });
     }
   },
+
   components: {
     [blueForm.name]: blueForm
   }

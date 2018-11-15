@@ -4,8 +4,9 @@
          <div slot="header" class="headerWrap clearfix">
             <span class="sectionTitle">第一步：查询需要冲红的蓝票.</span>
              <!-- <h3>红票查询第一步：查询已上传的蓝票（相同的订单号可对应多张已上传的蓝票）</h3> -->
-                       <section class="queryWrap">
-            <el-form ref="queryform" size="mini" label-width="100px">
+            <section class="queryWrap">
+            <query-ivc-form @showQueryCondition="_getQueryConditions"></query-ivc-form>
+            <!-- <el-form ref="queryform" size="mini" label-width="100px">
                  <el-row>
                      <el-col :span="5">
                          <el-form-item label="发票类型：">
@@ -46,31 +47,35 @@
                          </el-form-item>
                      </el-col>
                  </el-row>
-            </el-form>
-          </section>
+            </el-form> -->
+            </section>
          </div>
          <div class="pagination top">
             <el-pagination 
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
                 :current-page = "currentPage"
-                :page-sizes="[10,30,50,100]"
-                :page-size="100"
+                :page-sizes="pageSizes"
+                :page-size="pageSize"
                 layout="total,sizes,prev,pager,next,jumper"
-                :total="1">
+                :total="queryTotal">
             </el-pagination>
         </div>
-        <el-table :data="queryResult" style="width:100%" height="50%">>
+        <el-table :data="queryResult" border stripe style="width:100%" height="300px">>
             <el-table-column fixed type="index"  label="序号" width="50">
             </el-table-column>
-            <el-table-column fixed prop="orderId" label="订单编号" width="100"></el-table-column>
-            <el-table-column fixed prop="ivcTitle" label="抬头" width="200"></el-table-column>
-            <el-table-column fixed prop="invoiceNo" label="蓝票号码" width="120"></el-table-column>
-            <el-table-column fixed prop="invoiceCode" label="蓝票代码" width="150"></el-table-column>
-            <el-table-column fixed prop="invoiceTime" label="开票时间" width="100"></el-table-column>
-            <el-table-column fixed prop="totalPrice" label="开票金额" width="100"></el-table-column>
-            <el-table-column fixed prop="drawer" label="开票人" width="80"></el-table-column>
-            <el-table-column fixed label="操作" width="200">
+            <el-table-column fixed prop="orderId" label="订单编号" width="120"></el-table-column>
+            <el-table-column  prop="invoiceTitle" label="抬头" width="240"></el-table-column>
+            <el-table-column  prop="invoiceNo" label="蓝票号码" width="100"></el-table-column>
+            <el-table-column  prop="invoiceCode" label="蓝票代码" width="120"></el-table-column>
+            <el-table-column  label="开票时间" width="100">
+              <template slot-scope="scope">
+                {{scope.row.invoiceTime?scope.row.invoiceTime.split("T")[0]:""}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="totalPrice" label="开票金额" width="100"></el-table-column>
+            <el-table-column prop="drawer" label="开票人" width="80"></el-table-column>
+            <el-table-column label="操作" width="200" fixed="right">
                <template slot-scope="scope">
                     <el-button type="text" size="small" @click="toRedInvoice(scope.row)">冲红录入</el-button>
                     <el-button type="text" size="small" @click="showDetail(1,invoiceCode,invoiceNo)">查看蓝票</el-button>
@@ -83,6 +88,9 @@
 </template>
 
 <script type="text/ecmascript-6">
+import axios from "axios";
+import queryIvcForm from "@/components/queryForm/queryUploadIvcForm.vue";
+import { parseTime } from "@/utils";
 let mockData = [
   {
     orderId: "100000000",
@@ -127,11 +135,54 @@ let config = {
 export default {
   data() {
     return {
+      pageSizes: [10, 30, 50, 100],
+      pageSize: 10,
       currentPage: 1,
-      queryResult: mockData
+      queryTotal: 0,
+      currentPage: 1,
+      queryResult: []
     };
   },
+  components: {
+    [queryIvcForm.name]: queryIvcForm
+  },
   methods: {
+    _getQueryConditions(queryObj) {
+      //调数据服务器蓝票查询接口
+      // console.log("父组件收到查询条件：", queryObj);
+      let queryData = {
+        orderId: queryObj.orderId,
+        invoiceType: queryObj.selectedInvoiceType,
+        invoiceCode: queryObj.invoiceCode,
+        invoiceNo: queryObj.invoiceNo,
+        invoiceTimeStart: !queryObj.invoiceTimeGap
+          ? ""
+          : queryObj.invoiceTimeGap.length > 1
+            ? parseTime(queryObj.invoiceTimeGap[0], "{y}-{m}-{d}")
+            : "",
+        invoiceTimeEnd: !queryObj.invoiceTimeGap
+          ? ""
+          : queryObj.invoiceTimeGap.length > 1
+            ? parseTime(queryObj.invoiceTimeGap[1], "{y}-{m}-{d}")
+            : "",
+        PageInfo: {
+          PageSize: this.pageSize,
+          PageCurrent: this.currentPage
+        }
+      };
+      axios
+        .post("/dataApis/api/invoice", queryData)
+        .then(res => {
+          // console.log("蓝票查询结果:", res);
+          //if (!res || !res.data || !res.data.data || res.data.code != 0) return;
+          this.queryResult = Array.isArray(res.data.data) ? res.data.data : [];
+          this.queryTotal = res.data.total;
+          console.log("蓝票查询结果数据：", this.queryResult);
+        })
+        .catch(err => {
+          console.log("蓝票查询出错：", err);
+        });
+    },
     showDetail(ivcType, invoiceCode, invoiceNo) {
       if (ivcType === config.ivcType.blue) {
         this.$router.push({
@@ -153,7 +204,8 @@ export default {
       console.log(`每页 ${val} 条`);
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      // console.log(`当前页: ${val}`);
+      this.currentPage = val;
     },
     onQuery() {}
   }
@@ -161,6 +213,9 @@ export default {
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
+.testClass {
+  background: red;
+}
 .el-row:nth-last-of-type(1) {
   .el-form-item--mini.el-form-item:nth-last-of-type(1),
   .el-form-item--small.el-form-item {
