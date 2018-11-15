@@ -77,7 +77,7 @@
             <el-table-column prop="drawer" label="开票人" width="80"></el-table-column>
             <el-table-column label="操作" width="200" fixed="right">
                <template slot-scope="scope">
-                    <el-button type="text" size="small" @click="toRedInvoice(scope.row)">冲红录入</el-button>
+                    <el-button type="text" size="small" @click="toRedInvoiceForm({orderId:scope.row.orderId,invoiceCode:scope.row.invoiceCode,invoiceNo:scope.row.invoiceNo})">冲红录入</el-button>
                     <el-button type="text" size="small" @click="showDetail(1,invoiceCode,invoiceNo)">查看蓝票</el-button>
                 </template>
             </el-table-column>
@@ -196,9 +196,14 @@ export default {
         });
       }
     },
-    toRedInvoice(row) {
-      console.log(row);
-      this.$router.push({ name: "invoiceRedForm" });
+    toRedInvoiceForm(...requiredItem) {
+      //requiredItem 是数组，所以需要先[0]，再使用扩展运算发展开
+      let obj = {
+        name: "invoiceRedForm",
+        params: { ...requiredItem[0] }
+      };
+      console.log("红票传参：", obj);
+      this.$router.push(obj);
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);

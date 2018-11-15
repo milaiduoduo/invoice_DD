@@ -50,19 +50,8 @@
                 <el-row>
                 <el-col :offset="1">
                     <el-form-item label="PDF上传">
-                        <el-upload
-                            class="upload-demo"
-                            action="https://jsonplaceholder.typicode.com/posts/"
-                            :on-preview="handlePreview"
-                            :on-remove="handleRemove"
-                            :before-remove="beforeRemove"
-                            multiple
-                            :limit="3"
-                            :on-exceed="handleExceed"
-                            :file-list="fileList">
-                            <el-button size="small" type="primary">点击上传</el-button>
-                            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-                        </el-upload>
+                      <input id="file" ref="file" type="file" name="file" @change="_uploadFile" accept="application/pdf">
+                        <div class="fileNotice">（文件大小不能超过100KB）</div>
                     </el-form-item>
                 </el-col>
                 </el-row>
@@ -73,16 +62,19 @@
 </template>
 
 <script type="text/ecmascript-6">
+import axios from "axios";
+import config from "@/config/paramsConfig";
+
 export default {
   data() {
     return {
       formData: {
         orderId: "",
-        invoiceCode: "",
-        invoiceNo: "",
-        blueInvoiceCode: "",
-        blueInvoiceNo: "",
-        invoiceTime: ""
+        invoiceCode: "065001800111",
+        invoiceNo: "1239223",
+        blueInvoiceCode: "065001800111",
+        blueInvoiceNo: "1239208",
+        invoiceTime: "2018-10-27"
       },
       formRules: {
         orderId: [
@@ -108,39 +100,136 @@ export default {
             trigger: "change"
           }
         ]
-      },
-      fileList: [
-        {
-          name: "food.jpeg",
-          url:
-            "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100"
-        },
-        {
-          name: "food2.jpeg",
-          url:
-            "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100"
-        }
-      ]
+      }
     };
   },
+  created() {
+    this.formData.orderId = this.$route.params.orderId;
+    this.formData.blueInvoiceCode = this.$route.params.invoiceCode;
+    this.formData.blueInvoiceNo = "1239208"; //this.$route.params.invoiceNo;
+    console.log(
+      this.formData.orderId,
+      this.formData.blueInvoiceCode,
+      this.formData.blueInvoiceNo
+    );
+  },
   methods: {
-    onSubmit() {},
-    onCancel() {},
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
+    _checkFileExt(path) {
+      if (!path.match(/.pdf$/i)) {
+        return false;
+      }
+      return true;
     },
-    handlePreview(file) {
-      console.log(file);
+    _checkSize(fileSize) {
+      let maxSize = 100 * 1024;
+      return fileSize < maxSize;
     },
-    handleExceed(files, fileList) {
-      this.$message.warning(
-        `当前限制选择 3 个文件，本次选择了 ${
-          files.length
-        } 个文件，共选择了 ${files.length + fileList.length} 个文件`
-      );
+    _uploadFile(e) {
+      let tempPath = e.target.value;
+      let file = e.target.files[0];
+      //文件合规判断/start
+      let fileSize = this.$refs.file.files[0].size;
+      let extMatch = this._checkFileExt(tempPath);
+      let sizeMatch = this._checkSize(fileSize);
+
+      if (!extMatch) {
+        this.$message({
+          showClose: true,
+          message: "注意：只能上传.pdf文件，不能上传其它类型哦~",
+          type: "error"
+        });
+        return;
+      }
+      if (!sizeMatch) {
+        this.$message({
+          showClose: true,
+          message: "注意：pdf文件大小不能超过100K哦~",
+          type: "error"
+        });
+        return;
+      }
+      //文件合规判断/end
+
+      //发送pdf上传请求
+      let url = "/fileUpload";
+      //let formData = new FormData(this.$refs.formWrap.$el);
+      let formData = new FormData();
+      formData.append("mFile", file);
+      // console.log("formData.get(file):", formData.get("file"));
+      // console.log("this.$refs.file: ", this.$refs.file.files[0]);
+
+      this.$reqPost("/fileApis/fileApi/fileUpload", formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      })
+        .then(res => {
+          console.log("上传接口返回：", res.data.path);
+          let pdf_xiangduiPath = res.data.path;
+          if (!pdf_xiangduiPath) {
+            this.$message({
+              showClose: true,
+              message: "pdf上传失败，请重新再试 ！"
+            });
+            return;
+          }
+
+          let tempArray = pdf_xiangduiPath.split("\\");
+          let pdfName = tempArray[tempArray.length - 1];
+
+          //D:\APIService\SourceInvoicePDF
+          this.formData.pdfPath = "111.pdf"; //pdfName;
+
+          console.log("this.formData.pdfPath:", this.formData.pdfPath);
+
+          this.$message({
+            showClose: true,
+            message: res.data.path,
+            type: "success"
+          });
+        })
+        .catch(err => {
+          console.log("blue page query Test err:", err);
+        });
+      //发送pdf上传请求/end
     },
-    beforeRemove(file, fileList) {
-      return this.$confirm(`确定移除 ${file.name}？`);
+    onSubmit() {
+      let postData = {
+        OrderId: this.formData.orderId,
+        InvoiceCode: this.formData.invoiceCode,
+        InvoiceNo: this.formData.invoiceNo,
+        InvocieTime: this.formData.invoiceTime,
+        BlueInvoiceCode: this.formData.blueInvoiceCode,
+        BlueInvoiceNo: this.formData.blueInvoiceNo,
+        PDFInfo: this.formData.pdfPath,
+        ReceiverName: config.receiverName
+      };
+      console.log("红票上传数据：", postData);
+      axios
+        .post("/dataApis/api/invoice-red", postData)
+        .then(res => {
+          console.log("红票上传返回：", res);
+          if (res.data.code == 0 && res.data.isSuccess) {
+            if (res.data.message == "重复开票") {
+              this.$message({
+                showClose: true,
+                message: res.data.message + ",注意发票号不能重复！",
+                type: "error"
+              });
+            } else {
+              this.$message({
+                showClose: true,
+                message: "上传成功！",
+                type: "success"
+              });
+            }
+          }
+        })
+        .catch(err => {
+          console.log("红票上传返回错误：", err);
+        });
+    },
+    onCancel() {
+      this.$refs.formWrap.resetFields();
+      // this.$refs[formName].resetFields();
     }
   }
 };
