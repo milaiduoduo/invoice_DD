@@ -17,13 +17,15 @@
           <div>pdfPath: {{item.pdfPath}}</div>
           <!-- 为了监控form中控件值的变化，实现双向绑定而建立 -->
           <m-blue-form 
-            :form-order-id.sync="item.orderId"
+            :form-order-id="item.orderId"
             :form-invoice-code.sync="item.invoiceCode"
             :form-invoice-no.sync="item.invoiceNo"
             :form-ivc-title.sync="item.ivcTitle"
             :form-total-price.sync="item.totalPrice"
             :form-invoice-time.sync="item.invoiceTime"
             :form-pdf-path.sync="item.pdfPath"
+            :form-receiver-tax-no.sync = "item.receiverTaxNo"
+            :form-receiver-name.sync="item.receiverName"
             ></m-blue-form>
           </div> 
         <div class="footer">
@@ -40,6 +42,7 @@
 import blueForm from "./blueForm.vue";
 import axios from "axios";
 import config from "@/config/paramsConfig";
+
 let initFormData = {
   orderId: "",
   invoiceCode: "",
@@ -47,8 +50,11 @@ let initFormData = {
   ivcTitle: "",
   totalPrice: "",
   invoiceTime: "",
-  pdfPath: ""
+  pdfPath: "",
+  receiverTaxNo: config.receiverTaxNo,
+  receiverName: config.receiverName
 };
+
 export default {
   data() {
     return {
@@ -56,23 +62,12 @@ export default {
       formList: []
     };
   },
+  created() {
+    this.orderId = this.$route.params.orderId;
+    initFormData.orderId = this.orderId;
+    this.formList.push(Object.create(initFormData));
+  },
   methods: {
-    onTest() {
-      axios
-        .post("/dataApis/api/invoice", {
-          PageInfo: {
-            PageSize: 100,
-            CurrentPage: 1
-          }
-        })
-        .then(res => {
-          console.log("调用京东接口测试。。。。");
-          console.log("京东接口已传发票数据：", res);
-        })
-        .catch(err => {
-          console.log("京东接口调用error:", err);
-        });
-    },
     onAllSubmit() {
       /*获取所有From字段的值，并发送请求*/
       console.log("this.formList all submit:", this.formList);
@@ -80,45 +75,29 @@ export default {
         let formData = this.formList[i];
 
         let OrderId = formData.orderId;
-        let ReceiverTaxNo = formData.ReceiverTaxNo;
+        let ReceiverTaxNo = formData.receiverTaxNo;
+        let ReceiverName = formData.receiverName;
         let InvoiceCode = formData.invoiceCode;
         let InvoiceNo = formData.invoiceNo;
         let IvcTitle = formData.ivcTitle;
         let TotalPrice = formData.totalPrice;
         let InvocieTime = formData.invoiceTime;
-        let PDFInfo = FormData.pdfPath;
-
-        console.log(
-          OrderId,
-          " | ",
-          ReceiverTaxNo,
-          " | ",
-          InvoiceCode,
-          " | ",
-          InvoiceNo,
-          " | ",
-          IvcTitle,
-          " | ",
-          TotalPrice,
-          " | ",
-          InvocieTime,
-          " | ",
-          PDFInfo
-        );
+        let PDFInfo = formData.pdfPath;
 
         axios
           .post("/dataApis/api/invoice-blue", {
-            OrderId: this.$route.params.orderId,
-            ReceiverTaxNo: config.receiverTaxNo,
-            InvoiceCode: "065001800111",
-            InvoiceNo: 1239208,
-            IvcTitle: "个人",
-            TotalPrice: 100,
-            InvocieTime: "2018-10-26",
-            PDFInfo: "111.pdf"
+            OrderId: OrderId,
+            ReceiverTaxNo: ReceiverTaxNo,
+            ReceiverName: ReceiverName,
+            InvoiceCode: InvoiceCode,
+            InvoiceNo: InvoiceNo,
+            IvcTitle: IvcTitle,
+            TotalPrice: TotalPrice,
+            InvocieTime: InvocieTime,
+            PDFInfo: PDFInfo
           })
           .then(res => {
-            console.log("蓝票上传返回：", res);
+            console.log("蓝票上传[", i, "]返回：", res);
             if (res.data.code == 0 && res.data.isSuccess) {
               if (res.data.message == "重复开票") {
                 this.$message({
@@ -152,18 +131,26 @@ export default {
         let orderId = this.formList[i].orderId;
         console.log("add ,序号：", i, " orderId:", orderId);
       }
+    },
+    onTest() {
+      axios
+        .post("/dataApis/api/invoice", {
+          PageInfo: {
+            PageSize: 100,
+            CurrentPage: 1
+          }
+        })
+        .then(res => {
+          console.log("调用京东接口测试。。。。");
+          console.log("京东接口已传发票数据：", res);
+        })
+        .catch(err => {
+          console.log("京东接口调用error:", err);
+        });
     }
   },
   components: {
     [blueForm.name]: blueForm
-  },
-  created() {
-    this.orderId = this.$route.params.orderId;
-    // console.log("this.$route.params.orderId:", this.$route.params.orderId);
-    // this.initFormData.orderId = this.$route.params.orderId;
-    // this.initFormData.receiverTaxNo = this.config.receiverTaxNo;
-    // this.initFormData.receiverName = this.config.receiverName;
-    this.formList.push(Object.create(initFormData));
   }
 };
 </script>

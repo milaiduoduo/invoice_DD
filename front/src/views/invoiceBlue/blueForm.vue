@@ -55,19 +55,6 @@
             <el-row>
                 <el-col :offset="1">
                     <el-form-item label="PDF上传">
-                        <!-- <el-upload
-                            class="upload-demo"
-                            action="https://jsonplaceholder.typicode.com/posts/"
-                            :on-preview="handlePreview"
-                            :on-remove="handleRemove"
-                            :before-remove="beforeRemove"
-                            multiple
-                            :limit="3"
-                            :on-exceed="handleExceed"
-                            :file-list="fileList">
-                            <el-button size="small" type="primary">点击上传</el-button>
-                            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-                        </el-upload> -->
                         <input id="file" ref="file" type="file" name="file" @change="_uploadFile" accept="application/pdf">
                         <div class="fileNotice">（文件大小不能超过100KB）</div>
                     </el-form-item>
@@ -91,20 +78,22 @@ export default {
     "formIvcTitle",
     "formTotalPrice",
     "formInvoiceTime",
-    "formPdfPath"
+    "formPdfPath",
+    "formReceiverTaxNo",
+    "formReceiverName"
   ],
   data() {
     return {
       formData: {
         orderId: "",
-        invoiceCode: "065001800111",
-        invoiceNo: "1239208",
-        ivcTitle: "个人",
-        totalPrice: "100",
-        invoiceTime: "2018-10-26",
+        invoiceCode: "",
+        invoiceNo: "",
+        ivcTitle: "",
+        totalPrice: "",
+        invoiceTime: "",
         pdfPath: "",
-        receiverTaxNo: config.receiverTaxNo,
-        receiverName: config.receiverName
+        receiverTaxNo: "",
+        receiverName: ""
       },
       formRules: {
         orderId: [
@@ -141,26 +130,19 @@ export default {
             trigger: "change"
           }
         ]
-      },
-      fileList: [
-        {
-          name: "food.jpeg",
-          url:
-            "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100"
-        },
-        {
-          name: "food2.jpeg",
-          url:
-            "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100"
-        }
-      ]
+      }
     };
+  },
+  created() {
+    this.formData.orderId = this.formOrderId;
+    this.formData.receiverTaxNo = this.formReceiverTaxNo;
+    this.formData.receiverName = this.formReceiverName;
   },
   computed: {
     /*为了监控form中控件值的变化，实现双向绑定而建立----------------*/
-    c_orderId() {
-      return this.formData.orderId;
-    },
+    // c_orderId() {
+    //   return this.formData.orderId;
+    // },
     c_invoiceCode() {
       return this.formData.invoiceCode;
     },
@@ -178,16 +160,23 @@ export default {
     },
     c_pdfPath() {
       return this.formData.pdfPath;
+    },
+    c_receiverTaxNo() {
+      return this.formData.receiverTaxNo;
+    },
+    c_receiverName() {
+      return this.formData.receiverName;
     }
 
     /*为了监控form中控件值的变化，实现双向绑定而建立------------------*/
   },
   watch: {
     /*为了监控form中控件值的变化，实现双向绑定而建立----------------*/
-    c_orderId(newValue) {
-      this.$emit("update:formOrderId", newValue);
-    },
+    // c_orderId(newValue) {
+    //   this.$emit("update:formOrderId", newValue);
+    // },
     c_invoiceCode(newValue) {
+      console.log("发票号码点击：", newValue);
       this.$emit("update:formInvoiceCode", newValue);
     },
     c_invoiceNo(newValue) {
@@ -204,6 +193,12 @@ export default {
     },
     c_pdfPath(newValue) {
       this.$emit("update:formPdfPath", newValue);
+    },
+    c_receiverTaxNo(newValue) {
+      this.$emit("update:formReceiverTaxNo", newValue);
+    },
+    c_receiverName(newValue) {
+      this.$emit("update:formReceiverName", newValue);
     }
     /*为了监控form中控件值的变化，实现双向绑定而建立----------------*/
   },
@@ -283,27 +278,7 @@ export default {
     },
     onSave() {
       console.log(this.formData);
-    },
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
-    },
-    handlePreview(file) {
-      console.log(file);
-    },
-    handleExceed(files, fileList) {
-      this.$message.warning(
-        `当前限制选择 3 个文件，本次选择了 ${
-          files.length
-        } 个文件，共选择了 ${files.length + fileList.length} 个文件`
-      );
-    },
-    beforeRemove(file, fileList) {
-      return this.$confirm(`确定移除 ${file.name}？`);
     }
-  },
-  created() {
-    this.formData.orderId = this.$route.params.orderId;
-    //console.log("params:", this.$route.params.orderId);
   }
 };
 </script>
