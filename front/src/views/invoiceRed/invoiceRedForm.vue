@@ -70,11 +70,11 @@ export default {
     return {
       formData: {
         orderId: "",
-        invoiceCode: "065001800111",
-        invoiceNo: "1239223",
-        blueInvoiceCode: "065001800111",
-        blueInvoiceNo: "1239208",
-        invoiceTime: "2018-10-27"
+        invoiceCode: "",
+        invoiceNo: "",
+        blueInvoiceCode: "",
+        blueInvoiceNo: "",
+        invoiceTime: ""
       },
       formRules: {
         orderId: [
@@ -106,7 +106,7 @@ export default {
   created() {
     this.formData.orderId = this.$route.params.orderId;
     this.formData.blueInvoiceCode = this.$route.params.invoiceCode;
-    this.formData.blueInvoiceNo = "1239208"; //this.$route.params.invoiceNo;
+    this.formData.blueInvoiceNo = this.$route.params.invoiceNo;
     console.log(
       this.formData.orderId,
       this.formData.blueInvoiceCode,

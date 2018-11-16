@@ -45,7 +45,7 @@
                 </el-row>
                 <el-row>
                     <el-col :offset="1" :span="10">
-                        <el-form-item label="开票人" prop="drawer ">
+                        <el-form-item label="开票人" prop="drawer">
                             <el-input :disabled="true" v-model="formData.drawer"></el-input>
                         </el-form-item>
                     </el-col>
@@ -84,25 +84,25 @@
                 <section class="category">收货人信息</section>
                 <el-row>
                     <el-col :offset="1" :span="10">
-                        <el-form-item label="收货人姓名" prop="receiverTaxNo">
-                            <el-input :disabled="true" v-model="formData.receiverTaxNo"></el-input>
+                        <el-form-item label="收货人姓名" prop="consigneeFullName">
+                            <el-input :disabled="true" v-model="formData.consigneeFullName"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :offset="1" :span="10">
-                        <el-form-item label="收货人电话" prop="receiverName">
-                            <el-input :disabled="true" v-model="formData.receiverName"></el-input>
+                        <el-form-item label="收货人电话" prop="consigneePhone">
+                            <el-input :disabled="true" v-model="formData.consigneePhone"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
                 <el-row>
                     <el-col :offset="1" :span="10">
-                        <el-form-item label="收货人地址" prop="receiverTaxNo">
-                            <el-input :disabled="true" v-model="formData.receiverTaxNo"></el-input>
+                        <el-form-item label="收货人地址" prop="consigneeFullAddress">
+                            <el-input :disabled="true" v-model="formData.consigneeFullAddress"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :offset="1" :span="10">
-                        <el-form-item label="订单支付方式" prop="receiverName">
-                            <el-input :disabled="true" v-model="formData.receiverName"></el-input>
+                        <el-form-item label="订单支付方式" prop="payType">
+                            <el-input :disabled="true" v-model="formData.payType"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -112,6 +112,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+import axios from "axios";
 export default {
   data() {
     return {
@@ -123,10 +124,86 @@ export default {
         totalPrice: "",
         invoiceTime: "",
         pdfPath: "",
-        receiverTaxNo: "91650103599163841F",
-        receiverName: "乌鲁木齐华鑫智宏商贸有限公司"
+        receiverTaxNo: "",
+        receiverName: "",
+        drawer: "",
+        payee: "",
+        consigneeFullName: "",
+        consigneeMobile: "",
+        consigneeFullAddress: "",
+        consigneeTelephone: "",
+        payType: "",
+        consigneePhone: ""
       }
     };
+  },
+  created() {
+    try {
+      let {
+        invoiceType,
+        orderId,
+        receiverTaxNo,
+        receiverName,
+        invoiceCode,
+        invoiceNo,
+        invoiceTitle,
+        totalPrice,
+        invoiceTime,
+        pdfInfo,
+        ivcContentName,
+        eiRemark,
+        receiverAddress,
+        receiverPhone,
+        receiverBankName,
+        drawer,
+        payee,
+        blueInvoiceCode,
+        blueInvoiceNo
+      } = this.$route.params;
+      // console.log("解构函数orderId：", this.$route.params);
+      // 发送请求
+      if (!orderId) throw "查看蓝票详情，未取得orderId!";
+      axios
+        .get("/dataApis/api/order", {
+          params: {
+            OrderId: orderId
+          }
+        })
+        .then(res => {
+          let {
+            consigneeFullName,
+            consigneeMobile,
+            consigneeFullAddress,
+            consigneeTelephone,
+            payType
+          } = res.data.data[0];
+          console.log("蓝票详情，订单查询接口调用结果：", res.data.data[0]);
+          // formData数据绑定
+          this.formData.orderId = orderId;
+          this.formData.invoiceCode = invoiceCode;
+          this.formData.invoiceNo = invoiceNo;
+          this.formData.ivcTitle = invoiceTitle;
+          this.formData.totalPrice = totalPrice;
+          this.formData.invoiceTime = invoiceTime;
+          this.formData.pdfPath = pdfInfo;
+          this.formData.receiverTaxNo = receiverTaxNo;
+          this.formData.receiverName = receiverName;
+          this.formData.drawer = drawer;
+          this.formData.payee = payee;
+          this.formData.consigneeFullName = consigneeFullName;
+          // this.formData.consigneeMobile = consigneeMobile;
+          this.formData.consigneeFullAddress = consigneeFullAddress;
+          // this.formData.consigneeTelephone = consigneeTelephone;
+          this.formData.consigneePhone =
+            consigneeMobile + " 或 " + consigneeTelephone;
+          this.formData.payType = payType;
+        })
+        .catch(err => {
+          console.log("蓝票详情，订单查询接口调用错误:", err);
+        });
+    } catch (err) {
+      console.log("Error! 蓝票详情错误:", err);
+    }
   }
 };
 </script>

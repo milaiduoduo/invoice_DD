@@ -5,49 +5,7 @@
             <span class="sectionTitle">第一步：查询需要冲红的蓝票.</span>
              <!-- <h3>红票查询第一步：查询已上传的蓝票（相同的订单号可对应多张已上传的蓝票）</h3> -->
             <section class="queryWrap">
-            <query-ivc-form @showQueryCondition="_getQueryConditions"></query-ivc-form>
-            <!-- <el-form ref="queryform" size="mini" label-width="100px">
-                 <el-row>
-                     <el-col :span="5">
-                         <el-form-item label="发票类型：">
-                             <el-select v-model="queryInvoiceType" placeholder="请选择">
-                                <el-option
-                                    v-for="item in invoiceTypeOptions"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value">
-                                </el-option>
-                            </el-select>
-                         </el-form-item>
-                     </el-col>
-                     <el-col :span="5">
-                         <el-form-item label="订单编号：">
-                            <el-input placeholder="请输入订单编号"></el-input>
-                         </el-form-item>
-                     </el-col>
-                     <el-col :span="5">
-                         <el-form-item label="发票代码：">
-                            <el-input placeholder="请输入发票代码"></el-input>
-                         </el-form-item>
-                     </el-col>
-                     
-                     <el-col :span="2">
-                            <el-button class="queryBtn" type="primary" size="small" @click="onQuery">查询</el-button>
-                     </el-col>
-                 </el-row>
-                 <el-row>
-                     <el-col :span="10">
-                         <el-form-item label="开票日期：">
-                             <el-date-picker  type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
-                         </el-form-item>
-                     </el-col>
-                     <el-col :span="5">
-                         <el-form-item label="发票号码：">
-                            <el-input placeholder="请输入发票号码"></el-input>
-                         </el-form-item>
-                     </el-col>
-                 </el-row>
-            </el-form> -->
+            <query-ivc-form :blueOnly="true" @showQueryCondition="_getQueryConditions"></query-ivc-form>
             </section>
          </div>
          <div class="pagination top">
@@ -91,6 +49,7 @@
 import axios from "axios";
 import queryIvcForm from "@/components/queryForm/queryUploadIvcForm.vue";
 import { parseTime } from "@/utils";
+import config from "@/config/paramsConfig";
 let mockData = [
   {
     orderId: "100000000",
@@ -126,12 +85,7 @@ let mockData = [
     uploadFlag: "待上传"
   }
 ];
-let config = {
-  ivcType: {
-    blue: 1,
-    red: 2
-  }
-};
+
 export default {
   data() {
     return {
@@ -184,7 +138,7 @@ export default {
         });
     },
     showDetail(ivcType, invoiceCode, invoiceNo) {
-      if (ivcType === config.ivcType.blue) {
+      if (ivcType === config.ivcType.blue.key) {
         this.$router.push({
           name: "blueIvcDetail",
           params: { invoiceCode: "", invoiceNo: "1111" }
@@ -211,8 +165,7 @@ export default {
     handleCurrentChange(val) {
       // console.log(`当前页: ${val}`);
       this.currentPage = val;
-    },
-    onQuery() {}
+    }
   }
 };
 </script>

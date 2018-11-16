@@ -4,7 +4,7 @@
                  <el-row>
                      <el-col :span="5">
                          <el-form-item label="发票类型：">
-                             <el-select disabled v-model="queryFormData.selectedInvoiceType" placeholder="请选择">
+                             <el-select :disabled="blueOnly" v-model="queryFormData.selectedInvoiceType" placeholder="请选择">
                                 <el-option
                                     v-for="item in invoiceTypeOptions"
                                     :key="item.value"
@@ -47,12 +47,16 @@
 
 <script type="text/ecmascript-6">
 import axios from "axios";
+import config from "@/config/paramsConfig";
 export default {
   name: "query-ivc-form",
+  props: ["blueOnly"],
   data() {
     return {
       queryFormData: {
-        selectedInvoiceType: 1,
+        selectedInvoiceType: this.blueOnly
+          ? config.ivcType.blue.key
+          : config.ivcType.all.key,
         orderId: "",
         invoiceCode: "",
         invoiceNo: "",
