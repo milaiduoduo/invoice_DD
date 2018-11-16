@@ -76,7 +76,8 @@
                 </el-row>
                 <el-row>
                     <el-col :offset="1">
-                        <el-form-item label="PDF查看">
+                        <el-form-item label="PDF查看" prop="pdfPath">
+                            <el-button type="text" @click="showPdf(formData.pdfPath)">点击查看</el-button>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -203,6 +204,11 @@ export default {
         });
     } catch (err) {
       console.log("Error! 蓝票详情错误:", err);
+    }
+  },
+  methods: {
+    showPdf(href) {
+      window.open(href);
     }
   }
 };
