@@ -36,7 +36,7 @@
             <el-table-column label="操作" width="200" fixed="right">
                <template slot-scope="scope">
                     <el-button type="text" size="small" @click="toRedInvoiceForm({orderId:scope.row.orderId,invoiceCode:scope.row.invoiceCode,invoiceNo:scope.row.invoiceNo})">冲红录入</el-button>
-                    <el-button type="text" size="small" @click="showDetail(1,invoiceCode,invoiceNo)">查看蓝票</el-button>
+                    <el-button type="text" size="small" @click="_showDetail(scope.row)">查看蓝票</el-button>
                 </template>
             </el-table-column>
             <!-- <el-table-column fixed label="详情查看" width="100"></el-table-column> -->
@@ -137,16 +137,21 @@ export default {
           console.log("蓝票查询出错：", err);
         });
     },
-    showDetail(ivcType, invoiceCode, invoiceNo) {
-      if (ivcType === config.ivcType.blue.key) {
+    _showDetail(rowObj) {
+      let invoiceType = rowObj.invoiceType;
+      if (invoiceType === config.ivcType.blue.key) {
         this.$router.push({
           name: "blueIvcDetail",
-          params: { invoiceCode: "", invoiceNo: "1111" }
+          params: {
+            ...rowObj
+          }
         });
-      } else {
+      } else if (invoiceType === config.ivcType.red.key) {
         this.$router.push({
           name: "redIvcDetail",
-          params: { invoiceCode: "", invoiceNo: "2222" }
+          params: {
+            ...rowObj
+          }
         });
       }
     },

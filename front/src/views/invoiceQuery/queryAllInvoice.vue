@@ -40,7 +40,7 @@
             <el-table-column fixed prop="drawer" label="开票人" width="80"></el-table-column>
             <el-table-column fixed label="操作" width="100">
                <template slot-scope="scope">
-                    <el-button type="text" size="small" @click="_showDetail(scope.row,{invoiceType:scope.row.invoiceType,orderId:scope.row.orderId,invoiceCode:scope.row.invoiceCode,invoiceNo:scope.row.invoiceNo})">查看详情</el-button>
+                    <el-button type="text" size="small" @click="_showDetail(scope.row)">查看详情</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -145,15 +145,6 @@ export default {
     },
     _showDetail(rowObj) {
       console.log("rowObj:", rowObj);
-
-      // console.log(
-      //   "对象的解构赋值结果：",
-      //   invoiceType,
-      //   orderId,
-      //   invoiceCode,
-      //   invoiceNo
-      // );
-
       let invoiceType = rowObj.invoiceType;
       if (invoiceType === config.ivcType.blue.key) {
         this.$router.push({
