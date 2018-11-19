@@ -140,11 +140,11 @@ export default {
     _showDetail(rowObj) {
       let invoiceType = rowObj.invoiceType;
       if (invoiceType === config.ivcType.blue.key) {
+        console.log("蓝票参数：rowObj：", rowObj.orderId);
         this.$router.push({
-          name: "blueIvcDetail",
-          params: {
-            ...rowObj
-          }
+          path: `/blueIvcDetail/${rowObj.orderId}/${rowObj.invoiceCode}/${
+            rowObj.invoiceNo
+          }`
         });
       } else if (invoiceType === config.ivcType.red.key) {
         this.$router.push({
@@ -154,6 +154,21 @@ export default {
           }
         });
       }
+      // if (invoiceType === config.ivcType.blue.key) {
+      //   this.$router.push({
+      //     name: "blueIvcDetail",
+      //     params: {
+      //       ...rowObj
+      //     }
+      //   });
+      // } else if (invoiceType === config.ivcType.red.key) {
+      //   this.$router.push({
+      //     name: "redIvcDetail",
+      //     params: {
+      //       ...rowObj
+      //     }
+      //   });
+      // }
     },
     _toRedInvoiceForm(requiredItem) {
       console.log("红票传参：", requiredItem);

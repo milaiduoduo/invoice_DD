@@ -148,17 +148,23 @@ export default {
       let invoiceType = rowObj.invoiceType;
       if (invoiceType === config.ivcType.blue.key) {
         this.$router.push({
-          name: "blueIvcDetail",
-          params: {
-            ...rowObj
-          }
+          path: `/blueIvcDetail/${rowObj.orderId}/${rowObj.invoiceCode}/${
+            rowObj.invoiceNo
+          }`
         });
+        // this.$router.push({
+        //   name: "blueIvcDetail",
+        //   params: {
+        //     ...rowObj
+        //   }
+        // });
       } else if (invoiceType === config.ivcType.red.key) {
+        console.log("rowObj:", rowObj);
         this.$router.push({
-          name: "redIvcDetail",
-          params: {
-            ...rowObj
-          }
+          path: `/redIvcDetail/${rowObj.orderId}/${rowObj.blueInvoiceCode}/${
+            rowObj.blueInvoiceNo
+          }/${rowObj.invoiceCode}/${rowObj.invoiceNo}`
+          //invoiceCode,pdfInfo,invoiceTime
         });
       }
     },

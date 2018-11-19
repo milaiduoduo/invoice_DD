@@ -8,13 +8,13 @@
                 <section class="category blueWrap">原蓝票信息</section>
                 <el-row>
                     <el-col :offset="1" :span="10">
-                        <el-form-item label="原蓝票代码" prop="invoiceCode">
-                            <el-input :disabled="true" v-model="formData.invoiceCode"></el-input>
+                        <el-form-item label="原蓝票代码" prop="blueInvoiceCode">
+                            <el-input :disabled="true" v-model="formData.blueInvoiceCode"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :offset="1" :span="10">
-                        <el-form-item label="原蓝票号码" prop="invoiceNo">
-                            <el-input :disabled="true" v-model.number="formData.invoiceNo"></el-input>
+                        <el-form-item label="原蓝票号码" prop="blueInvoiceNo">
+                            <el-input :disabled="true" v-model.number="formData.blueInvoiceNo"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -77,27 +77,28 @@
                 <section class="category redWrap">红票信息</section>
                 <el-row>
                     <el-col :offset="1" :span="10">
-                        <el-form-item label="红票代码" prop="invoiceCode">
-                            <el-input :disabled="true" v-model="formData.invoiceCode"></el-input>
+                        <el-form-item label="红票代码" prop="redInvoiceCode">
+                            <el-input :disabled="true" v-model="formData.redInvoiceCode"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :offset="1" :span="10">
-                        <el-form-item label="红票号码" prop="invoiceNo">
-                            <el-input :disabled="true" v-model.number="formData.invoiceNo"></el-input>
+                        <el-form-item label="红票号码" prop="redInvoiceNo">
+                            <el-input :disabled="true" v-model.number="formData.redInvoiceNo"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
                 <el-row>
                     <el-col :offset="1" :span="10">
-                        <el-form-item label="开票日期" prop="invoiceTime">
-                            <el-date-picker :disabled="true" v-model="formData.invoiceTime" type="date" placeholder="选择日期"></el-date-picker>
+                        <el-form-item label="开票日期" prop="redInvoiceTime">
+                            <el-date-picker :disabled="true" v-model="formData.redInvoiceTime" type="date" placeholder="选择日期"></el-date-picker>
                         </el-form-item>
                     </el-col>
                 </el-row>
                 
                 <el-row>
                     <el-col :offset="1">
-                        <el-form-item label="PDF查看">
+                        <el-form-item label="PDF查看" prop="redPdfPath">
+                            <el-button type="text" @click="showPdf(formData.redPdfPath)">点击查看</el-button>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -105,24 +106,24 @@
                 <section class="category">收货人信息</section>
                 <el-row>
                     <el-col :offset="1" :span="10">
-                        <el-form-item label="收货人姓名" prop="receiverTaxNo">
-                            <el-input :disabled="true" v-model="formData.receiverTaxNo"></el-input>
+                        <el-form-item label="收货人姓名" prop="consigneeFullName">
+                            <el-input :disabled="true" v-model="formData.consigneeFullName"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :offset="1" :span="10">
-                        <el-form-item label="收货人电话" prop="receiverName">
-                            <el-input :disabled="true" v-model="formData.receiverName"></el-input>
+                        <el-form-item label="收货人电话" prop="consigneePhone">
+                            <el-input :disabled="true" v-model="formData.consigneePhone"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
                 <el-row>
                     <el-col :offset="1" :span="10">
-                        <el-form-item label="收货人地址" prop="receiverTaxNo">
+                        <el-form-item label="收货人地址" prop="consigneeFullAddress">
                             <el-input :disabled="true" v-model="formData.receiverTaxNo"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :offset="1" :span="10">
-                        <el-form-item label="订单支付方式" prop="receiverName">
+                        <el-form-item label="订单支付方式" prop="payType">
                             <el-input :disabled="true" v-model="formData.receiverName"></el-input>
                         </el-form-item>
                     </el-col>
@@ -133,21 +134,137 @@
 </template>
 
 <script type="text/ecmascript-6">
+import axios from "axios";
 export default {
   data() {
     return {
       formData: {
         orderId: "",
-        invoiceCode: "",
-        invoiceNo: "",
+        blueInvoiceCode: "",
+        blueInvoiceNo: "",
+        redInvoiceCode: "",
+        redInvoiceNo: "",
+        redInvoiceTime: "",
+        redPdfPath: "",
         ivcTitle: "",
         totalPrice: "",
         invoiceTime: "",
         pdfPath: "",
-        receiverTaxNo: "91650103599163841F",
-        receiverName: "乌鲁木齐华鑫智宏商贸有限公司"
+        receiverTaxNo: "",
+        receiverName: "",
+        drawer: "",
+        payee: "",
+        consigneeFullName: "",
+        consigneeMobile: "",
+        consigneeFullAddress: "",
+        consigneeTelephone: "",
+        payType: "",
+        consigneePhone: ""
       }
     };
+  },
+  created() {
+    try {
+      console.log("红票详情参数获取：", this.$route.params);
+      let {
+        orderId,
+        blueInvoiceCode,
+        blueInvoiceNo,
+        invoiceCode,
+        invoiceNo
+      } = this.$route.params;
+      if (
+        !orderId ||
+        !blueInvoiceCode ||
+        !blueInvoiceNo ||
+        !invoiceCode ||
+        !invoiceNo
+      ) {
+        this.$message({
+          showClose: true,
+          message:
+            "订单号、红蓝发票号、红蓝票发票代码读取错误，请重新从列表点击进入！",
+          type: "error"
+        });
+        return;
+      }
+      axios
+        .all([
+          axios.get(
+            `/dataApis/api/invoice?invoiceCode=${invoiceCode}&invoiceNo=${invoiceNo}&orderId=${orderId}`
+          ),
+          axios.get(
+            `/dataApis/api/invoice?invoiceCode=${blueInvoiceCode}&invoiceNo=${blueInvoiceNo}&orderId=${orderId}`
+          )
+        ])
+        .then(res => {
+          console.log("红票详情:", res);
+          let redIvcObj, blueIvcObj, orderObj;
+
+          if (res[0].data.Data.InvoiceInfo.blueInvoiceCode) {
+            redIvcObj = res[0].data.Data.InvoiceInfo;
+            // console.log("res[1]", res[1].data.Data.InvoiceInfo);
+            blueIvcObj = res[1].data.Data.InvoiceInfo;
+
+            orderObj = res[1].data.Data.OrderInfo;
+            console.log(
+              "1.redIvcObj,blueIvcObj,orderObj",
+              redIvcObj,
+              blueIvcObj,
+              orderObj
+            );
+          } else {
+            redIvcObj = res[1].data.Data.InvoiceInfo;
+            blueIvcObj = res[0].data.Data.InvoiceInfo;
+            orderObj = res[0].data.Data.OrderInfo;
+            console.log(
+              "2.redIvcObj,blueIvcObj,orderObj",
+              redIvcObj,
+              blueIvcObj,
+              orderObj
+            );
+          }
+
+          //   let blueIvcObj = res.data.Data.InvoiceInfo;
+          //   let orderObj = res.data.Data.OrderInfo;
+          console.log("redIvcObj:", redIvcObj);
+          console.log("blueIvcObj:", blueIvcObj);
+          console.log("orderObj:", orderObj);
+
+          this.formData.blueInvoiceCode = blueIvcObj.invoiceCode;
+          this.formData.blueInvoiceNo = blueIvcObj.invoiceNo;
+          this.formData.orderId = blueIvcObj.orderId;
+          this.formData.redInvoiceCode = redIvcObj.invoiceCode;
+          this.formData.redInvoiceNo = redIvcObj.invoiceNo;
+          this.formData.redPdfPath = redIvcObj.pdfInfo;
+          console.log("redIvcObj.pdfInfo:::::", redIvcObj.pdfInfo);
+          this.formData.redInvoiceTime = redIvcObj.invoiceTime;
+          this.formData.ivcTitle = blueIvcObj.invoiceTitle;
+          this.formData.totalPrice = blueIvcObj.totalPrice;
+          this.formData.invoiceTime = blueIvcObj.invoiceTime;
+
+          this.formData.receiverTaxNo = blueIvcObj.receiverTaxNo;
+          this.formData.receiverName = blueIvcObj.receiverName;
+          this.formData.drawer = blueIvcObj.drawer;
+          this.formData.payee = blueIvcObj.payee;
+          this.formData.consigneeFullName = orderObj.consigneeFullName;
+          this.formData.consigneeFullAddress = orderObj.consigneeFullAddress;
+          this.formData.consigneePhone =
+            orderObj.consigneeMobile + " 或 " + orderObj.consigneeTelephone;
+          this.formData.payType = orderObj.payType;
+          this.formData.orderPayment = orderObj.payment;
+        })
+        .catch(err => {
+          throw err;
+        });
+    } catch (err) {
+      console.log("Error! 红票详情错误:", err);
+    }
+  },
+  methods: {
+    showPdf(href) {
+      window.open(href);
+    }
   }
 };
 </script>

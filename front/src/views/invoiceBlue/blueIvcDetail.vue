@@ -13,7 +13,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col :offset="1" :span="10">
-                        <el-form-item label="用户应付金额" prop="orderId">
+                        <el-form-item label="用户应付金额" prop="orderPayment">
                             <el-input :disabled="true" v-model="formData.orderPayment"></el-input>
                         </el-form-item>
                     </el-col>
@@ -140,70 +140,50 @@ export default {
   },
   created() {
     try {
-      let {
-        invoiceType,
-        orderId,
-        receiverTaxNo,
-        receiverName,
-        invoiceCode,
-        invoiceNo,
-        invoiceTitle,
-        totalPrice,
-        invoiceTime,
-        pdfInfo,
-        ivcContentName,
-        eiRemark,
-        receiverAddress,
-        receiverPhone,
-        receiverBankName,
-        drawer,
-        payee,
-        blueInvoiceCode,
-        blueInvoiceNo
-      } = this.$route.params;
-      // console.log("解构函数orderId：", this.$route.params);
-      // 发送请求
-      if (!orderId) throw "查看蓝票详情，未取得orderId!";
+      let { orderId, invoiceCode, invoiceNo } = this.$route.params;
+      console.log("蓝票详情获取的参数：", this.$route.params);
+      if (!orderId || !invoiceCode || !invoiceNo) {
+        this.$message({
+          showClose: true,
+          message: "订单号、发票号、发票代码，读取错误，请重新从列表点击进入！",
+          type: "error"
+        });
+        return;
+      }
       axios
-        .get("/dataApis/api/order", {
-          params: {
-            OrderId: orderId
-          }
-        })
+        .get(
+          `/dataApis/api/invoice?invoiceCode=${invoiceCode}&invoiceNo=${invoiceNo}&orderId=${orderId}`
+        )
         .then(res => {
-          let {
-            consigneeFullName,
-            consigneeMobile,
-            consigneeFullAddress,
-            consigneeTelephone,
-            payType
-          } = res.data.data[0];
-          console.log("蓝票详情，订单查询接口调用结果：", res.data.data[0]);
-          // formData数据绑定
-          this.formData.orderId = orderId;
-          this.formData.invoiceCode = invoiceCode;
-          this.formData.invoiceNo = invoiceNo;
-          this.formData.ivcTitle = invoiceTitle;
-          this.formData.totalPrice = totalPrice;
-          this.formData.invoiceTime = invoiceTime;
-          this.formData.pdfPath = pdfInfo;
-          this.formData.receiverTaxNo = receiverTaxNo;
-          this.formData.receiverName = receiverName;
-          this.formData.drawer = drawer;
-          this.formData.payee = payee;
-          this.formData.consigneeFullName = consigneeFullName;
-          // this.formData.consigneeMobile = consigneeMobile;
-          this.formData.consigneeFullAddress = consigneeFullAddress;
-          // this.formData.consigneeTelephone = consigneeTelephone;
+          console.log("蓝票详情：", res);
+          let invoiceInfo = res.data.Data.InvoiceInfo;
+          let orderInfo = res.data.Data.OrderInfo;
+
+          console.log("ivc：", invoiceInfo);
+          console.log("orderInfo", invoiceInfo);
+          this.formData.orderId = invoiceInfo.orderId;
+          this.formData.invoiceCode = invoiceInfo.invoiceCode;
+          this.formData.invoiceNo = invoiceInfo.invoiceNo;
+          this.formData.ivcTitle = invoiceInfo.invoiceTitle;
+          this.formData.totalPrice = invoiceInfo.totalPrice;
+          this.formData.invoiceTime = invoiceInfo.invoiceTime;
+          this.formData.pdfPath = invoiceInfo.pdfInfo;
+          this.formData.receiverTaxNo = invoiceInfo.receiverTaxNo;
+          this.formData.receiverName = invoiceInfo.receiverName;
+          this.formData.drawer = invoiceInfo.drawer;
+          this.formData.payee = invoiceInfo.payee;
+          this.formData.consigneeFullName = orderInfo.consigneeFullName;
+          this.formData.consigneeFullAddress = orderInfo.consigneeFullAddress;
           this.formData.consigneePhone =
-            consigneeMobile + " 或 " + consigneeTelephone;
-          this.formData.payType = payType;
+            orderInfo.consigneeMobile + " 或 " + orderInfo.consigneeTelephone;
+          this.formData.payType = orderInfo.payType;
+          this.formData.orderPayment = orderInfo.payment;
         })
         .catch(err => {
-          console.log("蓝票详情，订单查询接口调用错误:", err);
+          throw err;
         });
     } catch (err) {
-      console.log("Error! 蓝票详情错误:", err);
+      console.log("蓝票详情页错误：", err);
     }
   },
   methods: {
@@ -211,6 +191,74 @@ export default {
       window.open(href);
     }
   }
+  //   created() {
+  //     try {
+  //       let {
+  //         invoiceType,
+  //         orderId,
+  //         receiverTaxNo,
+  //         receiverName,
+  //         invoiceCode,
+  //         invoiceNo,
+  //         invoiceTitle,
+  //         totalPrice,
+  //         invoiceTime,
+  //         pdfInfo,
+  //         ivcContentName,
+  //         eiRemark,
+  //         receiverAddress,
+  //         receiverPhone,
+  //         receiverBankName,
+  //         drawer,
+  //         payee,
+  //         blueInvoiceCode,
+  //         blueInvoiceNo
+  //       } = this.$route.params;
+  //       // console.log("解构函数orderId：", this.$route.params);
+  //       // 发送请求
+  //       if (!orderId) throw "查看蓝票详情，未取得orderId!";
+  //       axios
+  //         .get("/dataApis/api/order", {
+  //           params: {
+  //             OrderId: orderId
+  //           }
+  //         })
+  //         .then(res => {
+  //           let {
+  //             consigneeFullName,
+  //             consigneeMobile,
+  //             consigneeFullAddress,
+  //             consigneeTelephone,
+  //             payType
+  //           } = res.data.data[0];
+  //           console.log("蓝票详情，订单查询接口调用结果：", res.data.data[0]);
+  //           // formData数据绑定
+  //           this.formData.orderId = orderId;
+  //           this.formData.invoiceCode = invoiceCode;
+  //           this.formData.invoiceNo = invoiceNo;
+  //           this.formData.ivcTitle = invoiceTitle;
+  //           this.formData.totalPrice = totalPrice;
+  //           this.formData.invoiceTime = invoiceTime;
+  //           this.formData.pdfPath = pdfInfo;
+  //           this.formData.receiverTaxNo = receiverTaxNo;
+  //           this.formData.receiverName = receiverName;
+  //           this.formData.drawer = drawer;
+  //           this.formData.payee = payee;
+  //           this.formData.consigneeFullName = consigneeFullName;
+  //           // this.formData.consigneeMobile = consigneeMobile;
+  //           this.formData.consigneeFullAddress = consigneeFullAddress;
+  //           // this.formData.consigneeTelephone = consigneeTelephone;
+  //           this.formData.consigneePhone =
+  //             consigneeMobile + " 或 " + consigneeTelephone;
+  //           this.formData.payType = payType;
+  //         })
+  //         .catch(err => {
+  //           console.log("蓝票详情，订单查询接口调用错误:", err);
+  //         });
+  //     } catch (err) {
+  //       console.log("Error! 蓝票详情错误:", err);
+  //     }
+  //   },
 };
 </script>
 
