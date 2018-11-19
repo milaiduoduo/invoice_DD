@@ -53,7 +53,7 @@ import axios from "axios";
 export default {
   data() {
     return {
-      queryOrderId: "81448392454",
+      queryOrderId: "",
       queryResult: [],
       pageSizes: [10, 30, 50, 100],
       pageSize: 10,
@@ -61,6 +61,16 @@ export default {
       queryTotal: 130
     };
   },
+  // beforeRouteLeave(to, from, next) {
+  //   console.log("退后！beforeRouteLeave");
+  //   to.meta.isBack = true;
+  //   next();
+  // },
+  // activated() {
+  //   console.log("退后！this.$route.meta.isBack:", this.$route.meta.isBack);
+  //   if (!this.$route.meta.isBack) {
+  //   }
+  // },
   methods: {
     toBlueInvoice(row) {
       console.log("row: ", row);
@@ -79,6 +89,7 @@ export default {
     },
     onQuery() {
       //调查询接口查询“以电子发票开票的订单”
+      if (!this.queryOrderId) return;
       axios
         .get("/dataApis/api/order", {
           params: {
@@ -89,7 +100,7 @@ export default {
           let resultData = res.data.data;
           if (!resultData) return;
           resultData.forEach(element => {
-            console.log("element:", element);
+            console.log("each order:", element);
             for (let item in element) {
               // console.log("item:", item);
               // console.log("elemtn.item", element[item]);
