@@ -55,10 +55,11 @@ export const constantRouterMap = [{
       component: () => import('@/views/invoiceQuery/queryOrder'),
       meta: {
         title: '蓝票上传',
-        icon: 'form'
+        icon: 'form',
+        keepAlive: true
       }
     }, {
-      path: 'invoiceBlueFrom',
+      path: 'invoiceBlueFrom/:orderId',
       name: 'invoiceBlueFrom',
       component: () => import('@/views/invoiceBlue/invoiceBlue'),
       hidden: true,
