@@ -78,10 +78,11 @@ export const constantRouterMap = [{
       component: () => import('@/views/invoiceQuery/queryBlueInvoice'),
       meta: {
         title: '红票上传',
-        icon: 'nested'
+        icon: 'nested',
+        keepAlive: true
       }
     }, {
-      path: 'invoiceRedForm',
+      path: 'invoiceRedForm/:orderId/:invoiceCode/:invoiceNo',
       name: 'invoiceRedForm',
       component: () => import('@/views/invoiceRed/invoiceRedForm'),
       hidden: true,
@@ -100,7 +101,8 @@ export const constantRouterMap = [{
       component: () => import('@/views/invoiceQuery/queryAllInvoice'),
       meta: {
         title: '已上传发票查询',
-        icon: 'link'
+        icon: 'link',
+        keepAlive: true
       }
     }]
   },
@@ -109,7 +111,7 @@ export const constantRouterMap = [{
     component: Layout,
     hidden: true,
     children: [{
-      path: '',
+      path: '/blueIvcDetail/:orderId/:invoiceCode/:invoiceNo',
       name: 'blueIvcDetail',
       component: () => import('@/views/invoiceBlue/blueIvcDetail'),
       meta: {
@@ -123,7 +125,7 @@ export const constantRouterMap = [{
     component: Layout,
     hidden: true,
     children: [{
-      path: '',
+      path: '/redIvcDetail/:orderId/:blueInvoiceCode/:blueInvoiceNo/:invoiceCode/:invoiceNo',
       name: 'redIvcDetail',
       component: () => import('@/views/invoiceRed/redIvcDetail'),
       meta: {
