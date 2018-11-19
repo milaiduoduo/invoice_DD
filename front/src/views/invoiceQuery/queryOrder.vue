@@ -13,7 +13,7 @@
                          </el-form-item>
                      </el-col>
                      <el-col :span="2">
-                            <el-button class="queryBtn" type="primary" size="small" @click="onQuery">查询</el-button>
+                            <el-button class="queryBtn" type="primary" size="small" @click="_onQuery">查询</el-button>
                      </el-col>
                  </el-row>
              </el-form>
@@ -58,17 +58,31 @@ export default {
       pageSizes: [10, 30, 50, 100],
       pageSize: 10,
       currentPage: 1,
-      queryTotal: 130
+      queryTotal: 130,
+      pageFromName: ""
     };
   },
-  // beforeRouteLeave(to, from, next) {
-  //   console.log("退后！beforeRouteLeave");
-  //   to.meta.isBack = true;
-  //   next();
-  // },
+  beforeRouteEnter(to, from, next) {
+    console.log("from:", from);
+    next(vm => {
+      vm.pageFromName = from.name;
+      vm.queryOrderId = from.params.orderId;
+      if (vm.pageFromName == "invoiceBlueFrom") {
+        // 再次按回传的orderId查询订单数据
+        // console.log("this.queryOrderId:", this.queryOrderId);
+        vm._onQuery();
+      }
+    });
+  },
+  // 疑问activated与beforeRouteEnter中的顺序，activated中为何this.pageFromName和this.queryOrderId 取值为空？
   // activated() {
-  //   console.log("退后！this.$route.meta.isBack:", this.$route.meta.isBack);
-  //   if (!this.$route.meta.isBack) {
+  //   // console.log("this.queryTotal:", this.queryTotal);
+  //   console.log("缓存的组件又出现了，我是不是要重新拉取数据呢？");
+  //   console.log("this.queryOrderId:", this.queryOrderId);
+  //   if (this.pageFromName == "invoiceBlueFrom") {
+  //     // 再次按回传的orderId查询订单数据
+  //     console.log("this.queryOrderId:", this.queryOrderId);
+  //     _onQuery();
   //   }
   // },
   methods: {
@@ -87,7 +101,7 @@ export default {
       console.log(`当前页: ${val}`);
       console.log("currentPage:", this.currentPage);
     },
-    onQuery() {
+    _onQuery() {
       //调查询接口查询“以电子发票开票的订单”
       if (!this.queryOrderId) return;
       axios
