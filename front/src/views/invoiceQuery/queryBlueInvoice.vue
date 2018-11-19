@@ -35,7 +35,7 @@
             <el-table-column prop="drawer" label="开票人" width="80"></el-table-column>
             <el-table-column label="操作" width="200" fixed="right">
                <template slot-scope="scope">
-                    <el-button type="text" size="small" @click="toRedInvoiceForm({orderId:scope.row.orderId,invoiceCode:scope.row.invoiceCode,invoiceNo:scope.row.invoiceNo})">冲红录入</el-button>
+                    <el-button type="text" size="small" @click="_toRedInvoiceForm({orderId:scope.row.orderId,invoiceCode:scope.row.invoiceCode,invoiceNo:scope.row.invoiceNo})">冲红录入</el-button>
                     <el-button type="text" size="small" @click="_showDetail(scope.row)">查看蓝票</el-button>
                 </template>
             </el-table-column>
@@ -155,14 +155,20 @@ export default {
         });
       }
     },
-    toRedInvoiceForm(...requiredItem) {
-      //requiredItem 是数组，所以需要先[0]，再使用扩展运算发展开
-      let obj = {
-        name: "invoiceRedForm",
-        params: { ...requiredItem[0] }
-      };
-      console.log("红票传参：", obj);
-      this.$router.push(obj);
+    _toRedInvoiceForm(requiredItem) {
+      console.log("红票传参：", requiredItem);
+      this.$router.push({
+        path: `invoiceRedForm/${requiredItem.orderId}/${
+          requiredItem.invoiceCode
+        }/${requiredItem.invoiceNo}`
+      });
+      //name的方式在某些情况下url上的地址不会更新
+      // this.$router.push({
+      //   name: "invoiceRedForm",
+      //   params: {
+      //     ...requiredItem
+      //   }
+      // });
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);

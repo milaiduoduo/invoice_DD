@@ -89,10 +89,12 @@ export default {
   methods: {
     toBlueInvoice(row) {
       console.log("row: ", row);
-      this.$router.push({
-        name: "invoiceBlueFrom",
-        params: { orderId: row.orderId }
-      });
+      this.$router.push({ path: `invoiceBlueFrom/${row.orderId}` });
+
+      // this.$router.push({
+      //   name: "invoiceBlueFrom",
+      //   params: { orderId: row.orderId }
+      // });
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
