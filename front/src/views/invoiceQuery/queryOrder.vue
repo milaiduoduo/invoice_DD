@@ -66,8 +66,9 @@ export default {
     console.log("from:", from);
     next(vm => {
       vm.pageFromName = from.name;
-      vm.queryOrderId = from.params.orderId;
       if (vm.pageFromName == "invoiceBlueFrom") {
+        vm.queryOrderId = from.params.orderId;
+        console.log("重新查询：", vm.pageFromName);
         // 再次按回传的orderId查询订单数据
         // console.log("this.queryOrderId:", this.queryOrderId);
         vm._onQuery();
