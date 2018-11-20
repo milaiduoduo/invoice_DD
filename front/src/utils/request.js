@@ -40,6 +40,7 @@ service.interceptors.response.use(
     if (res.code !== 0) {
       Message({
         message: res.message,
+        showClose: true,
         type: 'error',
         duration: 300 * 1000
       })
@@ -68,6 +69,7 @@ service.interceptors.response.use(
     console.log('err' + error) // for debug
     Message({
       message: error.message,
+      showClose: true,
       type: 'error',
       duration: 300 * 1000
     })

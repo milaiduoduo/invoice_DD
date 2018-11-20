@@ -47,8 +47,10 @@ app.use(koaBody({
     multipart: true
 }));
 
-import dateUtil from "./public/js/utils/date";
-
+import {
+    parseTime
+} from "./public/js/utils/date";
+// const dateUtil = require("./public/js/utils/date")
 
 // custom 404
 
@@ -58,10 +60,16 @@ import dateUtil from "./public/js/utils/date";
 //     ctx.redirect('/404.html');
 // });
 
+let config = {
+    code: {
+        success: 0,
+        err: 1
+    }
+}
 //测试
 router.post('/fileApi/post_test/', async function (ctx, next) {
     ctx.body = {
-        code: 0,
+        code: config.code.success,
         data: {
             name: 'post_test 方法'
         }
@@ -84,14 +92,17 @@ router.post('/fileApi/fileUpload/', async function (ctx, next) {
 
         //取得上传文件
         let files = ctx.request.body.files.mFile;
-        console.log("取得上传文件1：", ctx.request.body.files);
-        console.log("取得上传文件2：", ctx.request.body.files.mFile);
-        let newpath = '';
+        // console.log("取得上传文件1：", ctx.request.body.files);
+        // console.log("取得上传文件2：", ctx.request.body.files.mFile);
+        let filePath = '';
+        let directoryPath = 'D:/APIService/SourceInvoicePDF/';
+        let dayDPath = '';
+        let maxSize = 100 * 1024; //不超过100k
         files = Array.isArray(files) ? files : Array.of(files); //将单个对象转换为数组
 
         // 只能用先把files转化成数组，因为不传文件和上传1个文件从request上区分不出来，因为只有一个文件时，数据结构取不出来，不是数组。
         if (files.length > 0) {
-            console.log("in 处理文件process！！！！")
+            // console.log("in 处理文件process！！！！")
             for (let item of files) {
                 if (!item || (!item.size && !item.name)) {
                     console.log("此次没有上传文件");
@@ -100,23 +111,56 @@ router.post('/fileApi/fileUpload/', async function (ctx, next) {
                 let tmpath = item['path'];
                 let tmparr = item['name'].split('.');
                 let ext = '.' + tmparr[tmparr.length - 1];
+
+                // 文件合规性验证
+                if (ext != ".pdf") {
+                    throw '后缀验证失败：只能上传.pdf文件，不能上传其它类型！'
+                }
+
+                if (item.size > maxSize) {
+                    throw '文件大小验证失败：文件不能超过100k!'
+                }
+
+
                 // console.log('时间戳：', new Date().timestamp());
-                newpath = path.join('public/upload', new Date().timestamp() + ext);
-                // newpath = path.join('public/upload', "111" + ext);
-                const stream = fs.createWriteStream(newpath); //创建一个可写流
-                fs.createReadStream(tmpath).pipe(stream); //可读流通过管道写入可写流
+                // filePath = path.join('public/upload', new Date().timestamp() + ext);
+
+                dayDPath = path.join(directoryPath, parseTime(new Date(), "{y}-{m}-{d}"));
+                console.log("dayDPath:", dayDPath);
+                if (!fs.existsSync(dayDPath)) {
+                    fs.mkdir(dayDPath, {
+                        recursive: true
+                    }, err => {
+                        if (err) {
+                            console.error("创建文件夹错误,文件夹路径：", dayDPath, ":", err);
+                            throw err;
+                        }
+                        console.log("目录创建成功！路径：", dayDPath);
+                    })
+                }
+
+
+                filePath = path.join(dayDPath, new Date().timestamp() + ext);
+                const stream = fs.createWriteStream(filePath); //创建一个可写流
+                fs.createReadStream(tmpath).pipe(stream); //把可写流写入可读流
             }
         }
-        // console.log('ctx.request.body:', ctx.request.body);
+
         // 返回保存的路径
         ctx.body = {
-            code: 0,
+            code: config.code.success,
             data: {
-                path: newpath
+                path: filePath
             }
         };
     } catch (err) {
         console.log("上传失败，原因：", err);
+        ctx.body = {
+            code: config.code.err,
+            data: {
+                err: err
+            }
+        };
     }
 });
 

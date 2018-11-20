@@ -176,8 +176,8 @@ export default {
           let pdfName = tempArray[tempArray.length - 1];
 
           //D:\APIService\SourceInvoicePDF
-          this.formData.pdfPath = "111.pdf"; //pdfName;
-
+          this.formData.pdfPath = encodeURIComponent(pdf_xiangduiPath); //pdfName;
+          console.log("pdf_xiangduiPath:", pdf_xiangduiPath);
           console.log("this.formData.pdfPath:", this.formData.pdfPath);
 
           this.$message({
