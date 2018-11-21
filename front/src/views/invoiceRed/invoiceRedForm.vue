@@ -299,6 +299,7 @@ export default {
     },
     _onCancel() {
       this.$refs.formWrap.resetFields();
+      this.$refs.file.value = "";
       // this.$refs[formName].resetFields();
     }
   }
