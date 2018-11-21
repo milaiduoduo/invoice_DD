@@ -14,7 +14,9 @@ let config = {
       key: 2,
       name: "红票"
     }
-  }
+  },
+  filePathInServer: "D:\\APIService\\SourceInvoicePDF",
+  filePathDirect: "\\SourceInvoicePDF\\"
 }
 
 export default config;

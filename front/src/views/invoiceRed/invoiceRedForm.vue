@@ -3,8 +3,8 @@
     <el-card>
         <div slot="header" class="headerWrap">
             <span class="sectionTitle">第二步：录入蓝票信息，并上传.</span>
-            <el-button type="primary" size="medium" @click="onSubmit">立即上传红票信息</el-button>
-            <el-button type="default" size="small" @click="onCancel">取消</el-button>
+            <el-button type="primary" size="medium" @click="_onSubmit">立即上传红票信息</el-button>
+            <el-button type="default" size="small" @click="_onCancel">取消</el-button>
         </div>
         <div class="redFormWrap">
             <div class="title">发票信息</div>
@@ -163,8 +163,8 @@ export default {
       })
         .then(res => {
           console.log("上传接口返回：", res.data.path);
-          let pdf_xiangduiPath = res.data.path;
-          if (!pdf_xiangduiPath) {
+          let pdf_relativePath = res.data.path;
+          if (!pdf_relativePath) {
             this.$message({
               showClose: true,
               message: "pdf上传失败，请重新再试 ！"
@@ -172,13 +172,16 @@ export default {
             return;
           }
 
-          let tempArray = pdf_xiangduiPath.split("\\");
-          let pdfName = tempArray[tempArray.length - 1];
+          let tempArray = pdf_relativePath.split("\\");
+          // let pdfName = tempArray[tempArray.length - 1];
 
           //D:\APIService\SourceInvoicePDF
-          this.formData.pdfPath = encodeURIComponent(pdf_xiangduiPath); //pdfName;
-          console.log("pdf_xiangduiPath:", pdf_xiangduiPath);
-          console.log("this.formData.pdfPath:", this.formData.pdfPath);
+          tempArray = pdf_relativePath.split(config.filePathDirect);
+          pdf_relativePath = tempArray[tempArray.length - 1];
+
+          this.formData.pdfPath = encodeURIComponent(pdf_relativePath);
+          // console.log("pdf_relativePath:", pdf_relativePath);
+          // console.log("this.formData.pdfPath:", this.formData.pdfPath);
 
           this.$message({
             showClose: true,
@@ -187,11 +190,11 @@ export default {
           });
         })
         .catch(err => {
-          console.log("blue page query Test err:", err);
+          console.log("红票pdf上传错误:", err);
         });
       //发送pdf上传请求/end
     },
-    onSubmit() {
+    _onSubmit() {
       let postData = {
         OrderId: this.formData.orderId,
         InvoiceCode: this.formData.invoiceCode,
@@ -208,7 +211,7 @@ export default {
         .then(res => {
           console.log("红票上传返回：", res);
           if (res.data.code == 0 && res.data.isSuccess) {
-            if (res.data.message == "重复开票") {
+            if (res.data.message.indexOf("重复") >= 0) {
               this.$message({
                 showClose: true,
                 message: res.data.message + ",注意发票号不能重复！",
@@ -227,7 +230,7 @@ export default {
           console.log("红票上传返回错误：", err);
         });
     },
-    onCancel() {
+    _onCancel() {
       this.$refs.formWrap.resetFields();
       // this.$refs[formName].resetFields();
     }
