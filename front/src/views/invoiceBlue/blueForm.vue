@@ -69,6 +69,7 @@
 import dateUtil from "@/utils/date";
 import config from "@/config/paramsConfig";
 import mx_uploadFile from "@/mixins/mx_formUploadfile.js";
+
 // import axios from "axios";
 export default {
   name: "m-blue-form",
@@ -160,21 +161,23 @@ export default {
       } catch (err) {
         console.log(`${ivcTypeName}pdf上传过程错误:`, err);
       }
-    },
-    _submitData() {
-      let postData = {
-        OrderId: this.formData.orderId,
-        InvoiceCode: this.formData.invoiceCode,
-        InvoiceNo: this.formData.invoiceNo,
-        InvocieTime: this.formData.invoiceTime,
-        IvcTitle: this.formData.ivcTitle,
-        TotalPrice: this.formData.totalPrice,
-        PDFInfo: this.formData.pdfPath,
-        ReceiverName: config.receiverName
-      };
-      console.log("蓝票上传数据：", postData);
-      this._postData(postData, config.url.blueIvcUploadUrl);
     }
+    // _submitData() {
+    //   let parseIvcTime = parseTime(this.formData.invoiceTime, "{y}-{m}-{d}");
+    //   let postData = {
+    //     OrderId: this.formData.orderId,
+    //     InvoiceCode: this.formData.invoiceCode,
+    //     InvoiceNo: this.formData.invoiceNo,
+    //     InvocieTime: parseIvcTime,
+    //     IvcTitle: this.formData.ivcTitle,
+    //     TotalPrice: this.formData.totalPrice,
+    //     PDFInfo: this.formData.pdfPath,
+    //     ReceiverName: config.receiverName
+    //   };
+    //   console.log("蓝票上传数据：", postData);
+    //   return;
+    //   this._postData(postData, config.url.blueIvcUploadUrl);
+    // }
   }
 };
 </script>
