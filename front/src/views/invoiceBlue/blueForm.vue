@@ -1,7 +1,7 @@
 <template>
 <div class="blueFormWrap">
     <section class="title">发票信息</section>
-    <el-form class="formWrap" size="small" ref="formWrap" label-width="120px" :model="formData" :rules="formRules">
+    <el-form class="formWrap" size="small" ref="formWrap" label-width="120px" status-icon :model="formData" :rules="formRules">
             <el-row>
                 <el-col :offset="1" :span="10">
                     <el-form-item label="订单编号" prop="orderId">
@@ -54,8 +54,8 @@
             </el-row>
             <el-row>
                 <el-col :offset="1">
-                    <el-form-item label="PDF上传">
-                        <input id="file" ref="file" type="file" name="file" @change="_uploadFile" accept="application/pdf">
+                    <el-form-item label="PDF上传" prop="pdfPath">
+                        <input id="file" ref="file" type="file" name="file" @change="_uploadFileByCatch($event,config.ivcType.blue.name)" :v-model="formData.pdfPath"  accept="application/pdf">
                         <div class="fileNotice">（文件大小不能超过100KB）</div>
                     </el-form-item>
                 </el-col>
@@ -68,9 +68,11 @@
 <script type="text/ecmascript-6">
 import dateUtil from "@/utils/date";
 import config from "@/config/paramsConfig";
+import mx_uploadFile from "@/mixins/mx_formUploadfile.js";
 // import axios from "axios";
 export default {
   name: "m-blue-form",
+  mixins: [mx_uploadFile],
   props: [
     "formOrderId",
     "formInvoiceCode",
@@ -82,57 +84,6 @@ export default {
     "formReceiverTaxNo",
     "formReceiverName"
   ],
-  data() {
-    return {
-      formData: {
-        orderId: "",
-        invoiceCode: "",
-        invoiceNo: "",
-        ivcTitle: "",
-        totalPrice: "",
-        invoiceTime: "",
-        pdfPath: "",
-        receiverTaxNo: "",
-        receiverName: ""
-      },
-      formRules: {
-        orderId: [
-          { required: true, message: "订单编号不能为空", trigger: "blur" }
-        ],
-        invoiceCode: [
-          { required: true, message: "发票代码不能为空", trigger: "blur" }
-        ],
-        invoiceNo: [
-          { required: true, message: "发票号码不能为空", trigger: "blur" }
-        ],
-        ivcTitle: [
-          { required: true, message: "发票抬头不能为空", trigger: "blur" }
-        ],
-        receiverTaxNo: [
-          { required: true, message: "销货方税号不能为空", trigger: "blur" }
-        ],
-        receiverName: [
-          { required: true, message: "销货方公司名称不能为空", trigger: "blur" }
-        ],
-        totalPrice: [
-          { required: true, message: "发票金额不能为空", trigger: "blur" },
-          {
-            type: "number",
-            message: "开票金额需要包含两位小数",
-            trigger: "blur"
-          }
-        ],
-        invoiceTime: [
-          {
-            type: "date",
-            required: true,
-            message: "开票日期不能为空",
-            trigger: "change"
-          }
-        ]
-      }
-    };
-  },
   created() {
     this.formData.orderId = this.formOrderId;
     this.formData.receiverTaxNo = this.formReceiverTaxNo;
@@ -203,81 +154,26 @@ export default {
     /*为了监控form中控件值的变化，实现双向绑定而建立----------------*/
   },
   methods: {
-    _checkFileExt(path) {
-      if (!path.match(/.pdf$/i)) {
-        return false;
+    _uploadFileByCatch(event, ivcTypeName) {
+      try {
+        this._uploadFile(event, ivcTypeName);
+      } catch (err) {
+        console.log(`${ivcTypeName}pdf上传过程错误:`, err);
       }
-      return true;
     },
-    _checkSize(fileSize) {
-      let maxSize = 100 * 1024;
-      return fileSize < maxSize;
-    },
-    _uploadFile(e) {
-      let tempPath = e.target.value;
-      let file = e.target.files[0];
-      let fileSize = this.$refs.file.files[0].size;
-      let extMatch = this._checkFileExt(tempPath);
-      let sizeMatch = this._checkSize(fileSize);
-
-      if (!extMatch) {
-        this.$message({
-          showClose: true,
-          message: "注意：只能上传.pdf文件，不能上传其它类型哦~",
-          type: "error"
-        });
-        return;
-      }
-      if (!sizeMatch) {
-        this.$message({
-          showClose: true,
-          message: "注意：pdf文件大小不能超过100K哦~",
-          type: "error"
-        });
-        return;
-      }
-
-      let url = "/fileUpload";
-      //let formData = new FormData(this.$refs.formWrap.$el);
-      let formData = new FormData();
-      formData.append("mFile", file);
-      // console.log("formData.get(file):", formData.get("file"));
-      // console.log("this.$refs.file: ", this.$refs.file.files[0]);
-
-      this.$reqPost("/fileApis/fileApi/fileUpload", formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      })
-        .then(res => {
-          console.log("上传接口返回：", res.data.path);
-          let pdf_xiangduiPath = res.data.path;
-          if (!pdf_xiangduiPath) {
-            this.$message({
-              showClose: true,
-              message: "pdf上传失败，请重新再试 ！"
-            });
-            return;
-          }
-
-          let tempArray = pdf_xiangduiPath.split("\\");
-          let pdfName = tempArray[tempArray.length - 1];
-
-          //D:\APIService\SourceInvoicePDF
-          this.formData.pdfPath = "111.pdf"; //pdfName;
-
-          console.log("this.formData.pdfPath:", this.formData.pdfPath);
-
-          this.$message({
-            showClose: true,
-            message: res.data.path,
-            type: "success"
-          });
-        })
-        .catch(err => {
-          console.log("blue page query Test err:", err);
-        });
-    },
-    onSave() {
-      console.log(this.formData);
+    _submitData() {
+      let postData = {
+        OrderId: this.formData.orderId,
+        InvoiceCode: this.formData.invoiceCode,
+        InvoiceNo: this.formData.invoiceNo,
+        InvocieTime: this.formData.invoiceTime,
+        IvcTitle: this.formData.ivcTitle,
+        TotalPrice: this.formData.totalPrice,
+        PDFInfo: this.formData.pdfPath,
+        ReceiverName: config.receiverName
+      };
+      console.log("蓝票上传数据：", postData);
+      this._postData(postData, config.url.blueIvcUploadUrl);
     }
   }
 };

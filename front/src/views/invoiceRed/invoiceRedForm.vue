@@ -64,11 +64,12 @@
 <script type="text/ecmascript-6">
 import axios from "axios";
 import config from "@/config/paramsConfig";
-import mx_uploadFile from "@/mixins/formUploadfile.js";
-
+import mx_uploadFile from "@/mixins/mx_formUploadfile.js";
+import mx_postData from "@/mixins/mx_postData.js";
 export default {
-  mixins: [mx_uploadFile],
+  mixins: [mx_uploadFile, mx_postData],
   created() {
+    // console.log("this:", this);
     this.formData.orderId = this.$route.params.orderId;
     this.formData.blueInvoiceCode = this.$route.params.invoiceCode;
     this.formData.blueInvoiceNo = this.$route.params.invoiceNo;
@@ -81,12 +82,14 @@ export default {
   methods: {
     _onSubmit() {
       try {
+        // console.log('this.$refs["formWrap"]:', this.$refs["formWrap"]);
+        // return;
         this.$refs["formWrap"].validate(valid => {
           if (!valid) return;
           this._submitData();
         });
       } catch (err) {
-        console.log("红票上传所有数据过程错误：", err);
+        console.log("红票上传所有数据过程中错误：", err);
       }
     },
     _uploadFileByCatch(event, ivcTypeName) {
@@ -113,6 +116,7 @@ export default {
     _onCancel() {
       this.$refs.formWrap.resetFields();
       this.$refs.file.value = "";
+      this.formData.pdfPath = "";
       // this.$refs[formName].resetFields();
     }
   }

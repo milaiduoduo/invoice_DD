@@ -16,7 +16,7 @@
           <div>invoiceTime: {{item.invoiceTime}}</div>
           <div>pdfPath: {{item.pdfPath}}</div> -->
           <!-- 为了监控form中控件值的变化，实现双向绑定而建立 -->
-          <m-blue-form ref="blueForm"
+          <m-blue-form ref="blueFormWrap"
             :form-order-id="item.orderId"
             :form-invoice-code.sync="item.invoiceCode"
             :form-invoice-no.sync="item.invoiceNo"
@@ -43,7 +43,7 @@
 import blueForm from "./blueForm.vue";
 import axios from "axios";
 import config from "@/config/paramsConfig";
-
+import mx_postData from "@/mixins/mx_postData.js";
 let initFormData = {
   orderId: "",
   invoiceCode: "",
@@ -57,6 +57,7 @@ let initFormData = {
 };
 
 export default {
+  mixins: [mx_postData],
   data() {
     return {
       orderId: "",
@@ -64,60 +65,94 @@ export default {
     };
   },
   created() {
+    //初始化第一个Form对应的数据
+    // console.log("this:", this);
     this.orderId = this.$route.params.orderId;
     initFormData.orderId = this.orderId;
     this.formList.push(Object.create(initFormData));
   },
   methods: {
+    _submitData(postData) {
+      console.log("蓝票上传数据：", postData);
+      this._postData(postData, config.url.blueIvcUploadUrl);
+    },
     onAllSubmit() {
-      /*获取所有From字段的值，并发送请求*/
-      console.log("this.formList all submit:", this.formList);
-      for (let i = 0; i < this.formList.length; i++) {
-        let formData = this.formList[i];
-
-        let OrderId = formData.orderId;
-        let ReceiverTaxNo = formData.receiverTaxNo;
-        let ReceiverName = formData.receiverName;
-        let InvoiceCode = formData.invoiceCode;
-        let InvoiceNo = formData.invoiceNo;
-        let IvcTitle = formData.ivcTitle;
-        let TotalPrice = formData.totalPrice;
-        let InvocieTime = formData.invoiceTime;
-        let PDFInfo = formData.pdfPath;
-
-        axios
-          .post("/dataApis/api/invoice-blue", {
-            OrderId: OrderId,
-            ReceiverTaxNo: ReceiverTaxNo,
-            ReceiverName: ReceiverName,
-            InvoiceCode: InvoiceCode,
-            InvoiceNo: InvoiceNo,
-            IvcTitle: IvcTitle,
-            TotalPrice: TotalPrice,
-            InvocieTime: InvocieTime,
-            PDFInfo: PDFInfo
-          })
-          .then(res => {
-            console.log("蓝票上传[", i, "]返回：", res);
-            if (res.data.code == 0 && res.data.isSuccess) {
-              if (res.data.message == "重复开票") {
-                this.$message({
-                  showClose: true,
-                  message: res.data.message + ",注意发票号不能重复！",
-                  type: "error"
-                });
-              } else {
-                this.$message({
-                  showClose: true,
-                  message: "上传成功！",
-                  type: "success"
-                });
-              }
-            }
-          })
-          .catch(err => {
-            console.log("蓝票上传返回错误：", err);
+      try {
+        //提交前验证，保证每个数据项都符合验证规则的
+        let passFlag = true;
+        this.$refs["blueFormWrap"].forEach(item => {
+          console.log('item.$refs["formWrap"]', item.$refs["formWrap"]);
+          item.$refs["formWrap"].validate(valid => {
+            console.log("valid:", valid);
+            if (!valid) passFlag = valid;
           });
+        });
+        if (!passFlag) return;
+        console.log("数据验证通过，可以发出请求了！");
+
+        // return;
+        /*获取所有From字段的值，并发送请求*/
+        console.log("this.formList all submit:", this.formList);
+        for (let i = 0; i < this.formList.length; i++) {
+          let formData = this.formList[i];
+          let postData = {
+            OrderId: formData.orderId,
+            InvoiceCode: formData.invoiceCode,
+            InvoiceNo: formData.invoiceNo,
+            InvocieTime: formData.invoiceTime,
+            IvcTitle: formData.ivcTitle,
+            TotalPrice: formData.totalPrice,
+            PDFInfo: formData.pdfPath,
+            ReceiverName: formData.receiverName,
+            ReceiverTaxNo: formData.receiverTaxNo
+          };
+
+          this._submitData(postData);
+          // let OrderId = formData.orderId;
+          // let ReceiverTaxNo = formData.receiverTaxNo;
+          // let ReceiverName = formData.receiverName;
+          // let InvoiceCode = formData.invoiceCode;
+          // let InvoiceNo = formData.invoiceNo;
+          // let IvcTitle = formData.ivcTitle;
+          // let TotalPrice = formData.totalPrice;
+          // let InvocieTime = formData.invoiceTime;
+          // let PDFInfo = formData.pdfPath;
+          // axios
+          //   .post("/dataApis/api/invoice-blue", {
+          //     OrderId: OrderId,
+          //     ReceiverTaxNo: ReceiverTaxNo,
+          //     ReceiverName: ReceiverName,
+          //     InvoiceCode: InvoiceCode,
+          //     InvoiceNo: InvoiceNo,
+          //     IvcTitle: IvcTitle,
+          //     TotalPrice: TotalPrice,
+          //     InvocieTime: InvocieTime,
+          //     PDFInfo: PDFInfo
+          //   })
+          //   .then(res => {
+          //     console.log("蓝票上传[", i, "]返回：", res);
+          //     if (res.data.code == 0 && res.data.isSuccess) {
+          //       if (res.data.message == "重复开票") {
+          //         this.$message({
+          //           showClose: true,
+          //           message: res.data.message + ",注意发票号不能重复！",
+          //           type: "error"
+          //         });
+          //       } else {
+          //         this.$message({
+          //           showClose: true,
+          //           message: "上传成功！",
+          //           type: "success"
+          //         });
+          //       }
+          //     }
+          //   })
+          //   .catch(err => {
+          //     console.log("蓝票上传返回错误：", err);
+          //   });
+        }
+      } catch (err) {
+        console.log("蓝票上传所有数据过程中错误：", err);
       }
     },
     onCancel() {
