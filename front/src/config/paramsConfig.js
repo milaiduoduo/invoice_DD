@@ -19,7 +19,8 @@ let config = {
   filePathDirect: "\\SourceInvoicePDF\\",
   url: {
     redIvcUploadUrl: '/dataApis/api/invoice-red',
-    blueIvcUploadUrl: '/dataApis/api/invoice-blue'
+    blueIvcUploadUrl: '/dataApis/api/invoice-blue',
+    orderQueryUrl: '/dataApis/api/order'
   }
 }
 

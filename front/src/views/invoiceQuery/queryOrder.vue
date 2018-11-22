@@ -5,15 +5,15 @@
           <span class="sectionTitle">第一步：用订单号查询，以电子发票开票的订单.</span>
           <!-- 查询还未上传任何电子发票的订单,【数据从订单数据来】 -->
              <!-- <span>查询条件：订单号，XX时间段</span> -->
-             <el-form ref="queryform" size="mini" label-width="80px">
+             <el-form ref="queryform" :model="formData" :rules="formRules" status-icon size="mini" label-width="80px">
                  <el-row>
                      <el-col :span="8">
-                         <el-form-item label="订单编号">
-                            <el-input placeholder="请输入订单编号" v-model="queryOrderId"></el-input>
+                         <el-form-item label="订单编号" prop="queryOrderId">
+                            <el-input placeholder="请输入订单编号" v-model="formData.queryOrderId"></el-input>
                          </el-form-item>
                      </el-col>
                      <el-col :span="2">
-                            <el-button class="queryBtn" type="primary" size="small" @click="_onQuery">查询</el-button>
+                            <el-button :loading="loadingStatus" class="queryBtn" type="primary" size="small" @click="_onQuery">查询</el-button>
                      </el-col>
                  </el-row>
              </el-form>
@@ -33,7 +33,7 @@
               </template>
             </el-table-column>
         </el-table>
-        <div class="pagination">
+        <!-- <div class="pagination">
             <el-pagination 
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
@@ -43,22 +43,36 @@
                 :page-size="1"
                 :total=queryTotal>
             </el-pagination>
-        </div>
+        </div> -->
     </el-card>
 </div>
 </template>
 
 <script type="text/ecmascript-6">
 import axios from "axios";
+import config from "@/config/paramsConfig.js";
+
 export default {
   data() {
+    loadingStatus: false;
     return {
-      queryOrderId: "",
+      formData: {
+        queryOrderId: ""
+      },
+      formRules: {
+        queryOrderId: [
+          {
+            required: true,
+            message: "请输入一个订单号，开始你的查询！",
+            trigger: "blur"
+          }
+        ]
+      },
       queryResult: [],
-      pageSizes: [10, 30, 50, 100],
-      pageSize: 10,
-      currentPage: 1,
-      queryTotal: 130,
+      // pageSizes: [10, 30, 50, 100],
+      // pageSize: 10,
+      // currentPage: 1,
+      // queryTotal: 130,
       pageFromName: ""
     };
   },
@@ -96,45 +110,48 @@ export default {
       //   params: { orderId: row.orderId }
       // });
     },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
-    handleCurrentChange(val) {
-      this.currentPage = val;
-      console.log(`当前页: ${val}`);
-      console.log("currentPage:", this.currentPage);
-    },
     _onQuery() {
       //调查询接口查询“以电子发票开票的订单”
-      if (!this.queryOrderId) return;
-      axios
-        .get("/dataApis/api/order", {
-          params: {
-            orderId: this.queryOrderId
-          }
-        })
-        .then(res => {
-          let resultData = res.data.data;
-          if (!resultData) return;
-          resultData.forEach(element => {
-            console.log("each order:", element);
-            for (let item in element) {
-              // console.log("item:", item);
-              // console.log("elemtn.item", element[item]);
-              if (item == "orderTime") {
-                element[item] = element[item].replace("T", " ");
-              }
+      this.$refs["queryform"].validate(valid => {
+        if (!valid) return;
+        //开始查询
+        axios
+          .get(config.url.orderQueryUrl, {
+            params: {
+              orderId: this.queryOrderId
             }
-          });
-          this.queryResult = resultData;
+          })
+          .then(res => {
+            let resultData = res.data.data;
+            if (!resultData) return;
+            resultData.forEach(element => {
+              console.log("each order:", element);
+              for (let item in element) {
+                // console.log("item:", item);
+                // console.log("elemtn.item", element[item]);
+                if (item == "orderTime") {
+                  element[item] = element[item].replace("T", " ");
+                }
+              }
+            });
+            this.queryResult = resultData;
 
-          //设置翻页组件参数
-          this.queryTotal = resultData.length;
-        })
-        .catch(err => {
-          console.log("订单查询错误：", err);
-        });
+            //设置翻页组件参数
+            this.queryTotal = resultData.length;
+          })
+          .catch(err => {
+            console.log("订单查询错误：", err);
+          });
+      });
     }
+    // handleSizeChange(val) {
+    //   console.log(`每页 ${val} 条`);
+    // },
+    // handleCurrentChange(val) {
+    //   this.currentPage = val;
+    //   console.log(`当前页: ${val}`);
+    //   console.log("currentPage:", this.currentPage);
+    // }
   }
 };
 </script>
