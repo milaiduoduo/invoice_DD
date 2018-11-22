@@ -62,7 +62,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import axios from "axios";
+// import axios from "axios";
 import config from "@/config/paramsConfig";
 import mx_uploadFile from "@/mixins/mx_formUploadfile.js";
 import mx_postData from "@/mixins/mx_postData.js";
@@ -102,7 +102,7 @@ export default {
       }
     },
     _submitData() {
-      let parseIvcTime = parseTime(formData.invoiceTime, "{y}-{m}-{d}");
+      let parseIvcTime = parseTime(this.formData.invoiceTime, "{y}-{m}-{d}");
       let postData = {
         OrderId: this.formData.orderId,
         InvoiceCode: this.formData.invoiceCode,
