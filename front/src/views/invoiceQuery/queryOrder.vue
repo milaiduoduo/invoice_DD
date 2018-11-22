@@ -5,7 +5,7 @@
           <span class="sectionTitle">第一步：用订单号查询，以电子发票开票的订单.</span>
           <!-- 查询还未上传任何电子发票的订单,【数据从订单数据来】 -->
              <!-- <span>查询条件：订单号，XX时间段</span> -->
-             <el-form ref="queryform" :model="formData" :rules="formRules" status-icon size="mini" label-width="80px">
+             <el-form ref="queryform" :model="formData" :rules="formRules" size="mini" label-width="80px">
                  <el-row>
                      <el-col :span="8">
                          <el-form-item label="订单编号" prop="queryOrderId">
@@ -116,7 +116,10 @@ export default {
         this.loadingStatus = true;
         //调查询接口查询“以电子发票开票的订单”
         this.$refs["queryform"].validate(valid => {
-          if (!valid) return;
+          if (!valid) {
+            this.loadingStatus = false;
+            return;
+          }
           //开始查询
           axios
             .get(config.url.orderQueryUrl, {
@@ -126,28 +129,29 @@ export default {
             })
             .then(res => {
               let resultData = res.data.data;
-              if (!resultData) return;
+              if (!resultData) {
+                this.loadingStatus = false;
+                return;
+              }
               resultData.forEach(element => {
                 console.log("each order:", element);
                 for (let item in element) {
-                  // console.log("item:", item);
-                  // console.log("elemtn.item", element[item]);
                   if (item == "orderTime") {
-                    // element[item] = element[item].replace("T", " ");
-                    parseTime(element[item], "{y}-{m}-{d}");
+                    element[item] = parseTime(element[item], "{y}-{m}-{d}");
                   }
                 }
               });
               this.queryResult = resultData;
               this.loadingStatus = false;
-              //设置翻页组件参数
-              this.queryTotal = resultData.length;
+
+              // this.queryTotal = resultData.length;
             })
             .catch(err => {
               throw new Error("订单查询请求错误：", err);
             });
         });
       } catch (err) {
+        this.loadingStatus = false;
         console.log("订单查询过程错误：", err);
       }
     }
