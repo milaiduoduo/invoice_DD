@@ -32,8 +32,8 @@
             <el-button type="primary" @click="onAllSubmit">蓝票录入完毕，上传！</el-button>
             <el-button type="default" size="small" @click="onCancel">取消</el-button>
             <el-button type="success" size="small" @click="onAddInvoice"> + 继续录入蓝票</el-button> 
-            <el-button type="success" @click="onfileTest">测试文件服务接口</el-button>  
-            <el-button type="success" @click="onTest">测试数据接口</el-button>
+            <!-- <el-button type="success" @click="onfileTest">测试文件服务接口</el-button>  
+            <el-button type="success" @click="onTest">测试数据接口</el-button> -->
         </div>
     </el-card>
 </div>
@@ -41,7 +41,7 @@
 
 <script type="text/ecmascript-6">
 import blueForm from "./blueForm.vue";
-import axios from "axios";
+// import axios from "axios";
 import config from "@/config/paramsConfig";
 import mx_postData from "@/mixins/mx_postData.js";
 import { parseTime } from "@/utils";
@@ -139,28 +139,34 @@ export default {
         let orderId = this.formList[i].orderId;
         console.log("add ,序号：", i, " orderId:", orderId);
       }
-    },
-    onTest() {
-      axios
-        .post("/dataApis/api/invoice", {
-          PageInfo: {
-            PageSize: 100,
-            CurrentPage: 1
-          }
-        })
-        .then(res => {
-          console.log("调用京东接口测试。。。。");
-          console.log("京东接口已传发票数据：", res);
-        })
-        .catch(err => {
-          console.log("京东接口调用error:", err);
-        });
-    },
-    onfileTest() {
-      this.$reqPost("/fileApis/fileApi/post_test").then(res => {
-        console.log("Test上传接口返回：", res);
-      });
     }
+    // onTest() {
+    //   // axios
+    //   //   .post("/dataApis/api/invoice", {
+    //   //     PageInfo: {
+    //   //       PageSize: 100,
+    //   //       CurrentPage: 1
+    //   //     }
+    //   //   })
+    //   this.$reqPost("/dataApis/api/invoice", {
+    //     PageInfo: {
+    //       PageSize: 100,
+    //       CurrentPage: 1
+    //     }
+    //   })
+    //     .then(res => {
+    //       console.log("调用京东接口测试。。。。");
+    //       console.log("京东接口已传发票数据：", res);
+    //     })
+    //     .catch(err => {
+    //       console.log("京东接口调用error:", err);
+    //     });
+    // },
+    // onfileTest() {
+    //   this.$reqPost("/fileApis/fileApi/post_test").then(res => {
+    //     console.log("Test上传接口返回：", res);
+    //   });
+    // }
   },
 
   components: {

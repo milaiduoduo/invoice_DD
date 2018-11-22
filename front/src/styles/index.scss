@@ -86,3 +86,8 @@ a:hover {
 .redWrap {
   color: $mainRed;
 }
+
+//--覆盖原样式------------------------------------
+.el-input.is-disabled .el-input__inner {
+  color: #6f6f6f;
+}

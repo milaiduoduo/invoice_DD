@@ -1,4 +1,4 @@
-import axios from "axios";
+// import axios from "axios";
 export default {
   data() {
     return {
@@ -8,8 +8,9 @@ export default {
   methods: {
     _postData(postData, spec_url) {
       console.log("postData:", postData, "spec_url:", spec_url);
-      axios
-        .post(spec_url, postData)
+      // axios
+      //   .post(spec_url, postData)
+      this.$reqPost(spec_url, postData)
         .then(res => {
           console.log(`票据上传返回：`, res);
           if (res.data.code == 0 && res.data.isSuccess) {

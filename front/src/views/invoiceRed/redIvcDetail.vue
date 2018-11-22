@@ -134,7 +134,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import axios from "axios";
+// import axios from "axios";
 export default {
   data() {
     return {
@@ -188,15 +188,23 @@ export default {
         });
         return;
       }
-      axios
-        .all([
-          axios.get(
-            `/dataApis/api/invoice?invoiceCode=${invoiceCode}&invoiceNo=${invoiceNo}&orderId=${orderId}`
-          ),
-          axios.get(
-            `/dataApis/api/invoice?invoiceCode=${blueInvoiceCode}&invoiceNo=${blueInvoiceNo}&orderId=${orderId}`
-          )
-        ])
+      //   axios
+      //     .all([
+      //       axios.get(
+      //         `/dataApis/api/invoice?invoiceCode=${invoiceCode}&invoiceNo=${invoiceNo}&orderId=${orderId}`
+      //       ),
+      //       axios.get(
+      //         `/dataApis/api/invoice?invoiceCode=${blueInvoiceCode}&invoiceNo=${blueInvoiceNo}&orderId=${orderId}`
+      //       )
+      //     ])
+      this.$reqAll([
+        this.$reqGet(
+          `/dataApis/api/invoice?invoiceCode=${invoiceCode}&invoiceNo=${invoiceNo}&orderId=${orderId}`
+        ),
+        this.$reqGet(
+          `/dataApis/api/invoice?invoiceCode=${blueInvoiceCode}&invoiceNo=${blueInvoiceNo}&orderId=${orderId}`
+        )
+      ])
         .then(res => {
           console.log("红票详情:", res);
           let redIvcObj, blueIvcObj, orderObj;

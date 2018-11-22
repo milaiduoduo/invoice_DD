@@ -49,7 +49,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import axios from "axios";
+// import axios from "axios";
 import config from "@/config/paramsConfig.js";
 import { parseTime } from "@/utils";
 
@@ -120,14 +120,15 @@ export default {
             this.loadingStatus = false;
             return;
           }
+          console.log("开始查询");
           //开始查询
-          axios
-            .get(config.url.orderQueryUrl, {
-              params: {
-                orderId: this.formData.queryOrderId
-              }
-            })
+          this.$reqGet(config.url.orderQueryUrl, {
+            // params: {
+            orderId: this.formData.queryOrderId
+            // }
+          })
             .then(res => {
+              console.log("开始返回！");
               let resultData = res.data.data;
               if (!resultData) {
                 this.loadingStatus = false;

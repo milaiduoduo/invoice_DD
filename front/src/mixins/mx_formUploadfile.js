@@ -1,4 +1,4 @@
-import axios from "axios";
+// import axios from "axios";
 import config from "@/config/paramsConfig";
 export default {
   data() {
@@ -86,6 +86,7 @@ export default {
   },
   methods: {
     _uploadFile(e, ivcTypeName) {
+      console.log('在mixin的js中this:', this);
       this.ivcType = ivcTypeName;
       let tempPath = e.target.value;
       let file = e.target.files[0];
@@ -119,7 +120,8 @@ export default {
       let formData = new FormData();
       formData.append("mFile", file);
 
-      axios.post("/fileApis/fileApi/fileUpload", formData, {
+      // axios.post("/fileApis/fileApi/fileUpload", formData, {
+      this.$reqPost("/fileApis/fileApi/fileUpload", formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }

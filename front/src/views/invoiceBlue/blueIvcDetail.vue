@@ -113,7 +113,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import axios from "axios";
+// import axios from "axios";
 export default {
   data() {
     return {
@@ -150,10 +150,13 @@ export default {
         });
         return;
       }
-      axios
-        .get(
-          `/dataApis/api/invoice?invoiceCode=${invoiceCode}&invoiceNo=${invoiceNo}&orderId=${orderId}`
-        )
+      //   axios
+      //     .get(
+      //       `/dataApis/api/invoice?invoiceCode=${invoiceCode}&invoiceNo=${invoiceNo}&orderId=${orderId}`
+      //     )
+      this.$reqGet(
+        `/dataApis/api/invoice?invoiceCode=${invoiceCode}&invoiceNo=${invoiceNo}&orderId=${orderId}`
+      )
         .then(res => {
           console.log("蓝票详情：", res);
           let invoiceInfo = res.data.Data.InvoiceInfo;

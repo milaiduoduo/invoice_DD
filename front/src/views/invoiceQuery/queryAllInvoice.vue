@@ -51,7 +51,7 @@
 <script type="text/ecmascript-6">
 import queryIvcForm from "@/components/queryForm/queryUploadIvcForm.vue";
 import { parseTime } from "@/utils";
-import axios from "axios";
+// import axios from "axios";
 import config from "@/config/paramsConfig";
 let mockData = [
   {
@@ -130,8 +130,9 @@ export default {
           PageCurrent: this.currentPage
         }
       };
-      axios
-        .post("/dataApis/api/invoice", queryData)
+      // axios
+      //   .post("/dataApis/api/invoice", queryData)
+      this.$reqPost("/dataApis/api/invoice", queryData)
         .then(res => {
           // console.log("蓝票查询结果:", res);
           //if (!res || !res.data || !res.data.data || res.data.code != 0) return;
