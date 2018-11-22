@@ -66,6 +66,8 @@ import axios from "axios";
 import config from "@/config/paramsConfig";
 import mx_uploadFile from "@/mixins/mx_formUploadfile.js";
 import mx_postData from "@/mixins/mx_postData.js";
+import { parseTime } from "@/utils";
+
 export default {
   mixins: [mx_uploadFile, mx_postData],
   created() {
@@ -100,11 +102,12 @@ export default {
       }
     },
     _submitData() {
+      let parseIvcTime = parseTime(formData.invoiceTime, "{y}-{m}-{d}");
       let postData = {
         OrderId: this.formData.orderId,
         InvoiceCode: this.formData.invoiceCode,
         InvoiceNo: this.formData.invoiceNo,
-        InvocieTime: this.formData.invoiceTime,
+        InvocieTime: parseIvcTime,
         BlueInvoiceCode: this.formData.blueInvoiceCode,
         BlueInvoiceNo: this.formData.blueInvoiceNo,
         PDFInfo: this.formData.pdfPath,
