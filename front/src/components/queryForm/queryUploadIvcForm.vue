@@ -1,6 +1,6 @@
 <template>
 <div class="queryFormWrap">
-    <el-form ref="queryform" size="mini" label-width="100px" :model="queryFormData" :rules="formRules">
+    <el-form ref="ivcQueryform" size="mini" label-width="100px" :model="queryFormData" :rules="formRules">
                  <el-row>
                      <el-col :span="5">
                          <el-form-item label="发票类型：">
@@ -54,15 +54,17 @@ export default {
   data() {
     var dateGapValidate = (rule, value, callback) => {
       // console.log("dateGapValidate value:", value);
-      if (!value) return;
+      if (!value) callback();
       let startTime = value[0].getTime();
       let endTime = value[1].getTime();
       // console.log("startTime:", startTime);
       if (startTime < 0) {
+        // value.length = 0;
         callback(new Error("日期不能早于1970年1月1日!"));
       }
       if (endTime - startTime > 92 * 24 * 60 * 60 * 1000) {
-        callback(new Error("日期跨度不能超过三个月，约等于32天！"));
+        // value.length = 0;
+        callback(new Error("日期跨度不能超过三个月，约等于92天！"));
       }
       callback();
     };
@@ -111,12 +113,15 @@ export default {
   // },
   methods: {
     onQuery() {
-      this.$refs.queryform.validate(validate => {
+      console.log("queryForm子组件触发！");
+      console.log('this.$refs["ivcQueryform"]:', this.$refs["ivcQueryform"]);
+      this.$refs["ivcQueryform"].validate(valid => {
         console.log("queryForm子组件触发！但数据验证不通过！");
-        if (!validate) return;
+        if (!valid) return;
         console.log("queryForm子组件触发！切给父组件传递参数！");
         this.$emit("showQueryCondition", this.queryFormData);
       });
+      // this.$refs["ivcQueryform"].validateField("invoiceTimeGap");
     },
     optionChange() {
       this.$emit("ivcTypeOptionChange");
