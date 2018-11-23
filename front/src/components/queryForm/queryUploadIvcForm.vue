@@ -1,6 +1,6 @@
 <template>
 <div class="queryFormWrap">
-    <el-form ref="queryform" size="mini" label-width="100px" :model="queryFormData">
+    <el-form ref="queryform" size="mini" label-width="100px" :model="queryFormData" :rules="formRules">
                  <el-row>
                      <el-col :span="5">
                          <el-form-item label="发票类型：">
@@ -31,8 +31,8 @@
                  </el-row>
                  <el-row>
                      <el-col :span="10">
-                         <el-form-item label="开票日期：">
-                             <el-date-picker v-model="queryFormData.invoiceTimeGap"  type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+                         <el-form-item label="开票日期：" prop="invoiceTimeGap">
+                             <el-date-picker v-model="queryFormData.invoiceTimeGap" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" ></el-date-picker>
                          </el-form-item>
                      </el-col>
                      <el-col :span="5">
@@ -52,6 +52,20 @@ export default {
   name: "query-ivc-form",
   props: ["blueOnly"],
   data() {
+    var dateGapValidate = (rule, value, callback) => {
+      // console.log("dateGapValidate value:", value);
+      if (!value) return;
+      let startTime = value[0].getTime();
+      let endTime = value[1].getTime();
+      // console.log("startTime:", startTime);
+      if (startTime < 0) {
+        callback(new Error("日期不能早于1970年1月1日!"));
+      }
+      if (endTime - startTime > 92 * 24 * 60 * 60 * 1000) {
+        callback(new Error("日期跨度不能超过三个月，约等于32天！"));
+      }
+      callback();
+    };
     return {
       queryFormData: {
         selectedInvoiceType: this.blueOnly
@@ -75,13 +89,34 @@ export default {
           value: 2,
           label: "红票"
         }
-      ]
+      ],
+      formRules: {
+        invoiceTimeGap: [
+          // {
+          //   required: true,
+          //   message: "订单编号不能为空",
+          //   trigger: "blur"
+          // },
+          { validator: dateGapValidate, trigger: "blur" }
+        ]
+      }
     };
   },
+  // watch: {
+  //   "queryFormData.invoiceTimeGap"(newVal, oldVal) {
+  //     console.log("newVal, oldVal:", newVal, oldVal);
+  //     if (!newVal) {
+  //     }
+  //   }
+  // },
   methods: {
     onQuery() {
-      console.log("queryForm子组件触发！");
-      this.$emit("showQueryCondition", this.queryFormData);
+      this.$refs.queryform.validate(validate => {
+        console.log("queryForm子组件触发！但数据验证不通过！");
+        if (!validate) return;
+        console.log("queryForm子组件触发！切给父组件传递参数！");
+        this.$emit("showQueryCondition", this.queryFormData);
+      });
     },
     optionChange() {
       this.$emit("ivcTypeOptionChange");
