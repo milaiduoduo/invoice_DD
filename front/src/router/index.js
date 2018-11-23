@@ -31,7 +31,6 @@ export const constantRouterMap = [{
     component: () => import('@/views/404'),
     hidden: true
   },
-
   {
     path: '/',
     component: Layout,
@@ -49,6 +48,7 @@ export const constantRouterMap = [{
   {
     path: '/invoiceBlue',
     component: Layout,
+    name: 'invoiceBlue',
     children: [{
       path: 'queryOrder',
       name: 'queryOrder',
@@ -56,7 +56,7 @@ export const constantRouterMap = [{
       meta: {
         title: '蓝票上传',
         icon: 'form',
-        keepAlive: true
+        // keepAlive: true
       }
     }, {
       path: 'invoiceBlueFrom/:orderId',
@@ -72,6 +72,7 @@ export const constantRouterMap = [{
   {
     path: '/invoiceRed',
     component: Layout,
+    name: 'invoiceRed',
     children: [{
       path: 'queryBlueInvoice',
       name: 'queryBlueInvoice',
@@ -79,7 +80,7 @@ export const constantRouterMap = [{
       meta: {
         title: '红票上传',
         icon: 'nested',
-        keepAlive: true
+        // keepAlive: true
       }
     }, {
       path: 'invoiceRedForm/:orderId/:invoiceCode/:invoiceNo',
@@ -95,6 +96,7 @@ export const constantRouterMap = [{
   {
     path: '/queryAllInvoice',
     component: Layout,
+    name: 'queryAllInvoiceWrap',
     children: [{
       path: '',
       name: 'queryAllInvoice',
@@ -102,13 +104,14 @@ export const constantRouterMap = [{
       meta: {
         title: '已上传发票查询',
         icon: 'link',
-        keepAlive: true
+        // keepAlive: true
       }
     }]
   },
   {
     path: '/blueIvcDetail',
     component: Layout,
+    name: 'blueIvcDetailWrap',
     hidden: true,
     children: [{
       path: '/blueIvcDetail/:orderId/:invoiceCode/:invoiceNo',
@@ -123,6 +126,7 @@ export const constantRouterMap = [{
   {
     path: '/redIvcDetail',
     component: Layout,
+    name: 'redIvcDetailWrap',
     hidden: true,
     children: [{
       path: '/redIvcDetail/:orderId/:blueInvoiceCode/:blueInvoiceNo/:invoiceCode/:invoiceNo',
