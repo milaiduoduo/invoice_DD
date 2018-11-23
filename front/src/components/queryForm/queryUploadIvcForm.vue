@@ -54,7 +54,12 @@ export default {
   data() {
     var dateGapValidate = (rule, value, callback) => {
       // console.log("dateGapValidate value:", value);
-      if (!value) callback();
+      if (!value) {
+        console.log("null为啥不进来value:", value);
+        callback();
+        return;
+      }
+      console.log("日期间隔value:", value);
       let startTime = value[0].getTime();
       let endTime = value[1].getTime();
       // console.log("startTime:", startTime);
