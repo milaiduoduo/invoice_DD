@@ -13,7 +13,7 @@
                          </el-form-item>
                      </el-col>
                      <el-col :span="2">
-                            <el-button :loading="loadingStatus" class="queryBtn" type="primary" size="small" @click="_onQuery">查询</el-button>
+                            <el-button class="queryBtn" type="primary" size="small" @click="_onQuery">查询</el-button>
                      </el-col>
                  </el-row>
              </el-form>
@@ -56,7 +56,7 @@ import { parseTime } from "@/utils";
 export default {
   data() {
     return {
-      loadingStatus: false,
+      // loadingStatus: false,
       formData: {
         queryOrderId: ""
       },
@@ -113,11 +113,11 @@ export default {
     },
     _onQuery() {
       try {
-        this.loadingStatus = true;
+        // this.loadingStatus = true;
         //调查询接口查询“以电子发票开票的订单”
         this.$refs["queryform"].validate(valid => {
           if (!valid) {
-            this.loadingStatus = false;
+            // this.loadingStatus = false;
             return;
           }
           console.log("开始查询");
@@ -131,7 +131,7 @@ export default {
               console.log("开始返回！");
               let resultData = res.data.data;
               if (!resultData) {
-                this.loadingStatus = false;
+                // this.loadingStatus = false;
                 return;
               }
               resultData.forEach(element => {
@@ -143,7 +143,7 @@ export default {
                 }
               });
               this.queryResult = resultData;
-              this.loadingStatus = false;
+              // this.loadingStatus = false;
 
               // this.queryTotal = resultData.length;
             })
@@ -152,7 +152,7 @@ export default {
             });
         });
       } catch (err) {
-        this.loadingStatus = false;
+        // this.loadingStatus = false;
         console.log("订单查询过程错误：", err);
       }
     }
