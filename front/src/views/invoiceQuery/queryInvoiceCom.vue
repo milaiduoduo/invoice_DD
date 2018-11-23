@@ -96,7 +96,7 @@ export default {
       this.currentPage == 1;
       this.queryCondition = queryObj;
       // 父组件收到查询条件数据： queryObj
-      // console.log("父组件收到查询条件：", queryObj);
+      console.log("父组件收到查询条件：", queryObj);
       let queryData = this._makePostData();
 
       this._queryIvcData(queryData);

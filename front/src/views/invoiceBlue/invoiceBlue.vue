@@ -125,7 +125,7 @@ export default {
         this.formList.pop();
       }
       if (this.formList.length == 1) {
-        console.log(this.$refs.blueForm.$el);
+        // console.log(this.$refs.blueForm.$el);
         this.$message({
           showClose: true,
           message: "需要实现清空内容！！！！",
