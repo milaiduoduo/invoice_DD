@@ -4,11 +4,15 @@
         <div slot="header" class="headerWrap clearfix">
           <!-- <span>查询条件：发票类型, 订单号，发票代码，发票号，开票日期段，</span> -->
           <section class="queryWrap">
-            <query-ivc-form :blueOnly="false" @showQueryCondition="_getQueryConditions"></query-ivc-form>
+            <query-ivc-form :blueOnly="false" @showQueryCondition="onQuery"></query-ivc-form>
           </section>   
-		</div>
+		    </div>
         <div class="pagination top">
-            <el-pagination 
+          <el-button-group>
+              <el-button ref="btnPre" type="primary" icon="el-icon-arrow-left" :disabled="btnPreDisabled" size="small" @click="onQueryByPageNum('pre')">上一页</el-button>
+              <el-button ref="btnNext" type="primary" :disabled="btnNextDisabled"  size="small" @click="onQueryByPageNum('next')">下一页<i class="el-icon-arrow-right el-icon--right"></i></el-button>
+          </el-button-group>
+            <!-- <el-pagination 
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
                 :current-page = "currentPage"
@@ -16,10 +20,10 @@
                 :page-size="pageSize"
                 layout="total,sizes,prev,pager,next,jumper"
                 :total="queryTotal">
-            </el-pagination>
+            </el-pagination> -->
         </div>
         <el-table border stripe :data="queryResult" style="width:100%" height="300px">
-            <el-table-column fixed type="index"  label="序号" width="50">
+            <el-table-column fixed prop="seq" label="序号" width="50">
             </el-table-column>
             <el-table-column fixed prop="orderId" label="订单编号" width="120"></el-table-column>
             <el-table-column fixed prop="invoiceTitle" label="抬头" width="240"></el-table-column>
@@ -92,53 +96,94 @@ export default {
   },
   data() {
     return {
-      pageSizes: [10, 30, 50, 100],
+      // pageSizes: [10, 30, 50, 100],
       pageSize: 10,
       currentPage: 1,
       queryTotal: 0,
-      currentPage: 1,
       queryResult: [],
-      ivcType: config.ivcType
+      ivcType: config.ivcType,
+      queryCondition: {},
+      btnPreDisabled: false,
+      btnNextDisabled: false
     };
   },
   created() {
-    console.log("config:", config.ivcType.blue.name);
+    this._btnDisabledStatus(true, true);
+    console.log(this.btnPreDisabled, this.btnNextDisabled);
   },
   methods: {
-    _getQueryConditions(queryObj) {
-      //调数据服务器发票查询接口
+    onQuery(queryObj) {
+      //初始化this.currentPage == 1
+      this.currentPage == 1;
+      this.queryCondition = queryObj;
+      // 父组件收到查询条件数据： queryObj
       // console.log("父组件收到查询条件：", queryObj);
+      let queryData = this._makePostData();
+
+      this._queryIvcData(queryData);
+    },
+    onQueryByPageNum(direction) {
+      if (direction == "pre") {
+        console.log("1.in pre this.currentPage:", this.currentPage);
+
+        this.currentPage = Math.max(1, --this.currentPage);
+        console.log("2.in pre this.currentPage:", this.currentPage);
+      } else {
+        this.currentPage++;
+      }
+      console.log("this.currentPage:", this.currentPage);
+      let queryData = this._makePostData();
+      this._queryIvcData(queryData);
+    },
+    _makePostData() {
       let queryData = {
-        orderId: queryObj.orderId,
-        invoiceType: queryObj.selectedInvoiceType
-          ? queryObj.selectedInvoiceType
+        orderId: this.queryCondition.orderId,
+        invoiceType: this.queryCondition.selectedInvoiceType
+          ? this.queryCondition.selectedInvoiceType
           : "",
-        invoiceCode: queryObj.invoiceCode,
-        invoiceNo: queryObj.invoiceNo,
-        invoiceTimeStart: !queryObj.invoiceTimeGap
+        invoiceCode: this.queryCondition.invoiceCode,
+        invoiceNo: this.queryCondition.invoiceNo,
+        invoiceTimeStart: !this.queryCondition.invoiceTimeGap
           ? ""
-          : queryObj.invoiceTimeGap.length > 1
-            ? parseTime(queryObj.invoiceTimeGap[0], "{y}-{m}-{d}")
+          : this.queryCondition.invoiceTimeGap.length > 1
+            ? parseTime(this.queryCondition.invoiceTimeGap[0], "{y}-{m}-{d}")
             : "",
-        invoiceTimeEnd: !queryObj.invoiceTimeGap
+        invoiceTimeEnd: !this.queryCondition.invoiceTimeGap
           ? ""
-          : queryObj.invoiceTimeGap.length > 1
-            ? parseTime(queryObj.invoiceTimeGap[1], "{y}-{m}-{d}")
+          : this.queryCondition.invoiceTimeGap.length > 1
+            ? parseTime(this.queryCondition.invoiceTimeGap[1], "{y}-{m}-{d}")
             : "",
         PageInfo: {
           PageSize: this.pageSize,
-          PageCurrent: this.currentPage
+          CurrentPage: this.currentPage
         }
       };
-      // axios
-      //   .post("/dataApis/api/invoice", queryData)
+      console.log("已上传票据查询条件:", queryData);
+      return queryData;
+    },
+    _queryIvcData(queryData) {
       this.$reqPost("/dataApis/api/invoice", queryData)
         .then(res => {
           // console.log("蓝票查询结果:", res);
           //if (!res || !res.data || !res.data.data || res.data.code != 0) return;
+          console.log("res:", res);
+          this._btnDisabledStatus(false, false);
           this.queryResult = Array.isArray(res.data.data) ? res.data.data : [];
-          this.queryTotal = res.data.total;
+          // this.queryTotal = res.data.total;
+          // console.log("queryTotal:", this.queryTotal);
           console.log("票据查询结果数据：", this.queryResult);
+          if (res.data.total === 0) {
+            console.log("到最后一页的下一页！");
+            this.btnNextDisabled = true;
+            return;
+          }
+          console.log("this.currentPage:", this.currentPage);
+          if (this.currentPage == 1) {
+            this.btnPreDisabled = true;
+            return;
+          } else if (this.currentPage > 1) {
+            this.btnPreDisabled = false;
+          }
         })
         .catch(err => {
           console.log("票据查询出错：", err);
@@ -168,6 +213,10 @@ export default {
           //invoiceCode,pdfInfo,invoiceTime
         });
       }
+    },
+    _btnDisabledStatus(preFlag, nextFlag) {
+      this.btnPreDisabled = preFlag;
+      this.btnNextDisabled = nextFlag;
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
