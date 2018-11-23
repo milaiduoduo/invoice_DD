@@ -43,7 +43,7 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <el-row>
+                <!-- <el-row>
                     <el-col :offset="1" :span="10">
                         <el-form-item label="开票人" prop="drawer">
                             <el-input :disabled="true" v-model="formData.drawer"></el-input>
@@ -54,7 +54,7 @@
                             <el-input :disabled="true" v-model="formData.payee"></el-input>
                         </el-form-item>
                     </el-col>
-                </el-row>
+                </el-row> -->
                 <el-row>
                     <el-col :offset="1" :span="10">
                         <el-form-item label="开票日期" prop="invoiceTime">

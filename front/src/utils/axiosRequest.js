@@ -19,11 +19,13 @@ export default {
   install(vm) {
     vm.prototype.$reqGet = get;
     vm.prototype.$reqPost = post;
-    vm.prototype.$reqAll = all;
+    vm.prototype.$reqAll = function () {
+      console.log("我是axios封装方法all");
+    };
   }
 }
-export {
-  get,
-  post,
-  all
-};
+// export {
+//   get,
+//   post,
+//   all
+// };

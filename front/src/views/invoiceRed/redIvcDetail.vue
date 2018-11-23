@@ -30,7 +30,7 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
-                 <el-row>
+                 <!-- <el-row>
                     <el-col :offset="1" :span="10">
                         <el-form-item label="开票人" prop="drawer ">
                             <el-input :disabled="true" v-model="formData.drawer"></el-input>
@@ -41,7 +41,7 @@
                             <el-input :disabled="true" v-model="formData.payee"></el-input>
                         </el-form-item>
                     </el-col>
-                </el-row>
+                </el-row> -->
                  <el-row>
                     <el-col :offset="1" :span="10">
                         <el-form-item label="开票日期" prop="invoiceTime">
@@ -134,7 +134,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-// import axios from "axios";
+import axios from "axios";
 export default {
   data() {
     return {
@@ -197,14 +197,16 @@ export default {
       //         `/dataApis/api/invoice?invoiceCode=${blueInvoiceCode}&invoiceNo=${blueInvoiceNo}&orderId=${orderId}`
       //       )
       //     ])
-      this.$reqAll([
-        this.$reqGet(
-          `/dataApis/api/invoice?invoiceCode=${invoiceCode}&invoiceNo=${invoiceNo}&orderId=${orderId}`
-        ),
-        this.$reqGet(
-          `/dataApis/api/invoice?invoiceCode=${blueInvoiceCode}&invoiceNo=${blueInvoiceNo}&orderId=${orderId}`
-        )
-      ])
+
+      axios
+        .all([
+          this.$reqGet(
+            `/dataApis/api/invoice?invoiceCode=${invoiceCode}&invoiceNo=${invoiceNo}&orderId=${orderId}`
+          ),
+          this.$reqGet(
+            `/dataApis/api/invoice?invoiceCode=${blueInvoiceCode}&invoiceNo=${blueInvoiceNo}&orderId=${orderId}`
+          )
+        ])
         .then(res => {
           console.log("红票详情:", res);
           let redIvcObj, blueIvcObj, orderObj;
@@ -265,6 +267,75 @@ export default {
         .catch(err => {
           throw err;
         });
+
+      //   this.$reqAll([
+      //     this.$reqGet(
+      //       `/dataApis/api/invoice?invoiceCode=${invoiceCode}&invoiceNo=${invoiceNo}&orderId=${orderId}`
+      //     ),
+      //     this.$reqGet(
+      //       `/dataApis/api/invoice?invoiceCode=${blueInvoiceCode}&invoiceNo=${blueInvoiceNo}&orderId=${orderId}`
+      //     )
+      //   ])
+      //     .then(res => {
+      //       console.log("红票详情:", res);
+      //       let redIvcObj, blueIvcObj, orderObj;
+
+      //       if (res[0].data.Data.InvoiceInfo.blueInvoiceCode) {
+      //         redIvcObj = res[0].data.Data.InvoiceInfo;
+      //         // console.log("res[1]", res[1].data.Data.InvoiceInfo);
+      //         blueIvcObj = res[1].data.Data.InvoiceInfo;
+
+      //         orderObj = res[1].data.Data.OrderInfo;
+      //         console.log(
+      //           "1.redIvcObj,blueIvcObj,orderObj",
+      //           redIvcObj,
+      //           blueIvcObj,
+      //           orderObj
+      //         );
+      //       } else {
+      //         redIvcObj = res[1].data.Data.InvoiceInfo;
+      //         blueIvcObj = res[0].data.Data.InvoiceInfo;
+      //         orderObj = res[0].data.Data.OrderInfo;
+      //         console.log(
+      //           "2.redIvcObj,blueIvcObj,orderObj",
+      //           redIvcObj,
+      //           blueIvcObj,
+      //           orderObj
+      //         );
+      //       }
+
+      //       //   let blueIvcObj = res.data.Data.InvoiceInfo;
+      //       //   let orderObj = res.data.Data.OrderInfo;
+      //       console.log("redIvcObj:", redIvcObj);
+      //       console.log("blueIvcObj:", blueIvcObj);
+      //       console.log("orderObj:", orderObj);
+
+      //       this.formData.blueInvoiceCode = blueIvcObj.invoiceCode;
+      //       this.formData.blueInvoiceNo = blueIvcObj.invoiceNo;
+      //       this.formData.orderId = blueIvcObj.orderId;
+      //       this.formData.redInvoiceCode = redIvcObj.invoiceCode;
+      //       this.formData.redInvoiceNo = redIvcObj.invoiceNo;
+      //       this.formData.redPdfPath = redIvcObj.pdfInfo;
+      //       console.log("redIvcObj.pdfInfo:::::", redIvcObj.pdfInfo);
+      //       this.formData.redInvoiceTime = redIvcObj.invoiceTime;
+      //       this.formData.ivcTitle = blueIvcObj.invoiceTitle;
+      //       this.formData.totalPrice = blueIvcObj.totalPrice;
+      //       this.formData.invoiceTime = blueIvcObj.invoiceTime;
+
+      //       this.formData.receiverTaxNo = blueIvcObj.receiverTaxNo;
+      //       this.formData.receiverName = blueIvcObj.receiverName;
+      //       this.formData.drawer = blueIvcObj.drawer;
+      //       this.formData.payee = blueIvcObj.payee;
+      //       this.formData.consigneeFullName = orderObj.consigneeFullName;
+      //       this.formData.consigneeFullAddress = orderObj.consigneeFullAddress;
+      //       this.formData.consigneePhone =
+      //         orderObj.consigneeMobile + " 或 " + orderObj.consigneeTelephone;
+      //       this.formData.payType = orderObj.payType;
+      //       this.formData.orderPayment = orderObj.payment;
+      //     })
+      //     .catch(err => {
+      //       throw err;
+      //     });
     } catch (err) {
       console.log("Error! 红票详情错误:", err);
     }

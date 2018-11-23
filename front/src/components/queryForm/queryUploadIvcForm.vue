@@ -4,7 +4,7 @@
                  <el-row>
                      <el-col :span="5">
                          <el-form-item label="发票类型：">
-                             <el-select :disabled="blueOnly" v-model="queryFormData.selectedInvoiceType" placeholder="请选择">
+                             <el-select :disabled="blueOnly" v-model="queryFormData.selectedInvoiceType" placeholder="请选择" @change="optionChange">
                                 <el-option
                                     v-for="item in invoiceTypeOptions"
                                     :key="item.value"
@@ -82,6 +82,9 @@ export default {
     onQuery() {
       console.log("queryForm子组件触发！");
       this.$emit("showQueryCondition", this.queryFormData);
+    },
+    optionChange() {
+      this.$emit("ivcTypeOptionChange");
     }
   }
 };
