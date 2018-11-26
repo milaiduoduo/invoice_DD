@@ -15,9 +15,11 @@ import store from './store'
 import '@/icons' // icon
 import '@/permission' // permission control
 
-// plugins
+//custom plugins
 import axiosRequest from '@/utils/axiosRequest';
+import m_message from '@/utils/message.js';
 Vue.use(axiosRequest);
+Vue.use(m_message);
 
 Vue.use(ElementUI, {
   locale
