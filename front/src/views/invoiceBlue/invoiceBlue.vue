@@ -74,12 +74,12 @@ export default {
     this.formList.push(Object.create(initFormData));
   },
   methods: {
-    _submitData(postData) {
+    async _submitData(postData) {
       // console.log("蓝票上传数据：", postData);
       // return;
-      this._postData(postData, config.url.blueIvcUploadUrl);
+      await this._postData(postData, config.url.blueIvcUploadUrl);
     },
-    onAllSubmit() {
+    async onAllSubmit() {
       try {
         //提交前验证，保证每个数据项都符合验证规则的
         let passFlag = true;
@@ -114,10 +114,10 @@ export default {
           };
           console.log("蓝票上传数据postData:", postData);
           // return;
-          this._submitData(postData);
+          await this._submitData(postData);
         }
       } catch (err) {
-        console.log("蓝票上传所有数据过程中错误：", err);
+        this.$showMessage(err.toString(), "error");
       }
     },
     onCancel() {
