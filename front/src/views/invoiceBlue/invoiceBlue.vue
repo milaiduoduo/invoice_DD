@@ -125,12 +125,11 @@ export default {
         this.formList.pop();
       }
       if (this.formList.length == 1) {
-        // console.log(this.$refs.blueForm.$el);
-        this.$message({
-          showClose: true,
-          message: "需要实现清空内容！！！！",
-          type: "error"
-        });
+        this.resetFormField(
+          this.$refs["blueFormWrap"][0].$refs["formWrap"],
+          this.$refs["blueFormWrap"][0].$refs["file"],
+          this.formList[0]
+        );
       }
     },
     onAddInvoice() {

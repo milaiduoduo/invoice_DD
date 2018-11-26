@@ -131,12 +131,13 @@ export default {
           let pdf_relativePath = res.data.data.path;
           // console.log("pdf_relativePath:", pdf_relativePath);
           if (!pdf_relativePath) {
-            this.$message({
-              showClose: true,
-              message: "pdf上传失败，请重新再传 ！",
-              type: "error",
-              duration: 0
-            });
+            this.$showMessage("pdf上传失败，请重新再传 ！", "error");
+            // this.$message({
+            //   showClose: true,
+            //   message: "pdf上传失败，请重新再传 ！",
+            //   type: "error",
+            //   duration: 0
+            // });
             return;
           }
           // console.log("config.filePathDirect:", config);
@@ -162,34 +163,6 @@ export default {
         });
       //发送pdf上传请求/end
     },
-    // _postData(postData, spec_url) {
-    //   axios
-    //     .post(spec_url, postData)
-    //     .then(res => {
-    //       console.log(`票据上传返回：`, res);
-    //       if (res.data.code == 0 && res.data.isSuccess) {
-    //         if (res.data.message.indexOf("重复") >= 0) {
-    //           this.$message({
-    //             showClose: true,
-    //             message: res.data.message + ",注意发票号不能重复！",
-    //             type: "error",
-    //             duration: 0
-    //           });
-    //         } else {
-    //           this.$message({
-    //             showClose: true,
-    //             message: "上传成功！",
-    //             type: "success",
-    //             duration: 5000
-    //           });
-    //         }
-    //       }
-    //     })
-    //     .catch(err => {
-    //       throw new Error("发票数据上传错误：", err);
-    //       // console.log("红票上传返回错误：", err);
-    //     });
-    // },
     _fileCheck(file) {
       //文件合规判断/start
       let fileSize = file ? this.$refs.file.files[0].size : 0;
@@ -198,21 +171,23 @@ export default {
       let sizeMatch = this._checkSize(fileSize);
 
       if (!extMatch) {
-        this.$message({
-          showClose: true,
-          message: "注意：只能上传.pdf文件，不能上传其它类型哦~",
-          type: "error",
-          duration: 0
-        });
+        this.$showMessage("注意：只能上传.pdf文件，不能上传其它类型哦~", "error");
+        // this.$message({
+        //   showClose: true,
+        //   message: "注意：只能上传.pdf文件，不能上传其它类型哦~",
+        //   type: "error",
+        //   duration: 0
+        // });
         return false;
       }
       if (!sizeMatch) {
-        this.$message({
-          showClose: true,
-          message: "注意：pdf文件大小不能超过100K哦~",
-          type: "error",
-          duration: 0
-        });
+        this.$showMessage("注意：pdf文件大小不能超过100K哦~", "error");
+        // this.$message({
+        //   showClose: true,
+        //   message: "注意：pdf文件大小不能超过100K哦~",
+        //   type: "error",
+        //   duration: 0
+        // });
         return false;
       }
       return true;

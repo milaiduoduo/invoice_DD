@@ -117,10 +117,7 @@ export default {
       this._postData(postData, config.url.redIvcUploadUrl);
     },
     _onCancel() {
-      this.$refs.formWrap.resetFields();
-      this.$refs.file.value = "";
-      this.formData.pdfPath = "";
-      // this.$refs[formName].resetFields();
+      this.resetFormField(this.$refs.formWrap, this.$refs.file, this.formData);
     }
   }
 };
