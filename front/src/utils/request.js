@@ -35,7 +35,7 @@ aioxs_ins.interceptors.request.use(
   },
   error => {
     // Do something with request error
-    console.log(error) // for debug
+    console.log('axios拦截器request Err' + error) // for debug
     return Promise.reject(error)
   }
 )
@@ -83,12 +83,14 @@ aioxs_ins.interceptors.response.use(
   },
   error => {
     console.log('axios拦截器response Err' + error) // for debug
-    Message({
-      message: 'response interceptors Error:' + ' ' + error.message,
-      showClose: true,
-      type: 'error',
-      duration: 300 * 1000
-    })
+    
+    // Message({
+    //   message: 'response interceptors Error:' + ' ' + error.message,
+    //   showClose: true,
+    //   type: 'error',
+    //   duration: 300 * 1000
+    // })
+    tryHideFullScreenLoading();
     return Promise.reject(error)
   }
 )
