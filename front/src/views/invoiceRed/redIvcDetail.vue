@@ -180,12 +180,13 @@ export default {
         !invoiceCode ||
         !invoiceNo
       ) {
-        this.$message({
-          showClose: true,
-          message:
-            "订单号、红蓝发票号、红蓝票发票代码读取错误，请重新从列表点击进入！",
-          type: "error"
-        });
+        this.$showMessage("订单号、红蓝发票号、红蓝票发票代码读取错误，请重新从列表点击进入！", "error");
+        // this.$message({
+        //   showClose: true,
+        //   message:
+        //     "订单号、红蓝发票号、红蓝票发票代码读取错误，请重新从列表点击进入！",
+        //   type: "error"
+        // });
         return;
       }
       //   axios

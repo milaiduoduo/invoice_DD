@@ -209,7 +209,6 @@ export default {
         if (valid) {
           return true;
         } else {
-          // this.$message();
           return false;
         }
       });
