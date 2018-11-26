@@ -91,28 +91,35 @@ export default {
     console.log("blueOnlyFlag:", this.blueOnlyFlag);
   },
   methods: {
-    onQuery(queryObj) {
-      //初始化this.currentPage == 1
-      this.currentPage == 1;
-      this.queryCondition = queryObj;
-      // 父组件收到查询条件数据： queryObj
-      console.log("父组件收到查询条件：", queryObj);
-      let queryData = this._makePostData();
-
-      this._queryIvcData(queryData);
-    },
-    onQueryByPageNum(direction) {
-      if (direction == "pre") {
-        console.log("1.in pre this.currentPage:", this.currentPage);
-
-        this.currentPage = Math.max(1, --this.currentPage);
-        console.log("2.in pre this.currentPage:", this.currentPage);
-      } else {
-        this.currentPage++;
+    async onQuery(queryObj) {
+      try {
+        //初始化this.currentPage == 1
+        this.currentPage == 1;
+        this.queryCondition = queryObj;
+        // 父组件收到查询条件数据： queryObj
+        console.log("父组件收到查询条件：", queryObj);
+        let queryData = this._makePostData();
+        await this._queryIvcData(queryData);
+      } catch (err) {
+        this.$showMessage(err.toString(), "error");
       }
-      console.log("this.currentPage:", this.currentPage);
-      let queryData = this._makePostData();
-      this._queryIvcData(queryData);
+    },
+    async onQueryByPageNum(direction) {
+      try {
+        if (direction == "pre") {
+          console.log("1.in pre this.currentPage:", this.currentPage);
+
+          this.currentPage = Math.max(1, --this.currentPage);
+          console.log("2.in pre this.currentPage:", this.currentPage);
+        } else {
+          this.currentPage++;
+        }
+        console.log("this.currentPage:", this.currentPage);
+        let queryData = this._makePostData();
+        await this._queryIvcData(queryData);
+      } catch (err) {
+        this.$showMessage("翻页查询出错：" + err.toString(), "error");
+      }
     },
     _makePostData() {
       let queryData = {
@@ -140,33 +147,36 @@ export default {
       console.log("已上传票据查询条件:", queryData);
       return queryData;
     },
-    _queryIvcData(queryData) {
-      this.$reqPost("/dataApis/api/invoice", queryData)
-        .then(res => {
-          // console.log("蓝票查询结果:", res);
-          //if (!res || !res.data || !res.data.data || res.data.code != 0) return;
-          console.log("res:", res);
-          this._btnDisabledStatus(false, false);
-          this.queryResult = Array.isArray(res.data.data) ? res.data.data : [];
-          // this.queryTotal = res.data.total;
-          // console.log("queryTotal:", this.queryTotal);
-          console.log("票据查询结果数据：", this.queryResult);
-          if (res.data.total === 0) {
-            // console.log("到最后一页的下一页！");
-            this.btnNextDisabled = true;
-            return;
-          }
-          console.log("this.currentPage:", this.currentPage);
-          if (this.currentPage == 1) {
-            this.btnPreDisabled = true;
-            return;
-          } else if (this.currentPage > 1) {
-            this.btnPreDisabled = false;
-          }
-        })
-        .catch(err => {
-          console.log("票据查询出错：", err);
-        });
+    async _queryIvcData(queryData) {
+      try {
+        let res = await this.$reqPost("/dataApis/api/invoice", queryData);
+        // .then(res => {
+        console.log("发票查询结果:", res);
+        //if (!res || !res.data || !res.data.data || res.data.code != 0) return;
+        this._btnDisabledStatus(false, false);
+        this.queryResult = Array.isArray(res.data.data) ? res.data.data : [];
+        // this.queryTotal = res.data.total;
+        // console.log("queryTotal:", this.queryTotal);
+        console.log("票据查询结果数据：", this.queryResult);
+        if (res.data.total === 0) {
+          // console.log("到最后一页的下一页！");
+          this.btnNextDisabled = true;
+          return;
+        }
+        console.log("this.currentPage:", this.currentPage);
+        if (this.currentPage == 1) {
+          this.btnPreDisabled = true;
+          return;
+        } else if (this.currentPage > 1) {
+          this.btnPreDisabled = false;
+        }
+      } catch (err) {
+        throw new Error("发票查询出错：", err);
+      }
+      // })
+      // .catch(err => {
+      //   console.log("票据查询出错：", err);
+      // });
     },
     _toRedInvoiceForm(requiredItem) {
       console.log("红票传参：", requiredItem);

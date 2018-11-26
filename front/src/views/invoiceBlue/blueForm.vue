@@ -155,10 +155,14 @@ export default {
     /*为了监控form中控件值的变化，实现双向绑定而建立----------------*/
   },
   methods: {
-    _uploadFileByCatch(event, ivcTypeName) {
+    async _uploadFileByCatch(event, ivcTypeName) {
       try {
-        this._uploadFile(event, ivcTypeName);
+        await this._uploadFile(event, ivcTypeName);
       } catch (err) {
+        this.$showMessage(
+          `${ivcTypeName}pdf上传过程错误:${err.toString()}`,
+          "error"
+        );
         console.log(`${ivcTypeName}pdf上传过程错误:`, err);
       }
     }

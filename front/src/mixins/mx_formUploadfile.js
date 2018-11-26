@@ -85,83 +85,73 @@ export default {
     }
   },
   methods: {
-    _uploadFile(e, ivcTypeName) {
-      console.log('在mixin的js中this:', this);
-      this.ivcType = ivcTypeName;
-      let tempPath = e.target.value;
-      let file = e.target.files[0];
-      console.log("file:", file);
-      this.formData.pdfPath = tempPath;
+    async _uploadFile(e, ivcTypeName) {
+      try {
+        console.log('在mixin的js中this:', this);
+        this.ivcType = ivcTypeName;
+        let tempPath = e.target.value;
+        let file = e.target.files[0];
+        console.log("file:", file);
+        this.formData.pdfPath = tempPath;
 
-      //input file必录项检查
-      //只是为了错误提示的显示，并不返回任何东西
-      this.$refs["formWrap"].validateField("pdfPath");
-      if (!tempPath) return;
+        //input file必录项检查
+        //只是为了错误提示的显示，并不返回任何东西
+        this.$refs["formWrap"].validateField("pdfPath");
+        if (!tempPath) return;
 
-      //文件合规检查
-      let checkResult = this._fileCheck(file);
-      console.log("文件合规检查结果：", checkResult);
-      if (!checkResult) {
-        //清空不合规的文件的显示值
-        // console.log("input value:", this.$refs.file.value);
-        // 两者需要同时清空，缺一不可
-        this.$refs.file.value = "";
-        this.formData.pdfPath = "";
-        // console.log('this.$refs.file.value，this.formData.pdfPath:', this.$refs.file.value, "|", this.formData.pdfPath)
-        return;
-      }
+        //文件合规检查
+        let checkResult = this._fileCheck(file);
+        console.log("文件合规检查结果：", checkResult);
+        if (!checkResult) {
+          //清空不合规的文件的显示值
+          // console.log("input value:", this.$refs.file.value);
+          // 两者需要同时清空，缺一不可
+          this.$refs.file.value = "";
+          this.formData.pdfPath = "";
+          return;
+        }
 
+        //发送pdf上传请求
+        //let formData = new FormData(this.$refs.formWrap.$el);
+        // console.log("formData.get(file):", formData.get("file"));
+        // console.log("this.$refs.file: ", this.$refs.file.files[0]);
 
-      //发送pdf上传请求
-      //let formData = new FormData(this.$refs.formWrap.$el);
-      // console.log("formData.get(file):", formData.get("file"));
-      // console.log("this.$refs.file: ", this.$refs.file.files[0]);
+        let formData = new FormData();
+        formData.append("mFile", file);
 
-      let formData = new FormData();
-      formData.append("mFile", file);
-
-      // axios.post("/fileApis/fileApi/fileUpload", formData, {
-      this.$reqPost("/fileApis/fileApi/fileUpload", formData, {
+        let res = await this.$reqPost("/fileApis/fileApi/fileUpload", formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
-        })
-        .then(res => {
-          console.log("上传接口返回：", res.data.data.path);
-          let pdf_relativePath = res.data.data.path;
-          // console.log("pdf_relativePath:", pdf_relativePath);
-          if (!pdf_relativePath) {
-            this.$showMessage("pdf上传失败，请重新再传 ！", "error");
-            // this.$message({
-            //   showClose: true,
-            //   message: "pdf上传失败，请重新再传 ！",
-            //   type: "error",
-            //   duration: 0
-            // });
-            return;
-          }
-          // console.log("config.filePathDirect:", config);
-          // 把上传路径设置成后台api要求的样子
-          //D:\APIService\SourceInvoicePDF
-          let tempArray = pdf_relativePath.split("\\");
-
-          tempArray = pdf_relativePath.split(config.filePathDirect);
-          pdf_relativePath = tempArray[tempArray.length - 1];
-          this.formData.pdfPath = encodeURIComponent(pdf_relativePath);
-          // console.log("pdf_relativePath:", pdf_relativePath);
-          // console.log("this.formData.pdfPath:", this.formData.pdfPath);
-
-          // this.$message({
-          //   showClose: true,
-          //   message: res.data.path,
-          //   type: "success"
-          // });
-        })
-        .catch(err => {
-          throw new Error(`${this.ivcType}pdf上传错误:`, err);
-          console.log(`${this.ivcType}pdf上传错误:`, err);
         });
-      //发送pdf上传请求/end
+
+        console.log("上传接口返回：", res.data.data.path);
+        let pdf_relativePath = res.data.data.path;
+        // console.log("pdf_relativePath:", pdf_relativePath);
+        if (!pdf_relativePath) {
+          this.$showMessage("pdf上传失败，请重新再传 ！", "error");
+          return;
+        }
+        // 把上传路径设置成后台api要求的样子
+        //D:\APIService\SourceInvoicePDF
+        let tempArray = pdf_relativePath.split("\\");
+
+        tempArray = pdf_relativePath.split(config.filePathDirect);
+        pdf_relativePath = tempArray[tempArray.length - 1];
+        this.formData.pdfPath = encodeURIComponent(pdf_relativePath);
+
+        //采用promise catch的异步错误，往外层抛的时候，外层无法捕捉到这个错误，浏览器会报uncaught Error
+        // })
+        // .catch(err => {
+        //   throw new Error(`${this.ivcType}pdf上传错误:`, err);
+        //   console.log(`${this.ivcType}pdf上传错误:`, err);
+        // });
+
+      } catch (err) {
+        this.$refs.file.value = "";
+        this.formData.pdfPath = "";
+        throw err;
+      }
     },
     _fileCheck(file) {
       //文件合规判断/start
