@@ -49,7 +49,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import axios from "axios";
+// import axios from "axios";
 import config from "@/config/paramsConfig.js";
 import { parseTime } from "@/utils";
 
