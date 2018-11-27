@@ -180,7 +180,10 @@ export default {
         !invoiceCode ||
         !invoiceNo
       ) {
-        this.$showMessage("订单号、红蓝发票号、红蓝票发票代码读取错误，请重新从列表点击进入！", "error");
+        this.$showMessage(
+          "订单号、红蓝发票号、红蓝票发票代码读取错误，请重新从列表点击进入！",
+          "error"
+        );
         // this.$message({
         //   showClose: true,
         //   message:
@@ -202,7 +205,7 @@ export default {
       axios
         .all([
           this.$reqGet(
-            `/dataApis/api/invoice?invoiceCode=${invoiceCode}&invoiceNo=${invoiceNo}&orderId=${orderId}`
+            `/1dataApis/api/invoice?invoiceCode=${invoiceCode}&invoiceNo=${invoiceNo}&orderId=${orderId}`
           ),
           this.$reqGet(
             `/dataApis/api/invoice?invoiceCode=${blueInvoiceCode}&invoiceNo=${blueInvoiceNo}&orderId=${orderId}`
@@ -212,32 +215,31 @@ export default {
           console.log("红票详情:", res);
           let redIvcObj, blueIvcObj, orderObj;
 
-          if (res[0].data.Data.InvoiceInfo.blueInvoiceCode) {
-            redIvcObj = res[0].data.Data.InvoiceInfo;
-            // console.log("res[1]", res[1].data.Data.InvoiceInfo);
-            blueIvcObj = res[1].data.Data.InvoiceInfo;
+          if (res[0].data.data.invoiceInfo.blueInvoiceCode) {
+            redIvcObj = res[0].data.data.invoiceInfo;
+            blueIvcObj = res[1].data.data.invoiceInfo;
 
-            orderObj = res[1].data.Data.OrderInfo;
-            console.log(
-              "1.redIvcObj,blueIvcObj,orderObj",
-              redIvcObj,
-              blueIvcObj,
-              orderObj
-            );
+            orderObj = res[1].data.data.orderInfo;
+            // console.log(
+            //   "1.redIvcObj,blueIvcObj,orderObj",
+            //   redIvcObj,
+            //   blueIvcObj,
+            //   orderObj
+            // );
           } else {
-            redIvcObj = res[1].data.Data.InvoiceInfo;
-            blueIvcObj = res[0].data.Data.InvoiceInfo;
-            orderObj = res[0].data.Data.OrderInfo;
-            console.log(
-              "2.redIvcObj,blueIvcObj,orderObj",
-              redIvcObj,
-              blueIvcObj,
-              orderObj
-            );
+            redIvcObj = res[1].data.data.invoiceInfo;
+            blueIvcObj = res[0].data.data.invoiceInfo;
+            orderObj = res[0].data.data.orderInfo;
+            // console.log(
+            //   "2.redIvcObj,blueIvcObj,orderObj",
+            //   redIvcObj,
+            //   blueIvcObj,
+            //   orderObj
+            // );
           }
 
-          //   let blueIvcObj = res.data.Data.InvoiceInfo;
-          //   let orderObj = res.data.Data.OrderInfo;
+          //   let blueIvcObj = res.data.data.invoiceInfo;
+          //   let orderObj = res.data.data.orderInfo;
           console.log("redIvcObj:", redIvcObj);
           console.log("blueIvcObj:", blueIvcObj);
           console.log("orderObj:", orderObj);
@@ -266,79 +268,16 @@ export default {
           this.formData.orderPayment = orderObj.payment;
         })
         .catch(err => {
-          throw err;
+          this.$showMessage(
+            "红票详情页数据获取错误：" + err.toString(),
+            "error"
+          );
+          console.log("红票详情页数据获取错误:", err);
+          //   throw err;
         });
-
-      //   this.$reqAll([
-      //     this.$reqGet(
-      //       `/dataApis/api/invoice?invoiceCode=${invoiceCode}&invoiceNo=${invoiceNo}&orderId=${orderId}`
-      //     ),
-      //     this.$reqGet(
-      //       `/dataApis/api/invoice?invoiceCode=${blueInvoiceCode}&invoiceNo=${blueInvoiceNo}&orderId=${orderId}`
-      //     )
-      //   ])
-      //     .then(res => {
-      //       console.log("红票详情:", res);
-      //       let redIvcObj, blueIvcObj, orderObj;
-
-      //       if (res[0].data.Data.InvoiceInfo.blueInvoiceCode) {
-      //         redIvcObj = res[0].data.Data.InvoiceInfo;
-      //         // console.log("res[1]", res[1].data.Data.InvoiceInfo);
-      //         blueIvcObj = res[1].data.Data.InvoiceInfo;
-
-      //         orderObj = res[1].data.Data.OrderInfo;
-      //         console.log(
-      //           "1.redIvcObj,blueIvcObj,orderObj",
-      //           redIvcObj,
-      //           blueIvcObj,
-      //           orderObj
-      //         );
-      //       } else {
-      //         redIvcObj = res[1].data.Data.InvoiceInfo;
-      //         blueIvcObj = res[0].data.Data.InvoiceInfo;
-      //         orderObj = res[0].data.Data.OrderInfo;
-      //         console.log(
-      //           "2.redIvcObj,blueIvcObj,orderObj",
-      //           redIvcObj,
-      //           blueIvcObj,
-      //           orderObj
-      //         );
-      //       }
-
-      //       //   let blueIvcObj = res.data.Data.InvoiceInfo;
-      //       //   let orderObj = res.data.Data.OrderInfo;
-      //       console.log("redIvcObj:", redIvcObj);
-      //       console.log("blueIvcObj:", blueIvcObj);
-      //       console.log("orderObj:", orderObj);
-
-      //       this.formData.blueInvoiceCode = blueIvcObj.invoiceCode;
-      //       this.formData.blueInvoiceNo = blueIvcObj.invoiceNo;
-      //       this.formData.orderId = blueIvcObj.orderId;
-      //       this.formData.redInvoiceCode = redIvcObj.invoiceCode;
-      //       this.formData.redInvoiceNo = redIvcObj.invoiceNo;
-      //       this.formData.redPdfPath = redIvcObj.pdfInfo;
-      //       console.log("redIvcObj.pdfInfo:::::", redIvcObj.pdfInfo);
-      //       this.formData.redInvoiceTime = redIvcObj.invoiceTime;
-      //       this.formData.ivcTitle = blueIvcObj.invoiceTitle;
-      //       this.formData.totalPrice = blueIvcObj.totalPrice;
-      //       this.formData.invoiceTime = blueIvcObj.invoiceTime;
-
-      //       this.formData.receiverTaxNo = blueIvcObj.receiverTaxNo;
-      //       this.formData.receiverName = blueIvcObj.receiverName;
-      //       this.formData.drawer = blueIvcObj.drawer;
-      //       this.formData.payee = blueIvcObj.payee;
-      //       this.formData.consigneeFullName = orderObj.consigneeFullName;
-      //       this.formData.consigneeFullAddress = orderObj.consigneeFullAddress;
-      //       this.formData.consigneePhone =
-      //         orderObj.consigneeMobile + " 或 " + orderObj.consigneeTelephone;
-      //       this.formData.payType = orderObj.payType;
-      //       this.formData.orderPayment = orderObj.payment;
-      //     })
-      //     .catch(err => {
-      //       throw err;
-      //     });
     } catch (err) {
-      console.log("Error! 红票详情错误:", err);
+      this.$showMessage("红票详情页错误：" + err.toString(), "error");
+      console.log("红票详情错误:", err);
     }
   },
   methods: {
