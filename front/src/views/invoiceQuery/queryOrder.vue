@@ -49,7 +49,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-// import axios from "axios";
+import axios from "axios";
 import config from "@/config/paramsConfig.js";
 import { parseTime } from "@/utils";
 
@@ -105,55 +105,49 @@ export default {
     toBlueInvoice(row) {
       console.log("row: ", row);
       this.$router.push({ path: `invoiceBlueFrom/${row.orderId}` });
-
       // this.$router.push({
       //   name: "invoiceBlueFrom",
       //   params: { orderId: row.orderId }
       // });
     },
-    _onQuery() {
+    async _onQuery() {
       try {
-        // this.loadingStatus = true;
+        let validFlag = false;
         //调查询接口查询“以电子发票开票的订单”
         this.$refs["queryform"].validate(valid => {
-          if (!valid) {
-            // this.loadingStatus = false;
-            return;
-          }
-          console.log("开始查询");
-          //开始查询
-          this.$reqGet(config.url.orderQueryUrl, {
-            // params: {
-            orderId: this.formData.queryOrderId
-            // }
-          })
-            .then(res => {
-              console.log("开始返回！");
-              let resultData = res.data.data;
-              if (!resultData) {
-                // this.loadingStatus = false;
-                return;
-              }
-              resultData.forEach(element => {
-                console.log("each order:", element);
-                for (let item in element) {
-                  if (item == "orderTime") {
-                    element[item] = parseTime(element[item], "{y}-{m}-{d}");
-                  }
-                }
-              });
-              this.queryResult = resultData;
-              // this.loadingStatus = false;
-
-              // this.queryTotal = resultData.length;
-            })
-            .catch(err => {
-              throw new Error("订单查询请求错误：", err);
-            });
+          validFlag = valid;
         });
+        if (!validFlag) return;
+        //开始查询
+        let res = await axios
+          .get(config.url.orderQueryUrl, {
+            params: {
+              orderId: this.formData.queryOrderId
+            }
+          })
+          .catch(err => {
+            throw new Error("订单查询列表获取错误：" + err.toString());
+          });
+        if (!res) return;
+
+        console.log("开始返回！");
+        let resultData = res.data.data;
+        if (!resultData) {
+          // this.loadingStatus = false;
+          return;
+        }
+        resultData.forEach(element => {
+          console.log("each order:", element);
+          for (let item in element) {
+            if (item == "orderTime") {
+              element[item] = parseTime(element[item], "{y}-{m}-{d}");
+            }
+          }
+        });
+        this.queryResult = resultData;
       } catch (err) {
-        // this.loadingStatus = false;
-        console.log("订单查询过程错误：", err);
+        this.$showMessage("订单查询错误：" + err.toString(), "error");
+        console.log("订单查询错误：", err);
       }
     }
     // handleSizeChange(val) {
