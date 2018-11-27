@@ -119,15 +119,13 @@ export default {
         });
         if (!validFlag) return;
         //开始查询
-        let res = await axios
-          .get(config.url.orderQueryUrl, {
-            params: {
-              orderId: this.formData.queryOrderId
-            }
-          })
-          .catch(err => {
-            throw new Error("订单查询列表获取错误：" + err.toString());
-          });
+        let res = await this.$reqGet(config.url.orderQueryUrl, {
+          // params: {
+          orderId: this.formData.queryOrderId
+          // }
+        }).catch(err => {
+          throw new Error("订单查询列表获取错误：" + err.toString());
+        });
         if (!res) return;
 
         console.log("开始返回！");
