@@ -16,10 +16,13 @@ import '@/icons' // icon
 import '@/permission' // permission control
 
 //custom plugins
-import axiosRequest from '@/utils/axiosRequest';
+import m_axiosRequest from '@/utils/axiosRequest';
 import m_message from '@/utils/message.js';
-Vue.use(axiosRequest);
+import m_storage from '@/utils/storage.js';
+
+Vue.use(m_axiosRequest);
 Vue.use(m_message);
+Vue.use(m_storage);
 
 Vue.use(ElementUI, {
   locale

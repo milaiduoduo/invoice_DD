@@ -98,7 +98,8 @@ export default {
         this.queryCondition = queryObj;
         // 父组件收到查询条件数据： queryObj
         console.log("父组件收到查询条件：", queryObj);
-        await this._queryIvcData();
+        let queryData = this._makePostData();
+        await this._queryIvcData(queryData);
       } catch (err) {
         this.$showMessage(err.toString(), "error");
       }
@@ -114,7 +115,8 @@ export default {
           this.currentPage++;
         }
         console.log("this.currentPage:", this.currentPage);
-        await this._queryIvcData();
+        let queryData = this._makePostData();
+        await this._queryIvcData(queryData);
       } catch (err) {
         this.$showMessage("翻页查询出错：" + err.toString(), "error");
       }
@@ -142,12 +144,18 @@ export default {
           CurrentPage: this.currentPage
         }
       };
-      console.log("已上传票据查询条件:", queryData);
+      console.log(
+        "已上传票据查询条件this.queryCondition:",
+        this.queryCondition
+      );
+      //保存查询条件
+      this.$utils.setLocalStorage({
+        queryCondition: JSON.stringify(queryData)
+      });
       return queryData;
     },
-    async _queryIvcData() {
+    async _queryIvcData(queryData) {
       try {
-        let queryData = this._makePostData();
         let res = await this.$reqPost("/dataApis/api/invoice", queryData);
         // .then(res => {
         console.log("发票查询结果:", res);

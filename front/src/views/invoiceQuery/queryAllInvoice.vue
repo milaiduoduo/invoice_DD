@@ -12,6 +12,10 @@ export default {
   components: {
     [queryInvoiceCom.name]: queryInvoiceCom
   }
+  // created() {
+  //   let test = this.$utils.getLocalStorages("queryCondition");
+  //   console.log("get localstoage:", test);
+  // }
 };
 </script>
 

@@ -4,7 +4,7 @@
                  <el-row>
                      <el-col :span="5">
                          <el-form-item label="发票类型：">
-                             <el-select :disabled="blueOnly" v-model="queryFormData.selectedInvoiceType" placeholder="请选择" @change="optionChange">
+                             <el-select :disabled="blueOnly" v-model="queryFormData.invoiceType" placeholder="请选择" @change="optionChange">
                                 <el-option
                                     v-for="item in invoiceTypeOptions"
                                     :key="item.value"
@@ -75,7 +75,7 @@ export default {
     };
     return {
       queryFormData: {
-        selectedInvoiceType: this.blueOnly
+        invoiceType: this.blueOnly
           ? config.ivcType.blue.key
           : config.ivcType.all.key,
         orderId: "",
@@ -98,36 +98,44 @@ export default {
         }
       ],
       formRules: {
-        invoiceTimeGap: [
-          // {
-          //   required: true,
-          //   message: "订单编号不能为空",
-          //   trigger: "blur"
-          // },
-          { validator: dateGapValidate, trigger: "blur" }
-        ]
+        invoiceTimeGap: [{ validator: dateGapValidate, trigger: "blur" }]
       }
     };
   },
-  // watch: {
-  //   "queryFormData.invoiceTimeGap"(newVal, oldVal) {
-  //     console.log("newVal, oldVal:", newVal, oldVal);
-  //     if (!newVal) {
-  //     }
-  //   }
-  // },
   methods: {
     onQuery() {
-      console.log("queryForm子组件触发！");
-      console.log('this.$refs["ivcQueryform"]:', this.$refs["ivcQueryform"]);
+      // console.log("queryForm子组件触发！");
+      // console.log('this.$refs["ivcQueryform"]:', this.$refs["ivcQueryform"]);
       this.$refs["ivcQueryform"].validate(valid => {
-        console.log("queryForm子组件触发！但数据验证不通过！");
+        // console.log("queryForm子组件触发！但数据验证不通过！");
         if (!valid) return;
-        console.log("queryForm子组件触发！切给父组件传递参数！");
+        // console.log("queryForm子组件触发！切给父组件传递参数！");
+        // this.setQueryCondition();
         this.$emit("showQueryCondition", this.queryFormData);
       });
       // this.$refs["ivcQueryform"].validateField("invoiceTimeGap");
     },
+    // setQueryCondition() {
+    //   //把查询条件设置到localStorage
+    //   // console.log(
+    //   //   "存入localstroage:",
+    //   //   JSON.stringify(JSON.parse(JSON.stringify(this.queryFormData)))
+    //   // );
+    //   this.$utils.setLocalStorage({
+    //     queryCondition: JSON.stringify(this.queryFormData)
+    //   });
+    //   // this.$utils.setLocalStorage({
+    //   //   queryCondition: JSON.stringify(
+    //   //     JSON.parse(JSON.stringify(this.queryFormData))
+    //   //   )
+    //   // });
+    //   // this.$utils.setLocalStorage({
+    //   //   queryFromPage: JSON.stringify({
+    //   //     name: "blueIvcDetail",
+    //   //     queryCondition: JSON.parse(JSON.stringify(this.queryFormData))
+    //   //   })
+    //   // });
+    // },
     optionChange() {
       this.$emit("ivcTypeOptionChange");
     }
