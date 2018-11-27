@@ -8,10 +8,10 @@
 
 <script type="text/ecmascript-6">
 import queryInvoiceCom from "@/views/invoiceQuery/queryInvoiceCom";
-// import { parseTime } from "@/utils";
-// import config from "@/config/paramsConfig";
+import mx_operateRoute from "@/mixins/mx_operateRoute";
 
 export default {
+  mixins: [mx_operateRoute],
   components: {
     [queryInvoiceCom.name]: queryInvoiceCom
   }

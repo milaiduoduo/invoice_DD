@@ -5,7 +5,7 @@
           <!-- <span>查询条件：发票类型, 订单号，发票代码，发票号，开票日期段，</span> -->
           <slot name="headerTitle"></slot>
           <section class="queryWrap">
-            <query-ivc-form :blueOnly="blueOnlyFlag" @showQueryCondition="onQuery" @ivcTypeOptionChange="_ivcOptionChange"></query-ivc-form>
+            <query-ivc-form :blueOnly="blueOnlyFlag" @showQueryCondition="onGetQueryCondition" @ivcTypeOptionChange="_ivcOptionChange"></query-ivc-form>
           </section>   
 		    </div>
         <div class="pagination top">
@@ -91,15 +91,14 @@ export default {
     console.log("blueOnlyFlag:", this.blueOnlyFlag);
   },
   methods: {
-    async onQuery(queryObj) {
+    async onGetQueryCondition(queryObj) {
       try {
         //初始化this.currentPage == 1
         this.currentPage == 1;
         this.queryCondition = queryObj;
         // 父组件收到查询条件数据： queryObj
         console.log("父组件收到查询条件：", queryObj);
-        let queryData = this._makePostData();
-        await this._queryIvcData(queryData);
+        await this._queryIvcData();
       } catch (err) {
         this.$showMessage(err.toString(), "error");
       }
@@ -115,8 +114,7 @@ export default {
           this.currentPage++;
         }
         console.log("this.currentPage:", this.currentPage);
-        let queryData = this._makePostData();
-        await this._queryIvcData(queryData);
+        await this._queryIvcData();
       } catch (err) {
         this.$showMessage("翻页查询出错：" + err.toString(), "error");
       }
@@ -147,8 +145,9 @@ export default {
       console.log("已上传票据查询条件:", queryData);
       return queryData;
     },
-    async _queryIvcData(queryData) {
+    async _queryIvcData() {
       try {
+        let queryData = this._makePostData();
         let res = await this.$reqPost("/dataApis/api/invoice", queryData);
         // .then(res => {
         console.log("发票查询结果:", res);

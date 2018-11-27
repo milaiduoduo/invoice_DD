@@ -6,7 +6,9 @@
 
 <script type="text/ecmascript-6">
 import queryInvoiceCom from "@/views/invoiceQuery/queryInvoiceCom";
+import mx_operateRoute from "@/mixins/mx_operateRoute.js";
 export default {
+  mixins: [mx_operateRoute],
   components: {
     [queryInvoiceCom.name]: queryInvoiceCom
   }

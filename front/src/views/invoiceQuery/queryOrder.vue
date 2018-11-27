@@ -50,10 +50,12 @@
 
 <script type="text/ecmascript-6">
 // import axios from "axios";
+import mx_operateRoute from "@/mixins/mx_operateRoute.js";
 import config from "@/config/paramsConfig.js";
 import { parseTime } from "@/utils";
 
 export default {
+  mixins: [mx_operateRoute],
   data() {
     return {
       // loadingStatus: false,
@@ -77,19 +79,19 @@ export default {
       pageFromName: ""
     };
   },
-  beforeRouteEnter(to, from, next) {
-    console.log("from:", from);
-    next(vm => {
-      vm.pageFromName = from.name;
-      if (vm.pageFromName == "invoiceBlueFrom") {
-        vm.formData.queryOrderId = from.params.orderId;
-        console.log("重新查询：", vm.pageFromName);
-        // 再次按回传的orderId查询订单数据
-        // console.log("this.queryOrderId:", this.queryOrderId);
-        vm._onQuery();
-      }
-    });
-  },
+  // beforeRouteEnter(to, from, next) {
+  //   console.log("from:", from);
+  //   next(vm => {
+  //     vm.pageFromName = from.name;
+  //     if (vm.pageFromName == "invoiceBlueFrom") {
+  //       vm.formData.queryOrderId = from.params.orderId;
+  //       console.log("重新查询：", vm.pageFromName);
+  //       // 再次按回传的orderId查询订单数据
+  //       // console.log("this.queryOrderId:", this.queryOrderId);
+  //       vm._onQuery();
+  //     }
+  //   });
+  // },
   // 疑问activated与beforeRouteEnter中的顺序，activated中为何this.pageFromName和this.queryOrderId 取值为空？
   // activated() {
   //   // console.log("this.queryTotal:", this.queryTotal);
