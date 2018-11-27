@@ -1,6 +1,8 @@
 let config = {
   receiverTaxNo: "91650103599163841F",
   receiverName: "乌鲁木齐华鑫智宏商贸有限公司",
+  preBlueInvoiceCode: "065001800111",
+  preRedInvoiceCode: "065001800112",
   ivcType: {
     all: {
       key: 0,

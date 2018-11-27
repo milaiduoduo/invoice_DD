@@ -8,7 +8,7 @@
         </div>
         <div class="redFormWrap">
             <div class="title">发票信息</div>
-            <el-form class="formWrap" size="small" ref="formWrap" status-icon label-width="120px" :model="formData" :rules="formRules">
+            <el-form class="formWrap" size="small" ref="formWrap" status-icon label-width="210px" :model="formData" :rules="formRules">
                 <el-row>
                 <el-col :offset="1" :span="10">
                     <el-form-item label="订单编号" prop="orderId">
@@ -30,7 +30,7 @@
                 </el-row>
                 <el-row>
                     <el-col :offset="1" :span="10">
-                        <el-form-item label="红票代码" prop="invoiceCode">
+                        <el-form-item label="红票代码（来至预设可修改）" prop="invoiceCode">
                             <el-input v-model="formData.invoiceCode"></el-input>
                         </el-form-item>
                     </el-col>
@@ -70,6 +70,11 @@ import { parseTime } from "@/utils";
 
 export default {
   mixins: [mx_uploadFile, mx_postData],
+  data() {
+    return {
+      ivcType: config.ivcType.red.name
+    };
+  },
   created() {
     // console.log("this:", this);
     this.formData.orderId = this.$route.params.orderId;

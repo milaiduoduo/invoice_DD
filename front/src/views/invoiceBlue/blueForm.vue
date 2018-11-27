@@ -1,7 +1,7 @@
 <template>
 <div class="blueFormWrap">
     <section class="title">发票信息</section>
-    <el-form class="formWrap" size="small" ref="formWrap" label-width="120px" status-icon :model="formData" :rules="formRules">
+    <el-form class="formWrap" size="small" ref="formWrap" label-width="210px" status-icon :model="formData" :rules="formRules">
             <el-row>
                 <el-col :offset="1" :span="10">
                     <el-form-item label="订单编号" prop="orderId">
@@ -11,7 +11,7 @@
             </el-row>
             <el-row>
                 <el-col :offset="1" :span="10">
-                    <el-form-item label="发票代码" prop="invoiceCode">
+                    <el-form-item label="发票代码（来至预设可修改）" prop="invoiceCode">
                         <el-input v-model="formData.invoiceCode"></el-input>
                     </el-form-item>
                 </el-col>
@@ -85,6 +85,11 @@ export default {
     "formReceiverTaxNo",
     "formReceiverName"
   ],
+  data() {
+    return {
+      ivcType: config.ivcType.blue.name
+    };
+  },
   created() {
     this.formData.orderId = this.formOrderId;
     this.formData.receiverTaxNo = this.formReceiverTaxNo;

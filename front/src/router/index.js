@@ -138,6 +138,20 @@ export const constantRouterMap = [{
       }
     }]
   },
+  {
+    path: '/sysConfig',
+    component: Layout,
+    name: 'sysConfigWrap',
+    children: [{
+      path: '',
+      name: 'sysConfig',
+      component: () => import('@/views/setting/sysConfig'),
+      meta: {
+        title: "参数设置",
+        icon: 'link'
+      }
+    }]
+  },
   // {
   //   path: '/test',
   //   component: Layout,
