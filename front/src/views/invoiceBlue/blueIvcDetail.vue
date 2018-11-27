@@ -162,7 +162,7 @@ export default {
     async _getDetailData(orderId, invoiceCode, invoiceNo) {
       try {
         let res = await this.$reqGet(
-          `/1dataApis/api/invoice?invoiceCode=${invoiceCode}&invoiceNo=${invoiceNo}&orderId=${orderId}`
+          `/dataApis/api/invoice?invoiceCode=${invoiceCode}&invoiceNo=${invoiceNo}&orderId=${orderId}`
         ).catch(err => {
           throw new Error("蓝票详情数据获取错误：" + err.toString());
           //this.$showMessage("蓝票详情数据获取错误：" + err.toString(), "error");
