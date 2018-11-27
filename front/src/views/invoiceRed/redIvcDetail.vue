@@ -205,7 +205,7 @@ export default {
       axios
         .all([
           this.$reqGet(
-            `/1dataApis/api/invoice?invoiceCode=${invoiceCode}&invoiceNo=${invoiceNo}&orderId=${orderId}`
+            `/dataApis/api/invoice?invoiceCode=${invoiceCode}&invoiceNo=${invoiceNo}&orderId=${orderId}`
           ),
           this.$reqGet(
             `/dataApis/api/invoice?invoiceCode=${blueInvoiceCode}&invoiceNo=${blueInvoiceNo}&orderId=${orderId}`

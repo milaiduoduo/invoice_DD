@@ -162,11 +162,12 @@ export default {
     async _getDetailData(orderId, invoiceCode, invoiceNo) {
       try {
         let res = await this.$reqGet(
-          `/dataApis/api/invoice?invoiceCode=${invoiceCode}&invoiceNo=${invoiceNo}&orderId=${orderId}`
+          `/1dataApis/api/invoice?invoiceCode=${invoiceCode}&invoiceNo=${invoiceNo}&orderId=${orderId}`
         ).catch(err => {
-          this.$showMessage("蓝票详情数据获取错误：" + err.toString(), "error");
+          throw new Error("蓝票详情数据获取错误：" + err.toString());
+          //this.$showMessage("蓝票详情数据获取错误：" + err.toString(), "error");
         });
-        // .then(res => {
+        // 此处也可以不写catch，async函数内部的try-catch能够捕获到异常。
         console.log("蓝票详情：", res);
         if (!res) return;
         let invoiceInfo = res.data.data.invoiceInfo;
@@ -192,7 +193,9 @@ export default {
         this.formData.payType = orderInfo.payType;
         this.formData.orderPayment = orderInfo.payment;
       } catch (err) {
-        throw err;
+        this.$showMessage(err.toString(), "error");
+        console.log("蓝票获取数据错误：", err);
+        //throw err; 异步异常抛出去后无法被捕获！
       }
     }
   }
