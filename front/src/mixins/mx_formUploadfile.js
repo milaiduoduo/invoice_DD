@@ -84,6 +84,13 @@ export default {
       }
     }
   },
+  created() {
+    if (this.ivcType.indexOf(config.ivcType.blue.name) >= 0) {
+      this.formData.invoiceCode = config.preBlueInvoiceCode;
+    } else {
+      this.formData.invoiceCode = config.preRedInvoiceCode;
+    }
+  },
   methods: {
     async _uploadFile(e, ivcTypeName) {
       try {
