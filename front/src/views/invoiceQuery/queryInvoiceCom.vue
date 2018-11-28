@@ -61,7 +61,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import queryIvcForm from "@/components/queryForm/queryUploadIvcForm.vue";
+import queryIvcForm from "@/components/queryForm/queryIvcForm.vue";
 import { parseTime } from "@/utils";
 // import axios from "axios";
 import config from "@/config/paramsConfig";
@@ -96,8 +96,7 @@ export default {
         //初始化this.currentPage == 1
         this.currentPage == 1;
         this.queryCondition = queryObj;
-        // 父组件收到查询条件数据： queryObj
-        console.log("父组件收到查询条件：", queryObj);
+
         let queryData = this._makePostData();
         await this._queryIvcData(queryData);
       } catch (err) {
@@ -124,53 +123,75 @@ export default {
     _makePostData() {
       let queryData = {
         orderId: this.queryCondition.orderId,
-        invoiceType: this.queryCondition.selectedInvoiceType
-          ? this.queryCondition.selectedInvoiceType
+        invoiceType: this.queryCondition.invoiceType
+          ? this.queryCondition.invoiceType
           : "",
         invoiceCode: this.queryCondition.invoiceCode,
         invoiceNo: this.queryCondition.invoiceNo,
         invoiceTimeStart: !this.queryCondition.invoiceTimeGap
           ? ""
-          : this.queryCondition.invoiceTimeGap.length > 1
-            ? parseTime(this.queryCondition.invoiceTimeGap[0], "{y}-{m}-{d}")
-            : "",
+          : this.queryCondition.invoiceTimeGap[0],
         invoiceTimeEnd: !this.queryCondition.invoiceTimeGap
           ? ""
-          : this.queryCondition.invoiceTimeGap.length > 1
-            ? parseTime(this.queryCondition.invoiceTimeGap[1], "{y}-{m}-{d}")
-            : "",
+          : this.queryCondition.invoiceTimeGap[1],
+        // invoiceTimeStart: !this.queryCondition.invoiceTimeGap
+        //   ? ""
+        //   : this.queryCondition.invoiceTimeGap.length > 1
+        //     ? parseTime(this.queryCondition.invoiceTimeGap[0], "{y}-{m}-{d}")
+        //     : "",
+        // invoiceTimeEnd: !this.queryCondition.invoiceTimeGap
+        //   ? ""
+        //   : this.queryCondition.invoiceTimeGap.length > 1
+        //     ? parseTime(this.queryCondition.invoiceTimeGap[1], "{y}-{m}-{d}")
+        //     : "",
         PageInfo: {
           PageSize: this.pageSize,
           CurrentPage: this.currentPage
         }
       };
+      // 父组件收到查询条件数据： queryObj
+      // console.log("父组件收到查询条件：", this.queryCondition);
+      // console.log("post数据参数条件:", queryData);
+
+      let queryConditionForSave = Object.assign({}, this.queryCondition, {
+        PageInfo: {
+          ...queryData.PageInfo
+        }
+      });
+      // {
+      //   ...this.queryCondition
+      // };
+
+      // console.log("构造的需要保存的查询条件1：", queryConditionForSave);
       console.log(
-        "已上传票据查询条件this.queryCondition:",
-        this.queryCondition
+        "构造的需要保存的查询条件2：",
+        JSON.stringify(queryConditionForSave)
       );
       //保存查询条件
       this.$utils.setLocalStorage({
-        queryCondition: JSON.stringify(queryData)
+        queryCondition: JSON.stringify(queryConditionForSave)
       });
+
       return queryData;
     },
     async _queryIvcData(queryData) {
       try {
         let res = await this.$reqPost("/dataApis/api/invoice", queryData);
+        console.log("发票查询参数：", queryData);
         // .then(res => {
-        console.log("发票查询结果:", res);
-        //if (!res || !res.data || !res.data.data || res.data.code != 0) return;
+        // console.log("发票查询结果:", res);
+        if (!res || !res.data || !res.data.data || res.data.code != 0) return;
         this._btnDisabledStatus(false, false);
         this.queryResult = Array.isArray(res.data.data) ? res.data.data : [];
         // this.queryTotal = res.data.total;
         // console.log("queryTotal:", this.queryTotal);
-        console.log("票据查询结果数据：", this.queryResult);
+        // console.log("票据查询结果数据：", this.queryResult);
         if (res.data.total === 0) {
           // console.log("到最后一页的下一页！");
           this.btnNextDisabled = true;
           return;
         }
-        console.log("this.currentPage:", this.currentPage);
+        // console.log("this.currentPage:", this.currentPage);
         if (this.currentPage == 1) {
           this.btnPreDisabled = true;
           return;

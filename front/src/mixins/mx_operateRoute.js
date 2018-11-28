@@ -1,7 +1,23 @@
 export default {
   beforeRouteEnter(to, from, next) {
-    console.log("from:", from);
-    let queryCondition;
+    // console.log("from:", from);
+    let queryCondition, queryConditionForFrom;
+
+    function setQueryCondition(vm) {
+      queryCondition = vm.$utils.getLocalStorages("queryCondition");
+      if (!queryCondition) return;
+      queryConditionForFrom = JSON.parse(queryCondition.queryCondition);
+      queryCondition = JSON.parse(queryCondition.queryCondition)
+      // console.log("路由钩子得到的Form查询显示：", queryConditionForFrom);
+      if (vm.$children[0].$children[0].$children[0].queryFormData) vm.$children[0].$children[0].$children[0].queryFormData = queryConditionForFrom;
+      queryCondition.invoiceType = queryConditionForFrom.invoiceType == 0 ? "" : queryConditionForFrom.invoiceType;
+      // console.log("queryConditionForFrom.invoiveTimeGap:", queryConditionForFrom, queryConditionForFrom.invoiceTimeGap);
+      queryCondition.invoiceTimeStart = !queryConditionForFrom.invoiceTimeGap ? "" : queryConditionForFrom.invoiceTimeGap[0];
+      queryCondition.invoiceTimeEnd = !queryConditionForFrom.invoiceTimeGap ? "" : queryConditionForFrom.invoiceTimeGap[1];
+
+      // console.log("路由钩子得到的post参数：", queryCondition);
+      vm.$children[0]._queryIvcData(queryCondition);
+    }
     next(vm => {
       vm.pageFromName = from.name;
       switch (vm.pageFromName) {
@@ -11,32 +27,13 @@ export default {
           vm._onQuery();
           break;
         case "blueIvcDetail":
-          console.log("vm:::", vm);
-          //vm.$children[0] 因为是子控件
-          queryCondition = vm.$utils.getLocalStorages("queryCondition");
-          if (!queryCondition) break;
-          queryCondition = JSON.parse(queryCondition.queryCondition);
-          console.log("钩子函数中构造查询条件：", queryCondition)
-          vm.$children[0].$children[0].$children[0].queryFormData = queryCondition;
-          vm.$children[0]._queryIvcData(queryCondition);
+          setQueryCondition(vm);
           break;
         case "redIvcDetail":
-          console.log("vm:::", vm);
-          queryCondition = vm.$utils.getLocalStorages("queryCondition");
-          if (!queryCondition) break;
-          queryCondition = JSON.parse(queryCondition.queryCondition);
-          console.log("钩子函数中构造查询条件：", queryCondition)
-          vm.$children[0].$children[0].$children[0].queryFormData = queryCondition;
-          vm.$children[0]._queryIvcData(queryCondition);
+          setQueryCondition(vm);
           break;
         case "invoiceRedForm":
-          console.log("vm:::", vm);
-          queryCondition = vm.$utils.getLocalStorages("queryCondition");
-          if (!queryCondition) break;
-          queryCondition = JSON.parse(queryCondition.queryCondition);
-          console.log("钩子函数中构造查询条件：", queryCondition)
-          vm.$children[0].$children[0].$children[0].queryFormData = queryCondition;
-          vm.$children[0]._queryIvcData(queryCondition);
+          setQueryCondition(vm);
           break;
         default:
           break;
