@@ -23,7 +23,7 @@
                 :total="queryTotal">
             </el-pagination> -->
         </div>
-        <el-table border stripe :data="queryResult" style="width:100%" height="300px">
+        <el-table border stripe :data="queryResult" style="width:100%" >
             <el-table-column fixed prop="seq" label="序号" width="50">
             </el-table-column>
             <el-table-column fixed prop="orderId" label="订单编号" width="120"></el-table-column>
@@ -88,7 +88,7 @@ export default {
   created() {
     this._btnDisabledStatus(true, true);
     // console.log(this.btnPreDisabled, this.btnNextDisabled);
-    console.log("blueOnlyFlag:", this.blueOnlyFlag);
+    // console.log("blueOnlyFlag:", this.blueOnlyFlag);
   },
   methods: {
     async onGetQueryCondition(queryObj) {
@@ -177,21 +177,18 @@ export default {
     async _queryIvcData(queryData) {
       try {
         let res = await this.$reqPost("/dataApis/api/invoice", queryData);
-        console.log("发票查询参数：", queryData);
-        // .then(res => {
-        // console.log("发票查询结果:", res);
-        if (!res || !res.data || !res.data.data || res.data.code != 0) return;
+        // console.log("发票查询参数：", queryData);
+
+        console.log("发票查询结果:", res);
         this._btnDisabledStatus(false, false);
         this.queryResult = Array.isArray(res.data.data) ? res.data.data : [];
-        // this.queryTotal = res.data.total;
-        // console.log("queryTotal:", this.queryTotal);
-        // console.log("票据查询结果数据：", this.queryResult);
-        if (res.data.total === 0) {
+        // console.log("queryTotal:", res.data.total);
+
+        if (!res.data.data) {
           // console.log("到最后一页的下一页！");
           this.btnNextDisabled = true;
           return;
         }
-        // console.log("this.currentPage:", this.currentPage);
         if (this.currentPage == 1) {
           this.btnPreDisabled = true;
           return;
@@ -201,10 +198,6 @@ export default {
       } catch (err) {
         throw new Error("发票查询出错：", err);
       }
-      // })
-      // .catch(err => {
-      //   console.log("票据查询出错：", err);
-      // });
     },
     _toRedInvoiceForm(requiredItem) {
       console.log("红票传参：", requiredItem);
