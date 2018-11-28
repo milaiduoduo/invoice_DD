@@ -35,7 +35,7 @@ aioxs_ins.interceptors.request.use(
   },
   error => {
     // Do something with request error
-    console.log('axios拦截器request Err' + error) // for debug
+    // console.log('axios拦截器request Err' + error) // for debug
     return Promise.reject(error)
   }
 )
@@ -46,11 +46,11 @@ aioxs_ins.interceptors.response.use(
     /**
      * 0 可结合自己业务进行修改
      */
-    console.log("axios拦截器response开始！");
+    // console.log("axios拦截器response开始！");
     const res = response.data;
 
     if (res.code !== 0 && res.code !== "0" && res.Code !== "0" && res.Code !== 0) {
-      console.log("axios拦截器response返回 res.code !== 0：", res);
+      // console.log("axios拦截器response返回 res.code !== 0：", res);
       Message({
         message: res.message,
         showClose: true,
@@ -75,15 +75,15 @@ aioxs_ins.interceptors.response.use(
       }
       return Promise.reject('error')
     } else {
-      console.log("axios拦截器code=0");
+      // console.log("axios拦截器code=0");
       //关闭loading蒙版
       tryHideFullScreenLoading();
       return response;
     }
   },
   error => {
-    console.log('axios拦截器response Err' + error) // for debug
-    
+    // console.log('axios拦截器response Err' + error) // for debug
+
     // Message({
     //   message: 'response interceptors Error:' + ' ' + error.message,
     //   showClose: true,
