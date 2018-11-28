@@ -73,25 +73,32 @@ export const constantRouterMap = [{
     path: '/invoiceRed',
     component: Layout,
     name: 'invoiceRed',
+    // meta: {
+    //   title: '红票上传Wrap',
+    //   icon: 'nested',
+    //   // keepAlive: true
+    // },
     children: [{
-      path: 'queryBlueInvoice',
-      name: 'queryBlueInvoice',
-      component: () => import('@/views/invoiceQuery/queryBlueInvoice'),
-      meta: {
-        title: '红票上传',
-        icon: 'nested',
-        // keepAlive: true
+        path: 'queryBlueInvoice',
+        name: 'queryBlueInvoice',
+        component: () => import('@/views/invoiceQuery/queryBlueInvoice'),
+        meta: {
+          title: '红票上传',
+          icon: 'nested',
+          // keepAlive: true
+        }
+      },
+      {
+        path: 'invoiceRedForm/:orderId/:invoiceCode/:invoiceNo',
+        name: 'invoiceRedForm',
+        component: () => import('@/views/invoiceRed/invoiceRedForm'),
+        hidden: true,
+        meta: {
+          title: '红票上传 / 红票录入',
+          icon: 'nested'
+        }
       }
-    }, {
-      path: 'invoiceRedForm/:orderId/:invoiceCode/:invoiceNo',
-      name: 'invoiceRedForm',
-      component: () => import('@/views/invoiceRed/invoiceRedForm'),
-      hidden: true,
-      meta: {
-        title: '红票上传 / 红票录入',
-        icon: 'nested'
-      }
-    }]
+    ]
   },
   {
     path: '/queryAllInvoice',
@@ -107,8 +114,7 @@ export const constantRouterMap = [{
         // keepAlive: true
       }
     }]
-  },
-  {
+  }, {
     path: '/blueIvcDetail',
     component: Layout,
     name: 'blueIvcDetailWrap',
@@ -122,8 +128,7 @@ export const constantRouterMap = [{
         icon: 'link'
       }
     }]
-  },
-  {
+  }, {
     path: '/redIvcDetail',
     component: Layout,
     name: 'redIvcDetailWrap',
@@ -137,8 +142,7 @@ export const constantRouterMap = [{
         icon: 'link'
       }
     }]
-  },
-  {
+  }, {
     path: '/sysConfig',
     component: Layout,
     name: 'sysConfigWrap',

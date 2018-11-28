@@ -20,7 +20,7 @@
 		    </div>
         
         <section><span class="sectionTitle">订单信息查询结果：</span></section>
-        <el-table border :data="queryResult" style="width:100%" height="50%">
+        <el-table class="elTable" border :data="queryResult" style="width:100%" max-height="108px">
             <el-table-column fixed type="index"  label="序号" width="50">
             </el-table-column>
             <el-table-column fixed prop="orderId" label="订单编号" width="120"></el-table-column>
@@ -33,6 +33,8 @@
               </template>
             </el-table-column>
         </el-table>
+        <section><span class="sectionTitle subTitle">包含的蓝票：</span></section>
+        <m-ivc-table v-if="queryIvcCondition.orderId" :queryIvcCondition="queryIvcCondition" :blueOnlyFlag="false"></m-ivc-table>
         <!-- <div class="pagination">
             <el-pagination 
                 @size-change="handleSizeChange"
@@ -53,9 +55,13 @@
 import mx_operateRoute from "@/mixins/mx_operateRoute.js";
 import config from "@/config/paramsConfig.js";
 import { parseTime } from "@/utils";
+import ivcTable from "@/views/invoiceQuery/ivcTable";
 
 export default {
   mixins: [mx_operateRoute],
+  components: {
+    [ivcTable.name]: ivcTable
+  },
   data() {
     return {
       // loadingStatus: false,
@@ -72,26 +78,10 @@ export default {
         ]
       },
       queryResult: [],
-      // pageSizes: [10, 30, 50, 100],
-      // pageSize: 10,
-      // currentPage: 1,
-      // queryTotal: 130,
-      pageFromName: ""
+      pageFromName: "",
+      queryIvcCondition: {}
     };
   },
-  // beforeRouteEnter(to, from, next) {
-  //   console.log("from:", from);
-  //   next(vm => {
-  //     vm.pageFromName = from.name;
-  //     if (vm.pageFromName == "invoiceBlueFrom") {
-  //       vm.formData.queryOrderId = from.params.orderId;
-  //       console.log("重新查询：", vm.pageFromName);
-  //       // 再次按回传的orderId查询订单数据
-  //       // console.log("this.queryOrderId:", this.queryOrderId);
-  //       vm._onQuery();
-  //     }
-  //   });
-  // },
   // 疑问activated与beforeRouteEnter中的顺序，activated中为何this.pageFromName和this.queryOrderId 取值为空？
   // activated() {
   //   // console.log("this.queryTotal:", this.queryTotal);
@@ -107,10 +97,6 @@ export default {
     toBlueInvoice(row) {
       console.log("row: ", row);
       this.$router.push({ path: `invoiceBlueFrom/${row.orderId}` });
-      // this.$router.push({
-      //   name: "invoiceBlueFrom",
-      //   params: { orderId: row.orderId }
-      // });
     },
     async _onQuery() {
       try {
@@ -122,22 +108,20 @@ export default {
         if (!validFlag) return;
         //开始查询
         let res = await this.$reqGet(config.url.orderQueryUrl, {
-          // params: {
           orderId: this.formData.queryOrderId
-          // }
         }).catch(err => {
           throw new Error("订单查询列表获取错误：" + err.toString());
         });
         if (!res) return;
 
-        console.log("开始返回！");
+        // console.log("开始返回！");
         let resultData = res.data.data;
         if (!resultData) {
           // this.loadingStatus = false;
           return;
         }
         resultData.forEach(element => {
-          console.log("each order:", element);
+          // console.log("each order:", element);
           for (let item in element) {
             if (item == "orderTime") {
               element[item] = parseTime(element[item], "{y}-{m}-{d}");
@@ -145,19 +129,17 @@ export default {
           }
         });
         this.queryResult = resultData;
+
+        //查询相关蓝票信息，并显示==============================================
+        this.queryIvcCondition = {
+          orderId: this.formData.queryOrderId,
+          invoiceType: config.ivcType.blue.key
+        };
       } catch (err) {
         this.$showMessage("订单查询错误：" + err.toString(), "error");
         console.log("订单查询错误：", err);
       }
     }
-    // handleSizeChange(val) {
-    //   console.log(`每页 ${val} 条`);
-    // },
-    // handleCurrentChange(val) {
-    //   this.currentPage = val;
-    //   console.log(`当前页: ${val}`);
-    //   console.log("currentPage:", this.currentPage);
-    // }
   }
 };
 </script>
@@ -169,6 +151,9 @@ export default {
 .el-form-item__content {
   margin-left: 40px !important;
 }
+.elTable {
+  margin-bottom: 10px;
+}
 .queryOrderWrap {
   .sectionTitle {
     display: block;
@@ -176,6 +161,9 @@ export default {
     margin-bottom: 20px;
     border-bottom: 1px dashed #ccc;
     font-weight: bold;
+    &.subTitle {
+      padding-left: 10px;
+    }
   }
   .queryBtn {
     position: absolute;

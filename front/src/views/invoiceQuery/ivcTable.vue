@@ -1,14 +1,6 @@
 <template>
-<div>
-    <el-card>
-        <div slot="header" class="headerWrap clearfix">
-          <!-- <span>查询条件：发票类型, 订单号，发票代码，发票号，开票日期段，</span> -->
-          <slot name="headerTitle"></slot>
-          <section class="queryWrap">
-            <query-ivc-form :blueOnly="blueOnlyFlag" @showQueryCondition="onGetQueryCondition" @ivcTypeOptionChange="_ivcOptionChange"></query-ivc-form>
-          </section>   
-		    </div>
-        <div class="pagination top">
+    <div>
+        <div class="pagination top" v-if="false">
           <el-button-group>
               <el-button ref="btnPre" type="primary" icon="el-icon-arrow-left" :disabled="btnPreDisabled" size="small" @click="onQueryByPageNum('pre')">上一页</el-button>
               <el-button ref="btnNext" type="primary" :disabled="btnNextDisabled"  size="small" @click="onQueryByPageNum('next')">下一页<i class="el-icon-arrow-right el-icon--right"></i></el-button>
@@ -56,23 +48,18 @@
                 </template>
             </el-table-column>
         </el-table>
-    </el-card>
-</div>
+    </div>
 </template>
 
 <script type="text/ecmascript-6">
-import queryIvcForm from "@/components/queryForm/queryIvcForm.vue";
+// import queryIvcForm from "@/components/queryForm/queryIvcForm.vue";
 import config from "@/config/paramsConfig";
 
 export default {
-  name: "m-query-invoice",
-  components: {
-    [queryIvcForm.name]: queryIvcForm
-  },
-  props: ["blueOnlyFlag"],
+  name: "m-ivc-table",
+  props: ["queryIvcCondition", "blueOnlyFlag"],
   data() {
     return {
-      // pageSizes: [10, 30, 50, 100],
       pageSize: 10,
       currentPage: 1,
       queryTotal: 0,
@@ -85,19 +72,21 @@ export default {
   },
   created() {
     this._btnDisabledStatus(true, true);
-    // console.log(this.btnPreDisabled, this.btnNextDisabled);
-    // console.log("blueOnlyFlag:", this.blueOnlyFlag);
+
+    this.onGetQueryCondition();
   },
   methods: {
-    async onGetQueryCondition(queryObj) {
+    async onGetQueryCondition() {
       try {
         //初始化this.currentPage == 1
         this.currentPage == 1;
-        this.queryCondition = queryObj;
+        this.queryCondition = this.queryIvcCondition;
+        console.log("查询条件：", this.queryIvcCondition);
 
         let queryData = this._makePostData();
         await this._queryIvcData(queryData);
       } catch (err) {
+        console.log("发票table异常：", err);
         this.$showMessage(err.toString(), "error");
       }
     },
@@ -137,7 +126,8 @@ export default {
           CurrentPage: this.currentPage
         }
       };
-      // 父组件收到查询条件数据： queryObj
+      console.log("queryData.PageInfo:", queryData.PageInfo);
+      // 父组件收到查询条件数据：
       // console.log("父组件收到查询条件：", this.queryCondition);
       // console.log("post数据参数条件:", queryData);
 
@@ -231,54 +221,10 @@ export default {
     _ivcOptionChange() {
       this.currentPage = 1;
     }
-    // handleSizeChange(val) {
-    //   console.log(`每页 ${val} 条`);
-    // },
-    // handleCurrentChange(val) {
-    //   // console.log(`当前页: ${val}`);
-    //   this.currentPage = val;
-    // }
   }
 };
 </script>
 
+
 <style scoped lang="scss" rel="stylesheet/scss">
-.sectionTitle {
-  display: block;
-  padding-bottom: 11px;
-  margin-bottom: 20px;
-  border-bottom: 1px dashed #ccc;
-  font-weight: bold;
-}
-.queryBtn {
-  position: absolute;
-  top: -3px;
-  margin-left: 40px;
-  padding: 9px 30px;
-  font-size: 14px;
-}
-.pagination.top {
-  padding: 5px 20px 10px 20px;
-  margin: -15px 10px 10px 10px;
-  // border-top: 1px dashed #ccc;
-  border-bottom: 1px solid #ccc;
-}
-
-.el-row:nth-last-of-type(1) {
-  .el-form-item--mini.el-form-item:nth-last-of-type(1),
-  .el-form-item--small.el-form-item {
-    margin-bottom: 0px;
-  }
-}
-
-.pagination {
-  padding: 5px 20px 10px 20px;
-  margin: 10px;
-  // border-top: 1px dashed #ccc;
-  border-bottom: 1px solid #ccc;
-  &.top {
-    padding-top: 0px;
-    margin: -10px 10px 10px 10px;
-  }
-}
 </style>
