@@ -38,6 +38,8 @@
 
 <script>
 import { isvalidUsername } from "@/utils/validate";
+import config from "@/config/paramsConfig.js";
+import { getHx_kp_config } from "@/utils/opLocalStorage";
 
 export default {
   name: "Login",
@@ -98,11 +100,34 @@ export default {
           this.$store
             .dispatch("Login", this.loginForm)
             .then(() => {
+              let result = getHx_kp_config(this);
+              if (!result) {
+                console.log(
+                  "设置setLocalStorage",
+                  typeof config.receiverTaxNo,
+                  typeof config.receiverName,
+                  typeof config.preBlueInvoiceCode,
+                  typeof config.preRedInvoiceCode
+                );
+
+                let sysConfigStr = JSON.stringify({
+                  receiverTaxNo: config.receiverTaxNo,
+                  receiverName: config.receiverName,
+                  preBlueInvoiceCode: config.preBlueInvoiceCode,
+                  preRedInvoiceCode: config.preRedInvoiceCode
+                });
+                this.$utils.setLocalStorage({
+                  hx_kp_config: sysConfigStr
+                });
+              }
+
               this.loading = false;
+              //登录成功，暂时设置配置项到LocalStorage
               this.$router.push({ path: this.redirect || "/" });
             })
-            .catch(() => {
+            .catch(err => {
               this.loading = false;
+              console.log("err:", err);
             });
         } else {
           console.log("error submit!!");

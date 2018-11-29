@@ -67,6 +67,7 @@ import config from "@/config/paramsConfig";
 import mx_uploadFile from "@/mixins/mx_formUploadfile.js";
 import mx_postData from "@/mixins/mx_postData.js";
 import { parseTime } from "@/utils";
+import { getHx_kp_config } from "@/utils/opLocalStorage";
 
 export default {
   mixins: [mx_uploadFile, mx_postData],
@@ -108,6 +109,9 @@ export default {
     },
     _submitData() {
       let parseIvcTime = parseTime(this.formData.invoiceTime, "{y}-{m}-{d}");
+      let hx_kp_config = getHx_kp_config(this);
+      // initFormData.receiverName = hx_kp_config.receiverName;
+      //   console.log("hx_kp_config.receiverName:", hx_kp_config.receiverName);
       let postData = {
         OrderId: this.formData.orderId,
         InvoiceCode: this.formData.invoiceCode,
@@ -116,7 +120,7 @@ export default {
         BlueInvoiceCode: this.formData.blueInvoiceCode,
         BlueInvoiceNo: this.formData.blueInvoiceNo,
         PDFInfo: this.formData.pdfPath,
-        ReceiverName: config.receiverName
+        ReceiverName: hx_kp_config.receiverName
       };
       console.log("红票上传数据：", postData);
       this._postData(postData, config.url.redIvcUploadUrl);

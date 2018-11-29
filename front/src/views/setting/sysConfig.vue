@@ -40,10 +40,10 @@ export default {
   data() {
     return {
       formData: {
-        preBlueInvoiceCode: config.preBlueInvoiceCode,
-        preRedInvoiceCode: config.preRedInvoiceCode,
-        preReceiverTaxNo: config.receiverTaxNo,
-        preReceiverName: config.receiverName
+        preBlueInvoiceCode: "",
+        preRedInvoiceCode: "",
+        preReceiverTaxNo: "",
+        preReceiverName: ""
       }
     };
   },
@@ -75,9 +75,45 @@ export default {
       console.log("preReceiverName:", this.preReceiverName);
     }
   },
+  created() {
+    let configObjWrap = this.$utils.getLocalStorage("hx_kp_config");
+    console.log("configObjWrap:", configObjWrap);
+    if (!configObjWrap) {
+      this.$showMessage(
+        "配置文件读取异常，请退出系统，重新登录获取！",
+        "error"
+      );
+      return;
+    }
+    let configObj = JSON.parse(configObjWrap);
+    console.log("configObjWrap:", configObj);
+    this.formData.preBlueInvoiceCode = configObj.preBlueInvoiceCode;
+    this.formData.preRedInvoiceCode = configObj.preRedInvoiceCode;
+    this.formData.preReceiverTaxNo = configObj.receiverTaxNo;
+    this.formData.preReceiverName = configObj.receiverName;
+  },
   methods: {
     onSave() {
-      this.$showMessage("修改成功", "success");
+      this.$utils.setLocalStorage({
+        hx_kp_config: JSON.stringify({
+          receiverTaxNo: this.formData.preReceiverTaxNo,
+          receiverName: this.formData.preReceiverName,
+          preBlueInvoiceCode: this.formData.preBlueInvoiceCode,
+          preRedInvoiceCode: this.formData.preRedInvoiceCode
+        })
+      });
+      let configObjWrap = this.$utils.getLocalStorage("hx_kp_config");
+      let configObj = JSON.parse(configObjWrap);
+      if (
+        this.formData.preBlueInvoiceCode === configObj.preBlueInvoiceCode &&
+        this.formData.preRedInvoiceCode === configObj.preRedInvoiceCode &&
+        this.formData.preReceiverTaxNo === configObj.receiverTaxNo &&
+        this.formData.preReceiverName === configObj.receiverName
+      ) {
+        this.$showMessage("修改成功！", "success");
+      } else {
+        this.$showMessage("修改失败！", "error");
+      }
     }
   }
 };

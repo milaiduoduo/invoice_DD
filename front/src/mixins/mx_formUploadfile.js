@@ -1,5 +1,9 @@
 // import axios from "axios";
 import config from "@/config/paramsConfig";
+import {
+  getHx_kp_config
+} from "@/utils/opLocalStorage";
+
 export default {
   data() {
     return {
@@ -85,10 +89,14 @@ export default {
     }
   },
   created() {
+    // console.log("getHx_kp_config:", getHx_kp_config);
+    let hx_kp_config = getHx_kp_config(this);
     if (this.ivcType.indexOf(config.ivcType.blue.name) >= 0) {
-      this.formData.invoiceCode = config.preBlueInvoiceCode;
+      // this.formData.invoiceCode = config.preBlueInvoiceCode;
+      this.formData.invoiceCode = hx_kp_config.preBlueInvoiceCode;
     } else {
-      this.formData.invoiceCode = config.preRedInvoiceCode;
+      // this.formData.invoiceCode = config.preRedInvoiceCode;
+      this.formData.invoiceCode = hx_kp_config.preRedInvoiceCode;
     }
   },
   methods: {

@@ -45,6 +45,7 @@ import blueForm from "./blueForm.vue";
 import config from "@/config/paramsConfig";
 import mx_postData from "@/mixins/mx_postData.js";
 import { parseTime } from "@/utils";
+import { getHx_kp_config } from "@/utils/opLocalStorage";
 
 let initFormData = {
   orderId: "",
@@ -54,8 +55,8 @@ let initFormData = {
   totalPrice: "",
   invoiceTime: "",
   pdfPath: "",
-  receiverTaxNo: config.receiverTaxNo,
-  receiverName: config.receiverName
+  receiverTaxNo: "",
+  receiverName: ""
 };
 
 export default {
@@ -72,6 +73,9 @@ export default {
     this.orderId = this.$route.params.orderId;
     initFormData.orderId = this.orderId;
     this.formList.push(Object.create(initFormData));
+    let hx_kp_config = getHx_kp_config(this);
+    initFormData.receiverTaxNo = hx_kp_config.receiverTaxNo;
+    initFormData.receiverName = hx_kp_config.receiverName;
   },
   methods: {
     async _submitData(postData) {
