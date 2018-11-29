@@ -57,7 +57,7 @@ import config from "@/config/paramsConfig";
 
 export default {
   name: "m-ivc-table",
-  props: ["queryIvcCondition", "blueOnlyFlag"],
+  props: ["queryIvcCondition", "blueOnlyFlag", "showTableData"],
   data() {
     return {
       pageSize: 10,
@@ -70,18 +70,25 @@ export default {
       btnNextDisabled: false
     };
   },
+  watch: {
+    queryIvcCondition(newVal) {
+      console.log("查询条件变了嘛？：", newVal);
+      this.onGetQueryCondition();
+    }
+  },
   created() {
     this._btnDisabledStatus(true, true);
-
-    this.onGetQueryCondition();
+    // console.log(, this.queryIvcCondition);
+    // if (!this.showTableData) return;
+    // this.onGetQueryCondition();
   },
   methods: {
     async onGetQueryCondition() {
       try {
         //初始化this.currentPage == 1
         this.currentPage == 1;
+
         this.queryCondition = this.queryIvcCondition;
-        console.log("查询条件：", this.queryIvcCondition);
 
         let queryData = this._makePostData();
         await this._queryIvcData(queryData);

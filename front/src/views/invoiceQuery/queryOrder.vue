@@ -1,6 +1,6 @@
 <template>
 <div class="queryOrderWrap">
-    <el-card>
+    <el-card :body-style="{padding:'12px 20px'}">
         <div slot="header" class="headerWrap clearfix">
           <span class="sectionTitle">第一步：用订单号查询，以电子发票开票的订单.</span>
           <!-- 查询还未上传任何电子发票的订单,【数据从订单数据来】 -->
@@ -34,7 +34,7 @@
             </el-table-column>
         </el-table>
         <section><span class="sectionTitle subTitle">包含的蓝票：</span></section>
-        <m-ivc-table v-if="queryIvcCondition.orderId" :queryIvcCondition="queryIvcCondition" :blueOnlyFlag="false"></m-ivc-table>
+        <m-ivc-table ref="mIvcTable" class="ivcTable" :queryIvcCondition="queryIvcCondition" :blueOnlyFlag="false"></m-ivc-table>
         <!-- <div class="pagination">
             <el-pagination 
                 @size-change="handleSizeChange"
@@ -130,11 +130,12 @@ export default {
         });
         this.queryResult = resultData;
 
-        //查询相关蓝票信息，并显示==============================================
+        //构造蓝票查询条件并调用查询方法==============================================
         this.queryIvcCondition = {
           orderId: this.formData.queryOrderId,
           invoiceType: config.ivcType.blue.key
         };
+        this.$refs.mIvcTable.onGetQueryCondition();
       } catch (err) {
         this.$showMessage("订单查询错误：" + err.toString(), "error");
         console.log("订单查询错误：", err);
@@ -151,15 +152,25 @@ export default {
 .el-form-item__content {
   margin-left: 40px !important;
 }
+.ivcTable,
 .elTable {
-  margin-bottom: 10px;
+  margin-top: -10px;
+  margin-bottom: 12px;
+}
+.el-card {
+  .el-card__header {
+    padding: 12px 20px;
+  }
+  .el-card__body {
+    padding: 12px 20px;
+  }
 }
 .queryOrderWrap {
   .sectionTitle {
     display: block;
-    padding-bottom: 11px;
-    margin-bottom: 20px;
-    border-bottom: 1px dashed #ccc;
+    // padding-bottom: 2px;
+    margin-bottom: 15px;
+    // border-bottom: 1px dashed #ccc;
     font-weight: bold;
     &.subTitle {
       padding-left: 10px;
