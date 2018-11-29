@@ -71,16 +71,23 @@ export default {
     };
   },
   watch: {
-    queryIvcCondition(newVal) {
-      console.log("查询条件变了嘛？：", newVal);
+    queryIvcCondition(newVal, oldVal) {
+      let diffFlag = false;
+      for (let item in newVal) {
+        if (newVal[item] != oldVal[item]) {
+          diffFlag = true;
+          break;
+        }
+      }
+      console.log("查询条件变了嘛？：", newVal, oldVal, diffFlag);
+      // this.queryIvcCondition = newVal;
+      // if (diffFlag) {
       this.onGetQueryCondition();
+      // }
     }
   },
   created() {
     this._btnDisabledStatus(true, true);
-    // console.log(, this.queryIvcCondition);
-    // if (!this.showTableData) return;
-    // this.onGetQueryCondition();
   },
   methods: {
     async onGetQueryCondition() {
@@ -89,7 +96,7 @@ export default {
         this.currentPage == 1;
 
         this.queryCondition = this.queryIvcCondition;
-
+        console.log("第一次查询条件：", this.queryIvcCondition);
         let queryData = this._makePostData();
         await this._queryIvcData(queryData);
       } catch (err) {
@@ -133,7 +140,7 @@ export default {
           CurrentPage: this.currentPage
         }
       };
-      console.log("queryData.PageInfo:", queryData.PageInfo);
+      console.log("发票queryData:", queryData);
       // 父组件收到查询条件数据：
       // console.log("父组件收到查询条件：", this.queryCondition);
       // console.log("post数据参数条件:", queryData);
@@ -145,10 +152,10 @@ export default {
       });
 
       // console.log("构造的需要保存的查询条件1：", queryConditionForSave);
-      console.log(
-        "构造的需要保存的查询条件2：",
-        JSON.stringify(queryConditionForSave)
-      );
+      // console.log(
+      //   "构造的需要保存的查询条件2：",
+      //   JSON.stringify(queryConditionForSave)
+      // );
       //保存查询条件
       this.$utils.setLocalStorage({
         queryCondition: JSON.stringify(queryConditionForSave)

@@ -114,10 +114,13 @@ export default {
         });
         if (!res) return;
 
-        // console.log("开始返回！");
+        console.log("订单查询结果res！", res);
         let resultData = res.data.data;
+        //构造蓝票查询条件并调用查询方法==start============================================
+        this.createQueryConditionFromBlueIvc();
+        //构造蓝票查询条件并调用查询方法==end============================================
         if (!resultData) {
-          // this.loadingStatus = false;
+          this.queryResult = null;
           return;
         }
         resultData.forEach(element => {
@@ -129,17 +132,18 @@ export default {
           }
         });
         this.queryResult = resultData;
-
-        //构造蓝票查询条件并调用查询方法==============================================
-        this.queryIvcCondition = {
-          orderId: this.formData.queryOrderId,
-          invoiceType: config.ivcType.blue.key
-        };
-        this.$refs.mIvcTable.onGetQueryCondition();
       } catch (err) {
         this.$showMessage("订单查询错误：" + err.toString(), "error");
         console.log("订单查询错误：", err);
       }
+    },
+    createQueryConditionFromBlueIvc() {
+      //构造蓝票查询条件并调用查询方法==start============================================
+      this.queryIvcCondition = {
+        orderId: this.formData.queryOrderId,
+        invoiceType: config.ivcType.blue.key
+      };
+      //构造蓝票查询条件并调用查询方法==end============================================
     }
   }
 };
