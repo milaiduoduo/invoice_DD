@@ -17,16 +17,24 @@ export default {
 
       // console.log("路由钩子得到的post参数：", queryCondition);
       vm.$children[0]._queryIvcData(queryCondition);
+    };
+
+    function toQueryOrder(vm) {
+      vm.formData.queryOrderId = from.params.orderId;
+      vm._onQuery();
     }
     next(vm => {
       vm.pageFromName = from.name;
+      console.log("from page:", from);
       switch (vm.pageFromName) {
         case "invoiceBlueFrom":
-          vm.formData.queryOrderId = from.params.orderId;
-          //console.log("重新查询：", vm.pageFromName);
-          vm._onQuery();
+          toQueryOrder(vm);
           break;
         case "blueIvcDetail":
+          if (to.name == 'queryOrder') {
+            toQueryOrder(vm);
+            break;
+          }
           setQueryCondition(vm);
           break;
         case "redIvcDetail":

@@ -143,6 +143,7 @@ export default {
         orderId: this.formData.queryOrderId,
         invoiceType: config.ivcType.blue.key
       };
+      console.log("this.queryIvcCondition:", this.queryIvcCondition);
       //构造蓝票查询条件并调用查询方法==end============================================
     }
   }
