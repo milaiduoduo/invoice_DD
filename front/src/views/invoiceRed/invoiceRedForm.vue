@@ -67,7 +67,7 @@ import config from "@/config/paramsConfig";
 import mx_uploadFile from "@/mixins/mx_formUploadfile.js";
 import mx_postData from "@/mixins/mx_postData.js";
 import { parseTime } from "@/utils";
-// import { getHx_kp_config } from "@/utils/opLocalStorage";
+import { getHx_kp_config } from "@/utils/opLocalStorage";
 
 export default {
   mixins: [mx_uploadFile, mx_postData],
@@ -123,7 +123,19 @@ export default {
       this._postData(postData, config.url.redIvcUploadUrl);
     },
     _onCancel() {
-      this.resetFormField(this.$refs.formWrap, this.$refs.file, this.formData);
+      let hx_kp_config = getHx_kp_config(this);
+      if (!hx_kp_config) {
+        console.log("localstorage没有配置文件！");
+        this.formData.invoiceCode = "";
+        // return
+      } else {
+        this.formData.invoiceCode = hx_kp_config.preRedInvoiceCode;
+      }
+
+      this.formData.invoiceNo = "";
+      this.formData.pdfPath = "";
+      this.formData.invoiceTime = "";
+      this.$refs.file.value = "";
     }
   }
 };

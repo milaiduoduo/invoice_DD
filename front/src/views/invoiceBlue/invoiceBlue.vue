@@ -45,7 +45,7 @@ import blueForm from "./blueForm.vue";
 import config from "@/config/paramsConfig";
 import mx_postData from "@/mixins/mx_postData.js";
 import { parseTime } from "@/utils";
-// import { getHx_kp_config } from "@/utils/opLocalStorage";
+import { getHx_kp_config } from "@/utils/opLocalStorage";
 
 let initFormData = {
   orderId: "",
@@ -130,11 +130,27 @@ export default {
         this.formList.pop();
       }
       if (this.formList.length == 1) {
-        this.resetFormField(
-          this.$refs["blueFormWrap"][0].$refs["formWrap"],
-          this.$refs["blueFormWrap"][0].$refs["file"],
-          this.formList[0]
-        );
+        let hx_kp_config = getHx_kp_config(this);
+        let item = this.$refs.blueFormWrap[0].formData;
+        console.log("item:", this.$refs.blueFormWrap[0]);
+        if (!hx_kp_config) {
+          console.log("localstorage没有配置文件！");
+          item.invoiceCode = "";
+          item.receiverName = "";
+          item.receiverTaxNo = "";
+          // return
+        } else {
+          item.invoiceCode = hx_kp_config.preBlueInvoiceCode;
+          item.receiverName = hx_kp_config.receiverName;
+          item.receiverTaxNo = hx_kp_config.receiverTaxNo;
+        }
+        item.ivcTitle = "";
+        item.totalPrice = "";
+        item.invoiceNo = "";
+        item.invoiceTime = "";
+        item.pdfPath = "";
+        this.$refs.blueFormWrap[0].$refs.file.value = "";
+        // this.$refs.blueFormWrap.file.value = "";
       }
     },
     onAddInvoice() {
