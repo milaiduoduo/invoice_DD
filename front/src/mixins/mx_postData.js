@@ -14,13 +14,14 @@ export default {
         if (res.data.code == 0 && res.data.isSuccess) {
           if (res.data.message.indexOf('成功') >= 0) {
             this.$showMessage(res.data.message, 'success');
-            this.$router.push({
-              path: '/invoiceBlue/queryOrder'
-            });
+            this.$router.back();
+            // this.$router.push({
+            //   path: '/invoiceBlue/queryOrder'
+            // });
           } else if (res.data.message.indexOf("重复") >= 0) {
             this.$showMessage(res.data.message + ",注意发票号不能重复！", 'error');
           } else {
-            this.$showMessage(res.data.message + ",注意发票号不能重复！", 'error');
+            this.$showMessage(res.data.message, 'info');
           }
         } else if (!res.data.isSuccess) {
           console.log("isSuccess==false:::", res.data.message);

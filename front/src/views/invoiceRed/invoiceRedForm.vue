@@ -2,7 +2,7 @@
 <div class="redWrap">
     <el-card>
         <div slot="header" class="headerWrap">
-            <span class="sectionTitle">第二步：录入蓝票信息，并上传.</span>
+            <span class="sectionTitle">第二步：录入红票信息，并上传.<span style="color:rgb(216, 12, 12);">（注意：红票冲蓝票可以不限次数冲销，京东接口没有限制；但错误数据无法删除，所以上传时请注意数据的正确性。）</span></span>
             <el-button type="primary" size="medium" @click="_onSubmit">立即上传红票信息</el-button>
             <el-button type="default" size="small" @click="_onCancel">取消</el-button>
         </div>

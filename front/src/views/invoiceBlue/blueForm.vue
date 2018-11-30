@@ -1,7 +1,7 @@
 <template>
 <div class="blueFormWrap">
     <section class="title">发票信息</section>
-    <el-form class="formWrap" size="small" ref="formWrap" label-width="210px" status-icon :model="formData" :rules="formRules">
+    <el-form class="formWrap" size="small" ref="formWrap" label-width="250px" status-icon :model="formData" :rules="formRules">
             <el-row>
                 <el-col :offset="1" :span="10">
                     <el-form-item label="订单编号" prop="orderId">
@@ -11,7 +11,7 @@
             </el-row>
             <el-row>
                 <el-col :offset="1" :span="10">
-                    <el-form-item label="发票代码（来至预设可修改）" prop="invoiceCode">
+                    <el-form-item label="发票代码（来至预设可改）" prop="invoiceCode">
                         <el-input v-model="formData.invoiceCode"></el-input>
                     </el-form-item>
                 </el-col>
@@ -35,13 +35,13 @@
             </el-row>
             <el-row>
                 <el-col :offset="1" :span="10">
-                    <el-form-item label="销货方税号" prop="receiverTaxNo">
-                        <el-input v-model="formData.receiverTaxNo" :disabled="true"></el-input>
+                    <el-form-item label="销货方税号（来至预设可改）" prop="receiverTaxNo">
+                        <el-input v-model="formData.receiverTaxNo"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :offset="1" :span="10">
-                    <el-form-item label="销货方公司名称" prop="receiverName">
-                        <el-input v-model="formData.receiverName" :disabled="true"></el-input>
+                    <el-form-item label="销货方公司名称（来至预设可改）" prop="receiverName">
+                        <el-input v-model="formData.receiverName"></el-input>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -92,8 +92,8 @@ export default {
   },
   created() {
     this.formData.orderId = this.formOrderId;
-    this.formData.receiverTaxNo = this.formReceiverTaxNo;
-    this.formData.receiverName = this.formReceiverName;
+    // this.formData.receiverTaxNo = this.formReceiverTaxNo;
+    // this.formData.receiverName = this.formReceiverName;
   },
   computed: {
     /*为了监控form中控件值的变化，实现双向绑定而建立----------------*/

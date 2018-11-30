@@ -103,6 +103,7 @@ export default {
     }
     this.formData.receiverTaxNo = hx_kp_config ? hx_kp_config.receiverTaxNo : '';
     this.formData.receiverName = hx_kp_config ? hx_kp_config.receiverName : '';
+    console.log("初始化录入From,赋值,this.formData.receiverTaxNo,this.formData.receiverName:", this.formData.receiverTaxNo, this.formData.receiverName)
   },
   methods: {
     async _uploadFile(e, ivcTypeName) {
