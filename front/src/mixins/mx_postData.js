@@ -25,7 +25,7 @@ export default {
           }
         } else if (!res.data.isSuccess) {
           console.log("isSuccess==false:::", res.data.message);
-          throw new Error(res.data.message);
+          throw new Error("issuccess:false," + res.data.message);
         }
       } catch (err) {
         throw new Error(err);
