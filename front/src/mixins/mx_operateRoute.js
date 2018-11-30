@@ -3,20 +3,24 @@ export default {
     // console.log("from:", from);
     let queryCondition, queryConditionForFrom;
 
-    function setQueryCondition(vm) {
+    function setIvcQueryCondition(vm) {
       queryCondition = vm.$utils.getLocalStorages("queryCondition");
       if (!queryCondition) return;
       queryConditionForFrom = JSON.parse(queryCondition.queryCondition);
       queryCondition = JSON.parse(queryCondition.queryCondition)
       // console.log("路由钩子得到的Form查询显示：", queryConditionForFrom);
-      if (vm.$children[0].$children[0].$children[0].queryFormData) vm.$children[0].$children[0].$children[0].queryFormData = queryConditionForFrom;
+      if (vm.$children[0] && vm.$children[0].$children[0] && vm.$children[0].$children[0].$children[0] && vm.$children[0].$children[0].$children[0].queryFormData) {
+        vm.$children[0].$children[0].$children[0].queryFormData = queryConditionForFrom;
+      }
       queryCondition.invoiceType = queryConditionForFrom.invoiceType == 0 ? "" : queryConditionForFrom.invoiceType;
       // console.log("queryConditionForFrom.invoiveTimeGap:", queryConditionForFrom, queryConditionForFrom.invoiceTimeGap);
       queryCondition.invoiceTimeStart = !queryConditionForFrom.invoiceTimeGap ? "" : queryConditionForFrom.invoiceTimeGap[0];
       queryCondition.invoiceTimeEnd = !queryConditionForFrom.invoiceTimeGap ? "" : queryConditionForFrom.invoiceTimeGap[1];
 
       // console.log("路由钩子得到的post参数：", queryCondition);
-      vm.$children[0]._queryIvcData(queryCondition);
+      if (vm.$children[0]._queryIvcData) {
+        vm.$children[0]._queryIvcData(queryCondition);
+      }
     };
 
     function toQueryOrder(vm) {
@@ -24,6 +28,8 @@ export default {
       vm._onQuery();
     }
     next(vm => {
+      console.log("vm是谁？", vm);
+      //vm就是要进入的那个页面
       vm.pageFromName = from.name;
       console.log("from page:", from);
       switch (vm.pageFromName) {
@@ -35,13 +41,13 @@ export default {
             toQueryOrder(vm);
             break;
           }
-          setQueryCondition(vm);
+          setIvcQueryCondition(vm);
           break;
         case "redIvcDetail":
-          setQueryCondition(vm);
+          setIvcQueryCondition(vm);
           break;
         case "invoiceRedForm":
-          setQueryCondition(vm);
+          setIvcQueryCondition(vm);
           break;
         default:
           break;
