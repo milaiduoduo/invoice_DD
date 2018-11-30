@@ -20,7 +20,8 @@
           placeholder="password"
           @keyup.enter.native="handleLogin" />
         <span class="show-pwd" @click="showPwd">
-          <svg-icon icon-class="eye" />
+          <svg-icon v-if="pwdType" icon-class="eye" />
+          <svg-icon v-if="!pwdType" icon-class="eyeOpen" />
         </span>
       </el-form-item>
       <el-form-item>
@@ -102,12 +103,9 @@ export default {
             .then(() => {
               let result = getHx_kp_config(this);
               if (!result) {
+                //如果localstorage里面没有，则从文件存入localstorage
                 console.log(
-                  "设置setLocalStorage",
-                  typeof config.receiverTaxNo,
-                  typeof config.receiverName,
-                  typeof config.preBlueInvoiceCode,
-                  typeof config.preRedInvoiceCode
+                  "设置setLocalStorage，localstorage里面没有，则从文件存入localstorage"
                 );
 
                 let sysConfigStr = JSON.stringify({
@@ -130,8 +128,7 @@ export default {
               console.log("err:", err);
             });
         } else {
-          console.log("error submit!!");
-          return false;
+          console.log("登录验证不成功！");
         }
       });
     }
@@ -141,9 +138,10 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss">
 $bg: #2d3a4b;
-$light_gray: #eee;
+$light_gray: #fff;
 
 /* reset element-ui css */
+
 .login-container {
   .el-input {
     display: inline-block;
@@ -168,6 +166,7 @@ $light_gray: #eee;
     background: rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     color: #454545;
+    // color: red;
   }
 }
 </style>
@@ -176,11 +175,18 @@ $light_gray: #eee;
 $bg: #2d3a4b;
 $dark_gray: #889aa4;
 $light_gray: #eee;
+
 .login-container {
   position: fixed;
   height: 100%;
   width: 100%;
   background-color: $bg;
+
+  .el-input {
+    input {
+      color: #fff;
+    }
+  }
   .login-form {
     position: absolute;
     left: 0;
@@ -219,7 +225,7 @@ $light_gray: #eee;
     position: absolute;
     right: 10px;
     top: 7px;
-    font-size: 16px;
+    font-size: 19px;
     color: $dark_gray;
     cursor: pointer;
     user-select: none;
