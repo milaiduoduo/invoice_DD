@@ -89,15 +89,20 @@ export default {
     }
   },
   created() {
-    // console.log("getHx_kp_config:", getHx_kp_config);
     let hx_kp_config = getHx_kp_config(this);
+
+    if (!hx_kp_config) {
+      console.log("localstorage没有配置文件！")
+      // return
+    };
+    console.log("localstorage有配置文件！this.ivcType：", this.ivcType);
     if (this.ivcType.indexOf(config.ivcType.blue.name) >= 0) {
-      // this.formData.invoiceCode = config.preBlueInvoiceCode;
-      this.formData.invoiceCode = hx_kp_config.preBlueInvoiceCode;
+      this.formData.invoiceCode = hx_kp_config ? hx_kp_config.preBlueInvoiceCode : '';
     } else {
-      // this.formData.invoiceCode = config.preRedInvoiceCode;
-      this.formData.invoiceCode = hx_kp_config.preRedInvoiceCode;
+      this.formData.invoiceCode = hx_kp_config ? hx_kp_config.preRedInvoiceCode : '';
     }
+    this.formData.receiverTaxNo = hx_kp_config ? hx_kp_config.receiverTaxNo : '';
+    this.formData.receiverName = hx_kp_config ? hx_kp_config.receiverName : '';
   },
   methods: {
     async _uploadFile(e, ivcTypeName) {

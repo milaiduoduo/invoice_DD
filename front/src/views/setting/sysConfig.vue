@@ -36,6 +36,7 @@
 
 <script type="text/ecmascript-6">
 import config from "@/config/paramsConfig";
+import { getHx_kp_config } from "@/utils/opLocalStorage";
 export default {
   data() {
     return {
@@ -47,50 +48,53 @@ export default {
       }
     };
   },
-  computed: {
-    preBlueInvoiceCode() {
-      return this.formData.preBlueInvoiceCode;
-    },
-    preRedInvoiceCode() {
-      return this.formData.preRedInvoiceCode;
-    },
-    preReceiverTaxNo() {
-      return this.formData.preReceiverTaxNo;
-    },
-    preReceiverName() {
-      return this.formData.preReceiverName;
-    }
-  },
-  watch: {
-    preBlueInvoiceCode(newVal) {
-      console.log("preBlueInvoiceCode:", this.preBlueInvoiceCode);
-    },
-    preRedInvoiceCode(newVal) {
-      console.log("preRedInvoiceCode:", this.preRedInvoiceCode);
-    },
-    preReceiverTaxNo(newVal) {
-      console.log("preReceiverTaxNo:", this.preReceiverTaxNo);
-    },
-    preReceiverName(newVal) {
-      console.log("preReceiverName:", this.preReceiverName);
-    }
-  },
+  // computed: {
+  //   preBlueInvoiceCode() {
+  //     return this.formData.preBlueInvoiceCode;
+  //   },
+  //   preRedInvoiceCode() {
+  //     return this.formData.preRedInvoiceCode;
+  //   },
+  //   preReceiverTaxNo() {
+  //     return this.formData.preReceiverTaxNo;
+  //   },
+  //   preReceiverName() {
+  //     return this.formData.preReceiverName;
+  //   }
+  // },
+  // watch: {
+  //   preBlueInvoiceCode(newVal) {
+  //     console.log("preBlueInvoiceCode:", this.preBlueInvoiceCode);
+  //   },
+  //   preRedInvoiceCode(newVal) {
+  //     console.log("preRedInvoiceCode:", this.preRedInvoiceCode);
+  //   },
+  //   preReceiverTaxNo(newVal) {
+  //     console.log("preReceiverTaxNo:", this.preReceiverTaxNo);
+  //   },
+  //   preReceiverName(newVal) {
+  //     console.log("preReceiverName:", this.preReceiverName);
+  //   }
+  // },
   created() {
-    let configObjWrap = this.$utils.getLocalStorage("hx_kp_config");
-    console.log("configObjWrap:", configObjWrap);
-    if (!configObjWrap) {
-      this.$showMessage(
-        "配置文件读取异常，请退出系统，重新登录获取！",
-        "error"
-      );
-      return;
-    }
-    let configObj = JSON.parse(configObjWrap);
-    console.log("configObjWrap:", configObj);
-    this.formData.preBlueInvoiceCode = configObj.preBlueInvoiceCode;
-    this.formData.preRedInvoiceCode = configObj.preRedInvoiceCode;
-    this.formData.preReceiverTaxNo = configObj.receiverTaxNo;
-    this.formData.preReceiverName = configObj.receiverName;
+    let hx_kp_config = getHx_kp_config(this, true);
+    console.log("hx_kp_config:", typeof hx_kp_config);
+    if (!hx_kp_config) return;
+    // let configObjWrap = this.$utils.getLocalStorage("hx_kp_config");
+
+    // if (!configObjWrap) {
+    //   this.$showMessage(
+    //     "配置文件读取异常，请退出系统，重新登录获取！",
+    //     "error"
+    //   );
+    //   return;
+    // }
+    //let configObj = JSON.parse(hx_kp_config);
+    console.log("JSON.parse(hx_kp_config):", hx_kp_config);
+    this.formData.preBlueInvoiceCode = hx_kp_config.preBlueInvoiceCode;
+    this.formData.preRedInvoiceCode = hx_kp_config.preRedInvoiceCode;
+    this.formData.preReceiverTaxNo = hx_kp_config.receiverTaxNo;
+    this.formData.preReceiverName = hx_kp_config.receiverName;
   },
   methods: {
     onSave() {
@@ -102,13 +106,14 @@ export default {
           preRedInvoiceCode: this.formData.preRedInvoiceCode
         })
       });
-      let configObjWrap = this.$utils.getLocalStorage("hx_kp_config");
-      let configObj = JSON.parse(configObjWrap);
+      // let configObjWrap = this.$utils.getLocalStorage("hx_kp_config");
+      let hx_kp_config = getHx_kp_config(this);
+      // let configObj = JSON.parse(hx_kp_config);
       if (
-        this.formData.preBlueInvoiceCode === configObj.preBlueInvoiceCode &&
-        this.formData.preRedInvoiceCode === configObj.preRedInvoiceCode &&
-        this.formData.preReceiverTaxNo === configObj.receiverTaxNo &&
-        this.formData.preReceiverName === configObj.receiverName
+        this.formData.preBlueInvoiceCode === hx_kp_config.preBlueInvoiceCode &&
+        this.formData.preRedInvoiceCode === hx_kp_config.preRedInvoiceCode &&
+        this.formData.preReceiverTaxNo === hx_kp_config.receiverTaxNo &&
+        this.formData.preReceiverName === hx_kp_config.receiverName
       ) {
         this.$showMessage("修改成功！", "success");
       } else {
