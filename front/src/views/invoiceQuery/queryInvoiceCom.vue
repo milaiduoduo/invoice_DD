@@ -85,8 +85,6 @@ export default {
   },
   created() {
     this._btnDisabledStatus(true, true);
-    // console.log(this.btnPreDisabled, this.btnNextDisabled);
-    // console.log("blueOnlyFlag:", this.blueOnlyFlag);
   },
   methods: {
     async onGetQueryCondition(queryObj) {
@@ -171,6 +169,9 @@ export default {
 
         if (!res.data.data) {
           // console.log("到最后一页的下一页！");
+          if (this.currentPage == 1) {
+            this.btnPreDisabled = true;
+          }
           this.btnNextDisabled = true;
           return;
         }
