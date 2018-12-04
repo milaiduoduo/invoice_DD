@@ -14,7 +14,7 @@ export default {
         if (res.data.code == 0 && res.data.isSuccess) {
           if (res.data.message.indexOf('成功') >= 0) {
             this.$showMessage(res.data.message, 'success');
-            this.$router.back();
+            // this.$router.back();
             // this.$router.push({
             //   path: '/invoiceBlue/queryOrder'
             // });
