@@ -2,7 +2,7 @@
 <div class="queryOrderWrap">
     <el-card :body-style="{padding:'12px 20px'}">
         <div slot="header" class="headerWrap clearfix">
-          <span class="sectionTitle">第一步：用订单号查询，以电子发票开票的订单.</span>
+          <span class="sectionTitle">第一步：用订单号查询，已电子发票开票的订单.</span>
           <!-- 查询还未上传任何电子发票的订单,【数据从订单数据来】 -->
              <!-- <span>查询条件：订单号，XX时间段</span> -->
              <el-form ref="queryform" :model="formData" :rules="formRules" size="mini" label-width="80px">
@@ -101,6 +101,7 @@ export default {
     async _onQuery() {
       try {
         let validFlag = false;
+        let elecIvcFlag = false;
         //调查询接口查询“以电子发票开票的订单”
         this.$refs["queryform"].validate(valid => {
           validFlag = valid;
@@ -131,9 +132,19 @@ export default {
             if (item == "orderTime") {
               element[item] = parseTime(element[item], "{y}-{m}-{d}");
             }
+            if (item == "invoiceInfo") {
+              // 发票类型:电子发票
+              if (element[item].indexOf("电子发票") >= 0) {
+                elecIvcFlag = true;
+              } else {
+              }
+            }
           }
         });
-        this.queryResult = resultData;
+        //发票不是电子发票则不显示
+        if (elecIvcFlag) {
+          this.queryResult = resultData;
+        }
       } catch (err) {
         this.$showMessage("订单查询错误：" + err.toString(), "error");
         console.log("订单查询错误：", err);
