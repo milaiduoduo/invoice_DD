@@ -11,20 +11,6 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       // 采用本地代理访问 服务器上的京东数据接口会报504错误，但是部署到服务器上能正常使用
-      '/dataApis': {
-        target: 'http://117.48.208.116:8888',
-        changeOrigin: true //,
-        // pathRewrite: {
-        //   '^/dataApis': ''
-        // }
-      },
-      '/fileApis': {
-        target: 'http://117.48.208.116:8888',
-        changeOrigin: true
-        // pathRewrite: {
-        //   '^/fileApis': ''
-        // }
-      }
       // '/fileApis': {
       //   target: 'http://127.0.0.1:3000',
       //   changeOrigin: true,
@@ -35,7 +21,7 @@ module.exports = {
     },
 
     // Various Dev Server settings
-    host: 'localhost', // can be overwritten by process.env.HOST
+    host: '127.0.0.1', // can be overwritten by process.env.HOST
     port: 9528, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,
     errorOverlay: true,
