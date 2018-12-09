@@ -4,7 +4,29 @@ const serve = require('koa-static');
 const koaBody = require('koa-body');
 const Koa = require('koa');
 var router = require('koa-router')();
+const appLog = require("./m-logger");
+const log4js = require('log4js');
+const ip = require('ip');
 
+const logConfig = {
+    appenders: {
+        cheese: {
+            type: 'dateFile', // 日志类型 
+            filename: `logs/task`, // 输出的文件名
+            pattern: '-yyyy-MM-dd.log', // 文件名增加后缀
+            alwaysIncludePattern: true // 是否总是有后缀名
+        }
+    },
+    categories: {
+        default: {
+            appenders: ['cheese'],
+            level: 'info'
+        }
+    }
+}
+
+log4js.configure(logConfig)
+const logger = log4js.getLogger('cheese');
 //服务器处理跨域
 // const cors = require('koa2-cors');
 //服务器处理跨域
@@ -40,6 +62,13 @@ const path = require('path');
 //服务器处理跨域
 
 // serve files from ./public
+app.use(appLog({
+    env: app.env,
+    projectName: 'zzkp-pdfUploadServer',
+    appLogLevel: 'debug',
+    dir: 'logs',
+    serverIp: ip.address()
+}));
 app.use(serve(path.join(__dirname, '/public')));
 app.use(serve(path.join(__dirname, '/views')));
 
@@ -50,6 +79,9 @@ app.use(koaBody({
 import {
     parseTime
 } from "./public/js/utils/date";
+import {
+    Logger
+} from 'log4js';
 // const dateUtil = require("./public/js/utils/date")
 
 // custom 404
@@ -106,6 +138,7 @@ router.post('/fileApi/fileUpload/', async function (ctx, next) {
             for (let item of files) {
                 if (!item || (!item.size && !item.name)) {
                     console.log("此次没有上传文件");
+                    logger.warn("此次没有上传文件");
                     continue;
                 }
                 let tmpath = item['path'];
@@ -126,7 +159,7 @@ router.post('/fileApi/fileUpload/', async function (ctx, next) {
                 // filePath = path.join('public/upload', new Date().timestamp() + ext);
 
                 dayDPath = path.join(directoryPath, parseTime(new Date(), "{y}-{m}-{d}"));
-                console.log("dayDPath:", dayDPath);
+                // console.log("dayDPath:", dayDPath);
                 if (!fs.existsSync(dayDPath)) {
                     fs.mkdir(dayDPath, {
                         recursive: true
@@ -145,7 +178,7 @@ router.post('/fileApi/fileUpload/', async function (ctx, next) {
                 fs.createReadStream(tmpath).pipe(stream); //把可写流写入可读流
             }
         }
-
+        logger.info("文件上传成功！路径：" + filePath);
         // 返回保存的路径
         ctx.body = {
             code: config.code.success,
@@ -154,10 +187,12 @@ router.post('/fileApi/fileUpload/', async function (ctx, next) {
             }
         };
     } catch (err) {
-        console.log("上传失败，原因：", err);
+        // console.log("文件上传失败，原因：", err);
+        logger.error("文件上传失败，原因：" + err);
         ctx.body = {
             code: config.code.err,
             data: {
+                path: '',
                 err: err
             }
         };

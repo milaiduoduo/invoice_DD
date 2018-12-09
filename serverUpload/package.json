@@ -27,7 +27,9 @@
     "koa-static": "^3.0.0"
   },
   "dependencies": {
+    "ip": "^1.1.5",
     "koa2-cors": "^2.0.6",
+    "log4js": "^3.0.6",
     "natives": "^1.1.6"
   }
 }
