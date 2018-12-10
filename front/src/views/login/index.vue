@@ -45,22 +45,23 @@ import { getHx_kp_config } from "@/utils/opLocalStorage";
 export default {
   name: "Login",
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!isvalidUsername(value)) {
-        callback(new Error("请输入正确的用户名"));
-      } else {
-        callback();
-      }
-    };
+    // const validateUsername = (rule, value, callback) => {
+    //   if (!isvalidUsername(value)) {
+    //     callback(new Error("请输入正确的用户名"));
+    //   } else {
+    //     callback();
+    //   }
+    // };
     const validatePass = (rule, value, callback) => {
       // if (value.length < 5) {
       //   callback(new Error("密码不能小于5位！"));
       // }else
-      if (value != "admin") {
-        callback(new Error("用户名或密码不正确！"));
-      } else {
-        callback();
-      }
+      // if (value != "hxzh2018200%") {
+      //   // if (value != "admin") {
+      //   callback(new Error("用户名或密码不正确！"));
+      // } else {
+      //   callback();
+      // }
     };
     return {
       loginForm: {
@@ -69,9 +70,17 @@ export default {
       },
       loginRules: {
         username: [
-          { required: true, trigger: "blur", validator: validateUsername }
+          { required: true, trigger: "blur", message: "请输入用户名" }
+          // { required: true, trigger: "blur", validator: validateUsername }
         ],
-        password: [{ required: true, trigger: "blur", validator: validatePass }]
+        password: [
+          {
+            required: true,
+            trigger: "blur",
+            message: "请输入密码"
+          }
+        ]
+        // password: [{ required: true, trigger: "blur", validator: validatePass }]
       },
       loading: false,
       pwdType: "password",
@@ -95,10 +104,28 @@ export default {
         this.pwdType = "password";
       }
     },
-    handleLogin() {
+    async handleLogin() {
+      console.log("in handleLogin!");
+      let formDataValidFlag = false;
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true;
+          formDataValidFlag = true;
+        } else {
+          this.loading = false;
+          console.log("登录验证不成功！");
+        }
+      });
+
+      if (formDataValidFlag) {
+        //发送登录请求
+        let res = await this.$reqGet(
+          `/dataApis/api/authentication?userName=${
+            this.loginForm.username
+          }&pwd=${this.loginForm.password}`
+        );
+        console.log("res && res.success:", res, res.success);
+        if (res.data && res.data.success) {
           this.$store
             .dispatch("Login", this.loginForm)
             .then(() => {
@@ -129,9 +156,11 @@ export default {
               console.log("err:", err);
             });
         } else {
-          console.log("登录验证不成功！");
+          //登录信息验证失败
+          this.loading = false;
+          this.$showMessage("用户名或密码不正确！", "error");
         }
-      });
+      }
     }
   }
 };

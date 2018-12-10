@@ -155,6 +155,19 @@ export const constantRouterMap = [{
         icon: 'link'
       }
     }]
+  }, {
+    path: '/setPWD',
+    component: Layout,
+    name: 'setPWDWrap',
+    children: [{
+      path: '',
+      name: 'setPWD',
+      component: () => import('@/views/setting/setPWD'),
+      meta:{
+        title:"修改密码",
+        icon:'link'
+      }
+    }]
   },
   // {
   //   path: '/test',
