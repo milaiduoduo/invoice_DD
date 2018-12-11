@@ -113,7 +113,7 @@ router.post('/fileApi/post_test/', async function (ctx, next) {
 router.post('/fileApi/fileUpload/', async function (ctx, next) {
     try {
         // ignore non-POSTs
-        if ('POST' != ctx.method) return await next();
+        //if ('POST' != ctx.method) return await next();
         // console.log('request.body::::', ctx.request.body);
         //取得表单元素
         // let params = ctx.request.body.fields;
