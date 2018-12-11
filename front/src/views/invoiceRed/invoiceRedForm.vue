@@ -100,9 +100,9 @@ export default {
         console.log("红票上传所有数据过程中错误：", err);
       }
     },
-    _uploadFileByCatch(event, ivcTypeName) {
+    async _uploadFileByCatch(event, ivcTypeName) {
       try {
-        this._uploadFile(event, ivcTypeName);
+        await this._uploadFile(event, ivcTypeName);
       } catch (err) {
         console.log(`${ivcTypeName}pdf上传过程错误:`, err);
       }

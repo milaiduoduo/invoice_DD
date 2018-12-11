@@ -139,7 +139,7 @@ export default {
 
         let formData = new FormData();
         formData.append("mFile", file);
-
+        console.log("马上开读！");
         let res = await this.$reqPost("/fileApis/fileApi/fileUpload", formData, {
           headers: {
             "Content-Type": "multipart/form-data"
@@ -161,8 +161,8 @@ export default {
         pdf_relativePath = tempArray[tempArray.length - 1];
         this.formData.pdfPath = encodeURIComponent(pdf_relativePath);
 
-        //采用promise catch的异步错误，往外层抛的时候，外层无法捕捉到这个错误，浏览器会报uncaught Error
-        // })
+        //     采用promise catch的异步错误， 往外层抛的时候， 外层无法捕捉到这个错误， 浏览器会报uncaught Error
+        //   })
         // .catch(err => {
         //   throw new Error(`${this.ivcType}pdf上传错误:`, err);
         //   console.log(`${this.ivcType}pdf上传错误:`, err);
@@ -172,6 +172,7 @@ export default {
         this.$refs.file.value = "";
         this.formData.pdfPath = "";
         throw err;
+        console.log("接到内层抛出的错误！", err);
       }
     },
     _fileCheck(file) {
