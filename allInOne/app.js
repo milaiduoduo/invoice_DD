@@ -34,7 +34,7 @@ log4js.configure(logConfig)
 const logger = log4js.getLogger('cheese');
 
 
-const port = 8888; //process.env.PORT;
+const port = 8889; //process.env.PORT;
 
 app.use(koaBody({
   multipart: true,
@@ -46,13 +46,13 @@ app.use(async function (ctx, next) {
   let start = new Date();
   await next();
   let ms = new Date() - start;
-  log4js.info(`${ctx.method} ${ctx.url} 请求响应时间：${ms}`);
+  logger.info(`${ctx.method} ${ctx.url} 请求响应时间：${ms}`);
   console.log('%s %s 请求响应时间：%s', ctx.method, ctx.url, ms);
 });
 
 //系统级捕捉未捕捉到的错误
 app.on('error', (err, ctx) => {
-  log4js.error(`Node.js Server error:${err}`);
+  logger.error(`Node.js Server error:${err}`);
   console.log('node.js Server error', err);
 })
 
