@@ -60,17 +60,20 @@ app.on('error', (err, ctx) => {
 //post获取上传的pdf文件
 router.post('/fileApi/fileUpload/', async function (ctx, next) {
   try {
-    // console.log("in");
-    // console.log("m_config:", m_config);
-    //新版修改了ctx.request.body里面的内容。把上传后的文件放在ctx.request.files里面，其它表单字段放在ctx.request.body里面了。
+    //异步异常
+    // process.nextTick(function my_app() {
+    //   throw new Error('Catch me');
+    // })
+
+    //新版koaBody修改了ctx.request.body里面的内容。把上传后的文件放在ctx.request.files里面，其它表单字段放在ctx.request.body里面了。
     let files = ctx.request.files.mFile;
     // console.log('ctx.request.files.mFile:', ctx.request.files.mFile);
     let filePath = '';
-    let dayDPach = '';
+    let dayDPath = '';
     let directoryPath = m_config.directoryPath;
     let maxSize = m_config.pdfMaxSize;
-
     files = Array.isArray(files) ? files : Array.of(files); //将单个对象转换成数组
+
     //console.log('files.length:', files.length);
     if (files.length > 0) {
       for (let item of files) {
@@ -86,22 +89,22 @@ router.post('/fileApi/fileUpload/', async function (ctx, next) {
         if (ext != '.pdf') throw '后缀验证失败： 只能上传.pdf文件， 不能上传其它类型！'
         if (item.size > maxSize) throw '文件大小验证失败：文件不能超过100k!';
 
-        console.log("通过合规检查！");
+        // console.log("通过合规检查！");
 
         //创建文件夹，创建文件
-        dayDPach = path.join(directoryPath, parseTime(new Date(), '{y}-{m}-{d}'));
-        console.log("dayDPach:", dayDPach);
-        if (!fs.existsSync(dayDPach)) {
-          fs.mkdir(dayDPach, {
+        dayDPath = path.join(directoryPath, parseTime(new Date(), '{y}-{m}-{d}'));
+        console.log("dayDPath:", dayDPath);
+        if (!fs.existsSync(dayDPath)) {
+          fs.mkdir(dayDPath, {
             recursive: true
           }, err => {
             if (err) {
-              logger.error("创建文件夹错误，文件夹路径为：" + dayDPach);
+              logger.error("创建文件夹错误，文件夹路径为：" + dayDPath);
               throw err;
             }
           })
         }
-        filePath = path.join(dayDPach, new Date().timestamp() + ext);
+        filePath = path.join(dayDPath, new Date().timestamp() + ext);
         const stream = fs.createWriteStream(filePath);
         fs.createReadStream(tmpath).pipe(stream);
       }
