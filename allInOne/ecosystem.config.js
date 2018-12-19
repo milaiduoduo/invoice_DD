@@ -7,6 +7,9 @@ module.exports = {
     // args: 'one two',
     // instances: 1,
     autorestart: true,
+    restart_delay: 30000, //异常重启情况下， 延时重启时间ms
+    min_uptime: 1000, //应用运行少于时间被认为是异常启动,默认ms
+    max_restarts: 10, // 最大异常重启次数，即小于min_uptime运行时间重启次数；
     watch: false,
     max_memory_restart: '1G'
     // env: {
